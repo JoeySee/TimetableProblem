@@ -10,6 +10,10 @@ public class Student {
 		this.id = Integer.parseInt(id);
 	}
 	
+	public int getID() {
+		return id;
+	}
+	
 	public ArrayList<Course> getRequestedCourses() {
 		return requestedCourses;
 	}

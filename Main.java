@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main {
-	ArrayList<Course> courses = new ArrayList<Course>();
-	ArrayList<Student> students = new ArrayList<Student>();
+	static ArrayList<Course> courses = new ArrayList<Course>();
+	static ArrayList<Student> students = new ArrayList<Student>();
 	
 	public static void main(String[] args) throws IOException {
 		
 		generateCourses();
-		//generateStudents();
+		generateStudents();
+		
+		for(Student s : students) {
+			System.out.println(s.getID());
+		}
 	}// main
 	
 	public static void generateStudents() throws IOException{
@@ -45,14 +49,18 @@ public class Main {
 		Student student = null;
 		for(int i = 0; i < lines; i++) {
 			if(data[i][0].equals("ID")) {
+				if(student != null) {
+					students.add(student);
+				} 
 				student = new Student(data[i][1]);
 			} else {
 				if(data[i][3].equals("Y")) {
-					student.addAlternateCourse(null);
+					student.addAlternateCourse(getCourse(data[i][0]));
+				} else {
+					student.addRequestedCourse(getCourse(data[i][0]));
 				}
 				
 			}
-			
 		}// for i
 	}
 	
@@ -86,14 +94,21 @@ public class Main {
 		}
 		
 		Course course = null;
-		
+		for(int i = 0; i < lines; i++) {
+			course = new Course(data[i][1], data[i][0]);
+			
+			
+		}// for i
 		
 	}
 	
 	// Find course in course arrayList
-	public Course getCourse(String name) {
-		Course result = null;
-		//for(int i = 0; i < )
-		return result;
+	public static Course getCourse(String code) {
+		for(Course c : courses) {
+			if(c.getCode().equals(code)) {
+				return c;
+			}
+		}
+		return null;
 	}
 }// Main
