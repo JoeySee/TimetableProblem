@@ -9,13 +9,13 @@ MACLV11---,ACTIVE LIVING 11,Physical Education,Regular,28,9,37,29,1
 MACLV11G--,ACTIVE LIVING 11 Girls,Physical Education,Regular,10,6,16,29,0
 MACLV12---,ACTIVE LIVING 12,Physical Education,Regular,28,4,32,29,1
 MACLV12G--,ACTIVE LIVING 12 Girls,Physical Education,Regular,7,4,11,29,0
-MADD-09---,ADST - Drafting 9,Applied Skills,Regular,31,32,63,24,1
+MADD-09---,ADST-Drafting 9,Applied Skills,Regular,31,32,63,24,1
 MADEM10---,ADST – ENTREPRENEURSHIP AND MARKETING 10,Applied Skills,Regular,85,54,139,29,3
-MADER09---,ADST - Electronics and Robotics,Applied Skills,Regular,29,29,58,24,1
-MADFS09---,ADST - Food Studies 9,Applied Skills,Regular,1,0,1,23,0
-MADGE09D--,ADST 9 - General Exploratns Design Innov & Inquiry,Applied Skills,Regular,17,28,45,24,1
+MADER09---,ADST-Electronics and Robotics,Applied Skills,Regular,29,29,58,24,1
+MADFS09---,ADST-Food Studies 9,Applied Skills,Regular,1,0,1,23,0
+MADGE09D--,ADST 9-General Exploratns Design Innov & Inquiry,Applied Skills,Regular,17,28,45,24,1
 MADIT09---,ADST-Information and ,Applied Skills,Regular,66,24,90,24,3
-MADW-09---,ADST - Woodwork 9,Applied Skills,Regular,29,17,46,21,1
+MADW-09---,ADST-Woodwork 9,Applied Skills,Regular,29,17,46,21,1
 MAE--09---,ARTS EDUCATION 9,Fine Arts,Regular,36,29,65,29,1
 MATPH12---,ANATOMY AND PHYSIOLOGY 12,Science,Regular,71,12,83,23,3
 MATPH12D--,ANATOMY AND PHYSIOLOGY 12 (PSI),Science,Regular,20,1,21,23,1
@@ -71,12 +71,12 @@ MENST12C--,ENGLISH STUDIES 12 CHALLENGE,English,Regular,27,0,27,24,1
 MENT-12---,ENTREPRENEURSHIP 12,Business Education,Regular,28,19,47,29,1
 MEPSS11---,EXPLORATIONS IN SOCIAL STUDIES 11,Social Studies,Regular,55,7,62,24,2
 MEVSC11---,ENVIRONMENTAL SCIENCE 11,Science,Regular,44,8,52,23,2
-MEVSC12C--,ENVIRONMENTAL SCIENCE 12 - CLIMATE CHANGE,Science,Regular,34,11,45,23,1
+MEVSC12C--,ENVIRONMENTAL SCIENCE 12-CLIMATE CHANGE,Science,Regular,34,11,45,23,1
 MFMP-10---,FOUNDATIONS OF MATH AND PRE-CALCULUS 10,Mathematics,Regular,126,2,128,29,4
 MFMP-10C--,FOUNDATIONS OF MATH AND PRE-CALCULUS 10 CHALLENGE,Mathematics,Regular,45,0,45,29,2
 MFMP-10H--,FOUNDATIONS OF MATH AND PRE-CALCULUS 10 HONOURS,Mathematics,Regular,51,0,51,29,2
 MFOM-11---,FOUNDATIONS OF MATHEMATICS 11,Mathematics,Regular,36,1,37,29,1
-MFOOD10---ADST –  FOOD STUDIES 10,Applied Skills,Regular,101,44,145,23,4
+MFOOD10---ADST-FOOD STUDIES 10,Applied Skills,Regular,101,44,145,23,4
 MFOOD11---,FOOD STUDIES 11,Applied Skills,Regular,59,33,92,23,3
 MFOOD12---,FOOD STUDIES 12,Applied Skills,Regular,62,24,86,23,3
 MFR--09---,FRENCH 9,Modern Languages,Regular,35,11,46,29,1
@@ -152,14 +152,14 @@ MSS--10C--,SOCIAL STUDIES 10 CHALLENGE,Social Studies,Regular,45,0,45,24,2
 MSTAT12---,STATISTICS 12,Mathematics,Regular,1,0,1,29,0
 MTAUT11---,AUTOMOTIVE TECHNOLOGY 11,Applied Skills,Regular,17,10,27,21,1
 MTAUT12---,AUTOMOTIVE TECHNOLOGY 12,Applied Skills,Regular,35,9,44,21,2
-MTDRF10---,ADST –  DRAFTING 10,Applied Skills,Regular,38,37,75,24,2
+MTDRF10---,ADST-DRAFTING 10,Applied Skills,Regular,38,37,75,24,2
 MTDRF11---,DRAFTING 11,Applied Skills,Regular,19,9,28,24,1
 MTDRF12---,DRAFTING 12,Applied Skills,Regular,17,10,27,24,1
 MTEAD12---,ENGINE AND DRIVETRAIN 12,Applied Skills,Regular,4,2,6,21,0
-MTEAR10---,ADST –  ELECTRONICS AND ROBOTICS 10,Applied Skills,Regular,16,19,35,24,1
-MTEAR10--L,ADST –  ELECTRONICS AND ROBOTICS 10 Linear,Applied Skills,Regular,14,0,14,24,1
+MTEAR10---,ADST-ELECTRONICS AND ROBOTICS 10,Applied Skills,Regular,16,19,35,24,1
+MTEAR10--L,ADST-ELECTRONICS AND ROBOTICS 10 Linear,Applied Skills,Regular,14,0,14,24,1
 MTEXP10D--,ADST-Technology Explorations 10 Design Innov & Inq,Information Tech,7,14,21,24,0
-MTPOW10---,ADST –  POWER TECHNOLOGY 10,Applied Skills,Regular,21,13,34,21,1
+MTPOW10---,ADST-POWER TECHNOLOGY 10,Applied Skills,Regular,21,13,34,21,1
 MTROB11---,ROBOTICS 11,Applied Skills,Regular,8,8,16,24,0
 MTROB11--L,ROBOTICS 11 LINEAR,Applied Skills,Regular,7,0,7,24,0
 MTROB12---,ROBOTICS 12,Applied Skills,Regular,3,1,4,24,0
@@ -176,12 +176,12 @@ MWEX-2B--L,WORK EXPERIENCE 12B LINEAR,Career Prep,Regular,2,0,2,29,0
 MWH--12---,20th CENTURY WORLD HISTORY 12,Social Studies,48,14,62,24,2
 MWPM-10---,WORKPLACE MATHEMATICS 10,Mathematics,Regular,17,0,17,29,1
 MWPM-11---,WORKPLACE MATHEMATICS 11,Mathematics,Regular,29,0,29,29,1
-MWWK-10---,ADST –  WOODWORK 10,Applied Skills,Regular,26,25,51,21,1
+MWWK-10---,ADST-WOODWORK 10,Applied Skills,Regular,26,25,51,21,1
 MWWK-11---,WOODWORK 11,Applied Skills,Regular,11,11,22,21,1
 MWWK-12---,WOODWORK 12,Applied Skills,Regular,18,8,26,21,1
 XBA--09B-L,BEGINNER BAND 9 LINEAR,Band,Regular,3,0,3,100,0
 XBA--09C-L,CONCERT BAND 9 Linear,Band,Regular,41,4,45,100,0
-XBA--09G--,CONCERT BAND 9 - Guitar,Band,Regular,23,25,48,29,1
+XBA--09G--,CONCERT BAND 9-Guitar,Band,Regular,23,25,48,29,1
 XBA--09J-L,JAZZ BAND 9 LINEAR,Music,Regular,18,0,18,100,0
 XC---09--L,CONCERT CHOIR 9 Linear,Music,Regular,16,0,16,50,0
 XLDCB09LS-,LEARNING STRATEGIES 9 LD,Personal Development,Regular,1,0,1,29,0
