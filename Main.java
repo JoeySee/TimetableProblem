@@ -8,14 +8,27 @@ public class Main {
 	static ArrayList<Student> students = new ArrayList<Student>();
 	
 	public static void main(String[] args) throws IOException {
-		
 		generateCourses();
 		generateStudents();
+		Timetable t = generateTimetable();
 		
 		for(Student s : students) {
-			System.out.println(s.getID());
+			s.addToCourses();
 		}
+		
+		
 	}// main
+	
+	public static Timetable generateTimetable() {
+		Timetable t = new Timetable();
+		
+		for(Course c : courses) {
+			int slot = (int) Math.random()*8;
+			t.addCourse(slot, c);
+		}
+		
+		return t;
+	}// generateTimetable
 	
 	public static void generateStudents() throws IOException{
 		BufferedReader in = null;
@@ -56,7 +69,8 @@ public class Main {
 			} else {
 				if(data[i][3].equals("Y")) {
 					student.addAlternateCourse(getCourse(data[i][0]));
-				} else {
+				} else if (data[i][3].equals("N")) {
+					System.out.println(data[i][0]);
 					student.addRequestedCourse(getCourse(data[i][0]));
 				}
 				
@@ -96,10 +110,9 @@ public class Main {
 		Course course = null;
 		for(int i = 0; i < lines; i++) {
 			course = new Course(data[i][1], data[i][0]);
-			
-			
+			courses.add(course);
 		}// for i
-		
+		courses.add(course);
 	}
 	
 	// Find course in course arrayList
