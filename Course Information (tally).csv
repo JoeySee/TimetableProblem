@@ -158,7 +158,7 @@ MTDRF12---,DRAFTING 12,Applied Skills,Regular,17,10,27,24,1
 MTEAD12---,ENGINE AND DRIVETRAIN 12,Applied Skills,Regular,4,2,6,21,0
 MTEAR10---,ADST-ELECTRONICS AND ROBOTICS 10,Applied Skills,Regular,16,19,35,24,1
 MTEAR10--L,ADST-ELECTRONICS AND ROBOTICS 10 Linear,Applied Skills,Regular,14,0,14,24,1
-MTEXP10D--,ADST-Technology Explorations 10 Design Innov & Inq,Information Tech,Regular,7,14,21,24,0
+MTEXP10D--,ADST-Technology Explorations 10 Design Innov & Inq,Information Tech,7,14,21,24,0
 MTPOW10---,ADST-POWER TECHNOLOGY 10,Applied Skills,Regular,21,13,34,21,1
 MTROB11---,ROBOTICS 11,Applied Skills,Regular,8,8,16,24,0
 MTROB11--L,ROBOTICS 11 LINEAR,Applied Skills,Regular,7,0,7,24,0
@@ -170,10 +170,10 @@ MVAPH12---,PHOTOGRAPHY 12,Fine Arts,Regular,6,11,17,24,0
 MVAST10---,VISUAL ARTS: ART STUDIO 10,Fine Arts,Regular,29,23,52,29,1
 MVAST11---,ART STUDIO 11,Fine Arts,Regular,11,18,29,29,0
 MVAST12---,ART STUDIO 12,Fine Arts,Regular,22,11,33,29,1
-MWBDV10IT-,Information and Communications Technologies 10,Information Tech,Regular,26,16,42,24,1
+MWBDV10IT-,Information and Communications Technologies 10,Information Tech,26,16,42,24,1
 MWEX-2A--L,WORK EXPERIENCE 12A LINEAR,Career Prep,Regular,5,0,5,29,0
 MWEX-2B--L,WORK EXPERIENCE 12B LINEAR,Career Prep,Regular,2,0,2,29,0
-MWH--12---,20th CENTURY WORLD HISTORY 12,Social Studies,Regular,48,14,62,24,2
+MWH--12---,20th CENTURY WORLD HISTORY 12,Social Studies,48,14,62,24,2
 MWPM-10---,WORKPLACE MATHEMATICS 10,Mathematics,Regular,17,0,17,29,1
 MWPM-11---,WORKPLACE MATHEMATICS 11,Mathematics,Regular,29,0,29,29,1
 MWWK-10---,ADST-WOODWORK 10,Applied Skills,Regular,26,25,51,21,1

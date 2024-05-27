@@ -12,6 +12,7 @@ public class Timetable {
 	public void addCourse(int slot, Course c) {
 		
 		schedule.get(slot).add(c);
+		// check for number of sections
 	}
 	
 	public void deleteCourse(int slot, Course c) {

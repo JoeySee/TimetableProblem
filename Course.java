@@ -3,16 +3,18 @@ import java.util.ArrayList;
 public class Course {
 	private String name;
 	private String code;
-	private int capacity = 30;
+	private int capacityPerSection = 30;
+	private int sections;
 	private int block; // Position within timetable (0-7)
 	private int index; // Position within block (0-?)
 	private ArrayList<Student> students = new ArrayList<Student>();
 	
-	public Course(String name, String c) {
+	public Course(String name, String c, int enrollmentMax, int sections) {
 		this.name = name;
 		this.code = c;
 		block = 0;
 		index = 0;
+		
 	}
 	
 	public ArrayList<Student> getStudents(){
