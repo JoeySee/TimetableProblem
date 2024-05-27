@@ -6,13 +6,16 @@ public class Course {
 	private int capacity = 30;
 	private int block; // Position within timetable (0-7)
 	private int index; // Position within block (0-?)
+	private int sessions;
 	private ArrayList<Student> students = new ArrayList<Student>();
 	
-	public Course(String name, String c) {
+	public Course(String name, String c, String cap, String s) {
 		this.name = name;
 		this.code = c;
 		block = 0;
 		index = 0;
+		capacity = Integer.parseInt(cap) * Integer.parseInt(s);
+		sessions = Integer.parseInt(s);
 	}
 	
 	public ArrayList<Student> getStudents(){
@@ -21,6 +24,7 @@ public class Course {
 	
 	public void addStudent(Student newStudent) {
 		students.add(newStudent);
+		capacity--;
 	}
 	
 	public String getCode() {

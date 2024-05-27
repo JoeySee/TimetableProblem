@@ -16,6 +16,15 @@ public class Main {
 			s.addToCourses();
 		}
 		
+		for(Student s : students) {
+			ArrayList <Course> c = s.getActualCourses();
+			System.out.println(s.getID());
+			for(Course a : c) {
+				System.out.println(a.getName());
+			}
+			System.out.println("----------------------------");
+		}
+		
 		
 	}// main
 	
@@ -51,7 +60,7 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = in.readLine();
 			//System.out.println(line);
-			if(line.contains("Course"));
+			if(line.contains("Course")) continue;
 			data[i] = line.split(",");
 			for (int j = 0; j < data[i].length; j++) {
 				System.out.println(data[i][j]);
@@ -61,7 +70,7 @@ public class Main {
 		
 		Student student = null;
 		for(int i = 0; i < lines; i++) {
-			if(data[i][0].equals("ID")) {
+			if(data[i][0] != null && data[i][0].equals("ID")) {
 				if(student != null) {
 					students.add(student);
 				} 
@@ -112,7 +121,7 @@ public class Main {
 		
 		Course course = null;
 		for(int i = 0; i < lines; i++) {
-			course = new Course(data[i][1], data[i][0]);
+			course = new Course(data[i][1], data[i][0], data[i][7], data[i][8]);
 			courses.add(course);
 		}// for i
 		courses.add(course);
