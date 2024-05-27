@@ -16,7 +16,6 @@ public class Student {
 	
 	public void addToCourses() {
 		System.out.println(requestedCourses);
-		System.out.println();
 		for(int i = 0; i < requestedCourses.size(); i++) {
 			if(requestedCourses.get(i).getCapacity() > 0) {
 				requestedCourses.get(i).addStudent(this);

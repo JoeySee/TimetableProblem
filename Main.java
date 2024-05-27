@@ -67,12 +67,15 @@ public class Main {
 				} 
 				student = new Student(data[i][1]);
 			} else {
-				if(data[i][3].equals("Y")) {
-					student.addAlternateCourse(getCourse(data[i][0]));
-				} else if (data[i][3].equals("N")) {
-					System.out.println(data[i][0]);
-					student.addRequestedCourse(getCourse(data[i][0]));
+				Course c = getCourse(data[i][0]);
+				if (c != null) {
+					if(data[i][3].equals("Y")) {
+						student.addAlternateCourse(c);
+					} else if (data[i][3].equals("N")) {
+						student.addRequestedCourse(c);
+					}
 				}
+				
 				
 			}
 		}// for i
@@ -122,6 +125,7 @@ public class Main {
 				return c;
 			}
 		}
+		System.out.println(code);
 		return null;
 	}
 }// Main
