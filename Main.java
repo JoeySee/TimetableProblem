@@ -126,6 +126,36 @@ public class Main {
 		}// for i
 		courses.add(course);
 	}
+
+	public static void generateCourseSeqRules() throws IOException {
+		BufferedReader br = null;
+		int lines = 0;
+		
+		try {
+			br = new BufferedReader(new FileReader("Course Sequencing Rules.csv"));
+		} catch(Exception e) {
+			System.out.println("File input error");
+		}
+		
+		while(br.readLine() != null) {
+			lines++;
+		}
+		
+		br = new BufferedReader(new FileReader("Course Sequencing Rules.csv"));
+		String [][] data = new String [lines][8];
+		String line;
+		for(int i = 0; i < lines; i++) {
+			line = br.readLine();
+			data[i] = line.split(",");
+			for (int j = 0; j < data[i].length; j++) {
+				if(j==0) {
+					System.out.print(data[i][j] + " before: ");
+				}
+				System.out.print(data[i][j]);
+			}
+			System.out.println();
+		}
+	}
 	
 	// Find course in course arrayList
 	public static Course getCourse(String code) {
