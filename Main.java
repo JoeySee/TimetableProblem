@@ -140,16 +140,25 @@ public class Main {
 		in = new BufferedReader(new FileReader("Course Information (tally).csv"));
 		String [][] data = new String [lines][9];
 		String line;
-		for (int i = 0; i < lines; i++) {
-			line = in.readLine();
-			//System.out.println(line);
-			if(line.contains("Course"));
-			data[i] = line.split(",");
-			for (int j = 0; j < data[i].length; j++) {
-				System.out.println(data[i][j]);
+		for(int i = 0; i < lines; i++) {
+			if(data[i][0].equals("ID")) {
+				if(student != null) {
+					students.add(student);
+				} 
+				student = new Student(data[i][1]);
+			} else if(!data[i][0].equals("Course")) {
+				c = getCourse(data[i][0]);
+				if (c != null) {
+					if(data[i][3].equals("Y")) {
+						student.addAlternateCourse(c);
+					} else if (data[i][3].equals("N")) {
+						student.addRequestedCourse(c);
+					}
+				}
+				
+				
 			}
-			System.out.println("-----------------------------------------");
-		}
+		}// for i
 		
 		Course course = null;
 		for(int i = 0; i < lines; i++) {
