@@ -89,6 +89,38 @@ public class Main {
 			}
 		}// for i
 	}
+
+	public static void generateBlockingRules() throws IOException{
+		BufferedReader in = null;
+		
+		// read in data
+		try {
+			in = new BufferedReader(new FileReader("Course Information (tally).csv")); // Read student requests 
+		} catch (Exception e) {
+			System.out.println("File input error");
+		}
+
+		int lines = 0;
+		while(in.readLine() != null) {
+			lines++;
+		}
+		in = new BufferedReader(new FileReader("Course Information (tally).csv"));
+		String [][] data = new String [lines][9];
+		String line;
+		for (int i = 0; i < lines; i++) {
+			line = in.readLine();
+			//System.out.println(line);
+			if(line.contains("Course"));
+			data[i] = line.split(",");
+		}
+		
+		Course course = null;
+		for(int i = 0; i < lines; i++) {
+			course = new Course(data[i][1], data[i][0]);
+			courses.add(course);
+		}// for i
+		courses.add(course);
+	}
 	
 	public static void generateCourses() throws IOException{
 		BufferedReader in = null;
