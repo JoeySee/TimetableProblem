@@ -10,14 +10,34 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		generateCourses();
 		generateStudents();
-		generateBlockingRules();
 		Timetable t = generateTimetable();
 		
 		for(Student s : students) {
 			s.addToCourses();
 		}
 		
+		for(Student s : students) {
+			ArrayList <Course> c = s.getActualCourses();
+			System.out.println(s.getID());
+			for(Course a : c) {
+				System.out.println(a.getName());
+			}
+			System.out.println("----------------------------");
+		}
 		
+		for(Course c : courses) {
+			System.out.println(c.getName());
+			System.out.println(c.getCapacity());
+			System.out.println(c.getSections());
+			System.out.println(c.getNumStudents());
+			for (int i = 0; i < c.getSections(); i++) {
+				System.out.println("section " + i + ":");
+				for (int j = 0; j < c.getNumStudents(i); j++) {
+					System.out.println(c.getStudents(i).get(j));
+				}
+			}
+			System.out.println("----------------------------");
+		}
 	}// main
 	
 	public static Timetable generateTimetable() {
@@ -52,20 +72,23 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = in.readLine();
 			//System.out.println(line);
-			if(line.contains("Course"));
+			if(line.contains("Course")) continue;
 			data[i] = line.split(",");
+			for (int j = 0; j < data[i].length; j++) {
+				System.out.println(data[i][j]);
+			}
+			System.out.println("-----------------------------------------");
 		}
 		
 		Student student = null;
-		Course c = null;
 		for(int i = 0; i < lines; i++) {
-			if(data[i][0].equals("ID")) {
+			if(data[i][0] != null && data[i][0].equals("ID")) {
 				if(student != null) {
 					students.add(student);
 				} 
 				student = new Student(data[i][1]);
-			} else if(!data[i][0].equals("Course")) {
-				c = getCourse(data[i][0]);
+			} else {
+				Course c = getCourse(data[i][0]);
 				if (c != null) {
 					if(data[i][3].equals("Y")) {
 						student.addAlternateCourse(c);
@@ -78,40 +101,7 @@ public class Main {
 			}
 		}// for i
 	}
-	
-	public static void generateCourses() throws IOException{
-		BufferedReader in = null;
-		
-		
-		// read in data
-		try {
-			in = new BufferedReader(new FileReader("Course Information (tally).csv")); // Read student requests 
-		} catch (Exception e) {
-			System.out.println("File input error");
-		}
 
-		int lines = 0;
-		while(in.readLine() != null) {
-			lines++;
-		}
-		in = new BufferedReader(new FileReader("Course Information (tally).csv"));
-		String [][] data = new String [lines][9];
-		String line;
-		for (int i = 0; i < lines; i++) {
-			line = in.readLine();
-			//System.out.println(line);
-			if(line.contains("Course"));
-			data[i] = line.split(",");
-		}
-		
-		Course course = null;
-		for(int i = 0; i < lines; i++) {
-			course = new Course(data[i][1], data[i][0]);
-			courses.add(course);
-		}// for i
-		courses.add(course);
-	}
-	
 	public static void generateBlockingRules() throws IOException{
 		BufferedReader in = null;
 		
@@ -138,7 +128,44 @@ public class Main {
 		
 		Course course = null;
 		for(int i = 0; i < lines; i++) {
-			course = new Course(data[i][1], data[i][0]);
+			course = new Course(data[i][1], data[i][0], data[i][7], data[i][8]);
+			courses.add(course);
+		}// for i
+		courses.add(course);
+	}
+	
+	public static void generateCourses() throws IOException{
+		BufferedReader in = null;
+		
+		
+		// read in data
+		try {
+			in = new BufferedReader(new FileReader("Course Information (tally).csv")); // Read student requests 
+		} catch (Exception e) {
+			System.out.println("File input error");
+		}
+
+		int lines = 0;
+		while(in.readLine() != null) {
+			lines++;
+		}
+		in = new BufferedReader(new FileReader("Course Information (tally).csv"));
+		String [][] data = new String [lines][9];
+		String line;
+		for (int i = 0; i < lines; i++) {
+			line = in.readLine();
+			//System.out.println(line);
+			if(line.contains("Course"));
+			data[i] = line.split(",");
+			for (int j = 0; j < data[i].length; j++) {
+				System.out.println(data[i][j]);
+			}
+			System.out.println("-----------------------------------------");
+		}
+		
+		Course course = null;
+		for(int i = 0; i < lines; i++) {
+			course = new Course(data[i][1], data[i][0], data[i][7], data[i][8]);
 			courses.add(course);
 		}// for i
 		courses.add(course);
@@ -151,6 +178,7 @@ public class Main {
 				return c;
 			}
 		}
+		System.out.println(code);
 		return null;
 	}
 }// Main

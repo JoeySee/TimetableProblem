@@ -15,8 +15,12 @@ public class Student {
 	}
 	
 	public void addToCourses() {
+		for(Course c : requestedCourses) {
+			System.out.println(c.getName());
+		}
+		System.out.println("-------------------------------------------------");
 		for(int i = 0; i < requestedCourses.size(); i++) {
-			if(requestedCourses.get(i).getCapacity() > 0) {
+			if(requestedCourses.get(i).getCapacity() > 0 && requestedCourses.get(i) != null) {
 				requestedCourses.get(i).addStudent(this);
 				actualCourses.add(requestedCourses.get(i));
 			}
@@ -28,6 +32,7 @@ public class Student {
 				actualCourses.add(requestedCourses.get(i));
 			}
 		}
+		
 		
 	}
 	
