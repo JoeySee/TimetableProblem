@@ -89,9 +89,10 @@ public class Main {
 			}
 		}// for i
 	}
-
-	public static void generateBlockingRules() throws IOException{
+	
+	public static void generateCourses() throws IOException{
 		BufferedReader in = null;
+		
 		
 		// read in data
 		try {
@@ -112,53 +113,11 @@ public class Main {
 			//System.out.println(line);
 			if(line.contains("Course"));
 			data[i] = line.split(",");
-		}
-		
-		Course course = null;
-		for(int i = 0; i < lines; i++) {
-			course = new Course(data[i][1], data[i][0]);
-			courses.add(course);
-		}// for i
-		courses.add(course);
-	}
-	
-	public static void generateCourses() throws IOException{
-		BufferedReader in = null;
-		
-		
-		// read in data
-		try {
-			in = new BufferedReader(new FileReader("Course Information (tally).csv")); // Read student requests 
-		} catch (Exception e) {
-			System.out.println("File input error");
-		}
-
-		int lines = 0;
-		while(in.readLine() != null) {
-			lines++;
-		}
-		in = new BufferedReader(new FileReader("Course Information (tally).csv"));
-		String [][] data = new String [lines][9];
-		String line;
-		for(int i = 0; i < lines; i++) {
-			if(data[i][0].equals("ID")) {
-				if(student != null) {
-					students.add(student);
-				} 
-				student = new Student(data[i][1]);
-			} else if(!data[i][0].equals("Course")) {
-				c = getCourse(data[i][0]);
-				if (c != null) {
-					if(data[i][3].equals("Y")) {
-						student.addAlternateCourse(c);
-					} else if (data[i][3].equals("N")) {
-						student.addRequestedCourse(c);
-					}
-				}
-				
-				
+			for (int j = 0; j < data[i].length; j++) {
+				System.out.println(data[i][j]);
 			}
-		}// for i
+			System.out.println("-----------------------------------------");
+		}
 		
 		Course course = null;
 		for(int i = 0; i < lines; i++) {
