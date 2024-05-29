@@ -31,12 +31,13 @@ public class Main {
 	
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();
-		
-		for(Course c : courses) {
-			int slot = (int) Math.random()*8;
+
+		for (Course c : courses) {
+			int slot = (int) (Math.random() * 8);
+			System.out.println(slot);
 			t.addCourse(slot, c);
 		}
-		
+
 		return t;
 	}// generateTimetable
 	
