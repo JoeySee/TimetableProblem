@@ -83,7 +83,9 @@ public class Course {
 	
 	public void setTimetablePos(int block, int index) {
 		lastIndex++;
-		this.block[lastIndex] = block;
-		this.index[lastIndex] = index;
+		if(lastIndex < sections){
+			this.block[lastIndex] = block;
+			this.index[lastIndex] = index;
+		}	
 	}
 }
