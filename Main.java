@@ -11,6 +11,7 @@ public class Main {
 		generateCourses();
 		generateStudents();
 		Timetable t = generateTimetable();
+		generateCourseSeqRules();
 		
 		for(Student s : students) {
 			s.addToCourses();
@@ -130,32 +131,49 @@ public class Main {
 	public static void generateCourseSeqRules() throws IOException {
 		BufferedReader br = null;
 		int lines = 0;
-		
+
 		try {
 			br = new BufferedReader(new FileReader("Course Sequencing Rules.csv"));
-		} catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println("File input error");
 		}
-		
-		while(br.readLine() != null) {
+
+		while (br.readLine() != null) {
 			lines++;
 		}
-		
+
 		br = new BufferedReader(new FileReader("Course Sequencing Rules.csv"));
-		String [][] data = new String [lines][8];
+		String[][] data = new String[lines][8];
 		String line;
-		for(int i = 0; i < lines; i++) {
+		for (int i = 0; i < lines; i++) {
 			line = br.readLine();
 			data[i] = line.split(",");
-			for (int j = 0; j < data[i].length; j++) {
-				if(j==0) {
-					System.out.print(data[i][j] + " before: ");
+			Course courseZero = null; // uses to store the course corresponding to data[i][0]
+			for (Course cr : courses) {
+				if (cr.getCode().equals(data[i][0])) {
+					courseZero = cr;
 				}
-				System.out.print(data[i][j]);
+			}
+			
+			//populate CourBefore when needed
+			for (int j = 1; j < data[i].length; j++) {
+				for (Course c : courses) {
+					if (c.getCode().equals(data[i][j]) && courseZero != null) {
+						c.addCourBefore(courseZero);
+					} // if
+				} // enhanced for
+			} // for j
+		} // for i
+
+
+		for(Course c : courses) {
+			System.out.print("The following courses must appear before " + c.getName() + ": ");
+			for(int i = 0; i < c.getCourBefore().size(); i++) {
+				System.out.print(c.getCourBefore().get(i).getName() + ",");
 			}
 			System.out.println();
-		}
-	}
+		} // for
+	} // generateCourseSeqRules
 	
 	// Find course in course arrayList
 	public static Course getCourse(String code) {
