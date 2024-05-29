@@ -39,6 +39,17 @@ public class Timetable {
 	}
 	
 	public String toString() {
+		String table = "S1 A      S1 B     S1 C     S1 D     S2 A      S2 B     S2 C   S2 D";
+		
+		
+		
+		for(int i = 0; i < schedule.length; i++) {
+			for(int j = 0; j < schedule[i].size(); j++) {
+				System.out.print(schedule[i].get(j).getName() + " ,");
+			}
+			System.out.println();
+		}
+		
 		return "TO DO";
 	}
 }
