@@ -4,38 +4,34 @@ public class Course {
 	private String name;
 	private String code;
 	private int capacity;
-	private int [] block; // Position within timetable (0-7)
-	private int [] index; // Position within block (0-?)
 	private int lastIndex;
-	private int sections;
-	private ArrayList<Student> [] students;
+	private int numSections;
+	private CourseSection [] sections;
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
 		this.code = c;
 		lastIndex = -1;
-		sections = Integer.parseInt(s);
-		block = new int [sections];
-		index = new int [sections];
+		numSections = Integer.parseInt(s);
 		capacity =  Integer.parseInt(cap);
-		students = (ArrayList<Student> [])new ArrayList [sections];
-		for (int i = 0; i < students.length; i++) {
-			students[i] = new ArrayList<Student>();
+		sections = new CourseSection [numSections];
+		for (int i = 0; i < sections.length; i++) {
+			sections[i] = new CourseSection (this, i);
 		}
 	}
 	
-	public ArrayList<Student> [] getStudents(){
-		return students;
+	public CourseSection getSection(int i){
+		return sections[i];
 	}
 	
-	public ArrayList<Student> getStudents(int sec){
-		return students[sec];
-	}
+	/*public ArrayList<Student> getStudents(int sec){
+		return sections[sec].getStudents();
+	}*/
 	
 	public void addStudent(Student newStudent) {
-		for (int i = 0; i < students.length; i++) {
-			if (students[i].size() < capacity) {
-				students[i].add(newStudent);
+		for (int i = 0; i < sections.length; i++) {
+			if (sections[i].getStudents().size() < capacity) {
+				sections[i].addStudent(newStudent);
 				System.out.println("added student in session " + i);
 				break;
 			} else {
@@ -53,37 +49,27 @@ public class Course {
 		return name;
 	}
 	
-	public int getBlock(int sec) {
-		return block[sec];
-	}
-	
-	public int getIndex(int sec) {
-		return index[sec];
-	}
-	
 	public int getCapacity() {
 		return capacity;
 	}
 	
-	public int getSections() {
-		return sections;
+	public int getNumSections() {
+		return numSections;
 	}
 	
 	public int getNumStudents() {
 		int n = 0;
-		for (int i = 0; i < students.length; i++) {
-			n += students[i].size();
+		for (int i = 0; i < numSections; i++) {
+			n += sections[i].getNumStudents();
 		}
 		return n;
 	}
 	
-	public int getNumStudents(int sec) {
-		return students[sec].size();
-	}
-	
 	public void setTimetablePos(int block, int index) {
 		lastIndex++;
-		this.block[lastIndex] = block;
-		this.index[lastIndex] = index;
+		if(lastIndex < numSections){
+			sections[lastIndex].setBlock(block);
+			sections[lastIndex].setIndex(index);
+		}	
 	}
 }
