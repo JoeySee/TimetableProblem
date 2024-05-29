@@ -11,22 +11,14 @@ public class Main {
 		generateCourses();
 		generateStudents();
 		Timetable t = generateTimetable();
-		generateCourseSeqRules();
+		
+		generateBlockingRules();
 		
 		for(Student s : students) {
 			s.addToCourses();
 		}
 		
-		for(Student s : students) {
-			ArrayList <Course> c = s.getActualCourses();
-			System.out.println(s.getID());
-			for(Course a : c) {
-				System.out.println(a.getName());
-			}
-			System.out.println("----------------------------");
-		}
-		
-		
+		getCourse("YCPA-0AX-L").test();
 	}// main
 	
 	public static Timetable generateTimetable() {
@@ -62,10 +54,6 @@ public class Main {
 			line = in.readLine();
 			//System.out.println(line);
 			data[i] = line.split(",");
-			for (int j = 0; j < data[i].length; j++) {
-				System.out.println(data[i][j]);
-			}
-			System.out.println("-----------------------------------------");
 		}
 		
 		Student student = null;
@@ -91,6 +79,8 @@ public class Main {
 		}// for i
 	}
 	
+	
+	
 	public static void generateCourses() throws IOException{
 		BufferedReader in = null;
 		
@@ -114,10 +104,6 @@ public class Main {
 			//System.out.println(line);
 			if(line.contains("Course"));
 			data[i] = line.split(",");
-			for (int j = 0; j < data[i].length; j++) {
-				System.out.println(data[i][j]);
-			}
-			System.out.println("-----------------------------------------");
 		}
 		
 		Course course = null;
@@ -131,49 +117,53 @@ public class Main {
 	public static void generateCourseSeqRules() throws IOException {
 		BufferedReader br = null;
 		int lines = 0;
-
+		
 		try {
 			br = new BufferedReader(new FileReader("Course Sequencing Rules.csv"));
+		} catch(Exception e) {
+			System.out.println("File input error");
+		}
+		
+		while(br.readLine() != null) {
+			lines++;
+		}
+		
+		br = new BufferedReader(new FileReader("Course Sequencing Rules.csv"));
+		String [][] data = new String [lines][8];
+		String line;
+	}
+	
+	public static void generateBlockingRules() throws IOException{
+		BufferedReader in = null;
+		
+		// read in data
+		try {
+			in = new BufferedReader(new FileReader("Course Blocking Rules.csv")); // Read student requests 
 		} catch (Exception e) {
 			System.out.println("File input error");
 		}
 
-		while (br.readLine() != null) {
+		int lines = 0;
+		while(in.readLine() != null) {
 			lines++;
 		}
-
-		br = new BufferedReader(new FileReader("Course Sequencing Rules.csv"));
-		String[][] data = new String[lines][8];
+		in = new BufferedReader(new FileReader("Course Blocking Rules.csv"));
 		String line;
 		for (int i = 0; i < lines; i++) {
-			line = br.readLine();
-			data[i] = line.split(",");
-			Course courseZero = null; // uses to store the course corresponding to data[i][0]
-			for (Course cr : courses) {
-				if (cr.getCode().equals(data[i][0])) {
-					courseZero = cr;
+			line = in.readLine();
+			String[] lineSplit = line.split(",");
+			if(getCourse(lineSplit[0]) == null) continue;
+			for(int j = 1; j < lineSplit.length-1; j++) {
+				if(getCourse(lineSplit[j]) == null) continue;
+				
+				if(lineSplit[lineSplit.length-1].equals("Simultaneous")) {
+					getCourse(lineSplit[0]).addSimultaneousCourseReciprocal(getCourse(lineSplit[j]));
+				} else if(lineSplit[lineSplit.length-1].equals("NotSimultaneous")) {
+					getCourse(lineSplit[0]).addNotSimultaneousCourseReciprocal(getCourse(lineSplit[j]));
 				}
 			}
-			
-			//populate CourBefore when needed
-			for (int j = 1; j < data[i].length; j++) {
-				for (Course c : courses) {
-					if (c.getCode().equals(data[i][j]) && courseZero != null) {
-						c.addCourBefore(courseZero);
-					} // if
-				} // enhanced for
-			} // for j
-		} // for i
-
-
-		for(Course c : courses) {
-			System.out.print("The following courses must appear before " + c.getName() + ": ");
-			for(int i = 0; i < c.getCourBefore().size(); i++) {
-				System.out.print(c.getCourBefore().get(i).getName() + ",");
-			}
-			System.out.println();
-		} // for
-	} // generateCourseSeqRules
+		}
+	}
 	
 	// Find course in course arrayList
 	public static Course getCourse(String code) {
@@ -182,7 +172,6 @@ public class Main {
 				return c;
 			}
 		}
-		System.out.println(code);
 		return null;
 	}
 }// Main

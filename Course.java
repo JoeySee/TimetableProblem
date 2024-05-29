@@ -8,8 +8,9 @@ public class Course {
 	private int [] index; // Position within block (0-?)
 	private int lastIndex;
 	private int sections;
+	private ArrayList<Course> simultaneousCourses; // Courses that can occur as a split with this one
+	private ArrayList<Course> notSimultaneousCourses; // Courses that can occur linearly with this one
 	private ArrayList<Student> [] students;
-	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
@@ -18,6 +19,8 @@ public class Course {
 		sections = Integer.parseInt(s);
 		block = new int [sections];
 		index = new int [sections];
+		simultaneousCourses = new ArrayList<Course>();
+		notSimultaneousCourses = new ArrayList<Course>();
 		capacity =  Integer.parseInt(cap);
 		students = (ArrayList<Student> [])new ArrayList [sections];
 		for (int i = 0; i < students.length; i++) {
@@ -37,23 +40,15 @@ public class Course {
 		for (int i = 0; i < students.length; i++) {
 			if (students[i].size() < capacity) {
 				students[i].add(newStudent);
-				System.out.println("added student in session " + i);
+				//System.out.println("added student in session " + i);
 				break;
 			} else {
-				System.out.println("full");
+				//System.out.println("full");
 			}
 		}
 		
 	}
 	
-	public void addCourBefore(Course c) {
-		courBefore.add(c);
-	}
-	
-	public ArrayList<Course> getCourBefore() {
-		return courBefore;
-	}
-
 	public String getCode() {
 		return code;
 	}
@@ -96,5 +91,43 @@ public class Course {
 			this.block[lastIndex] = block;
 			this.index[lastIndex] = index;
 		}	
+	}
+	
+	public void addSimultaneousCourseReciprocal(Course c) {
+		simultaneousCourses.add(c);
+		c.addSimultaneousCourse(this);
+	}
+	
+	public void addSimultaneousCourse(Course c) {
+		simultaneousCourses.add(c);
+	}
+	
+	public void addNotSimultaneousCourseReciprocal(Course c) {
+		notSimultaneousCourses.add(c);
+		c.addNotSimultaneousCourse(this);
+	}
+	
+	public void addNotSimultaneousCourse(Course c) {
+		notSimultaneousCourses.add(c);
+	}
+	
+	public void test() {
+		System.out.println(simultaneousCourses.get(0).getName());
+	}
+	
+	public boolean isCourseNotSimultaneous(Course c) {
+		boolean isFound = false;
+		for(Course d : notSimultaneousCourses) {
+			if(d.equals(c)) isFound = true;
+		}
+		return isFound;
+	}
+	
+	public boolean isCourseSimultaneous(Course c) {
+		boolean isFound = false;
+		for(Course d : simultaneousCourses) {
+			if(d.equals(c)) isFound = true;
+		}
+		return isFound;
 	}
 }
