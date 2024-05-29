@@ -9,6 +9,7 @@ public class Course {
 	private int lastIndex;
 	private int sections;
 	private ArrayList<Student> [] students;
+	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
@@ -45,6 +46,14 @@ public class Course {
 		
 	}
 	
+	public void addCourBefore(Course c) {
+		courBefore.add(c);
+	}
+	
+	public ArrayList<Course> getCourBefore() {
+		return courBefore;
+	}
+
 	public String getCode() {
 		return code;
 	}
