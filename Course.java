@@ -4,7 +4,6 @@ public class Course {
 	private String name;
 	private String code;
 	private int capacity;
-	private int lastIndex;
 	private int numSections;
 	private CourseSection [] sections;
 	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
@@ -14,7 +13,6 @@ public class Course {
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
 		this.code = c;
-		lastIndex = -1;
 		numSections = Integer.parseInt(s);
 		capacity =  Integer.parseInt(cap);
 		simultaneousCourses = new ArrayList<Course>();
@@ -50,7 +48,8 @@ public class Course {
 			} else {
 				//System.out.println("full");
 			}
-		}		
+		}
+		
 	}
 	
 	public String getCode() {
@@ -110,16 +109,10 @@ public class Course {
 	public boolean isCourseSimultaneous(Course c) {
 		boolean isFound = false;
 		for(Course d : simultaneousCourses) {
-			if(d.equals(c)) isFound = true;
+			if(d.equals(c)) {
+				isFound = true;
+			}
 		}
 		return isFound;
-	}
-	
-	public void setTimetablePos(int block, int index) {
-		lastIndex++;
-		if(lastIndex < numSections){
-			sections[lastIndex].setBlock(block);
-			sections[lastIndex].setIndex(index);
-		}	
 	}
 }

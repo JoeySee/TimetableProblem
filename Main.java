@@ -20,20 +20,23 @@ public class Main {
 		}
 		
 		for(Student s : students) {
-			ArrayList <Course> c = s.getActualCourses();
+			ArrayList <CourseSection> cs = s.getActualCourseSections();
 			//System.out.println(s.getID());
-			for(Course a : c) {
-//				System.out.println(a.getName());
+			for(CourseSection a : cs) {
+				//System.out.println(a.getCourse().getName());
 			}
 //			System.out.println("----------------------------");
 		}
 		System.out.println(t);
-		int index = 841;
-		System.out.println(students.get(index).getID());
-		ArrayList <Course> c = students.get(index).getActualCourses();
-		//System.out.println(s.getID());
-		for(Course a : c) {
-			System.out.println(a.getCode());
+		
+		
+		Student s = students.get(0);
+		CourseSection a = null;
+		System.out.println("student id " + s.getID() + "\n");
+		System.out.println(s.getActualCourseSections().size());
+		for (int i = 0; i < s.getActualCourseSections().size(); i++) {
+			a = s.getActualCourseSections().get(i);
+			System.out.println(a.getCourse().getName() + " at section " + a.getSecNum() + " at block " + a.getBlock());
 		}
 		
 	}// main

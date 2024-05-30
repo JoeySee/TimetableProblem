@@ -11,6 +11,8 @@ public class Timetable {
 	
 	public void addSection(int slot, CourseSection sec) {
 		schedule[slot].add(sec);
+		sec.setBlock(slot);
+		sec.setIndex(schedule[slot].size() - 1);
 	}
 	
 	public void deleteSection(int slot, Course c) {
