@@ -7,6 +7,9 @@ public class Course {
 	private int lastIndex;
 	private int numSections;
 	private CourseSection [] sections;
+	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
+	private ArrayList<Course> simultaneousCourses; // Courses that can occur as a split with this one
+	private ArrayList<Course> notSimultaneousCourses; // Courses that can occur linearly with this one
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
@@ -14,6 +17,8 @@ public class Course {
 		lastIndex = -1;
 		numSections = Integer.parseInt(s);
 		capacity =  Integer.parseInt(cap);
+		simultaneousCourses = new ArrayList<Course>();
+		notSimultaneousCourses = new ArrayList<Course>();
 		sections = new CourseSection [numSections];
 		for (int i = 0; i < sections.length; i++) {
 			sections[i] = new CourseSection (this, i);
@@ -28,17 +33,24 @@ public class Course {
 		return sections[sec].getStudents();
 	}*/
 	
+	public void addCourBefore(Course c) {
+		courBefore.add(c);
+	}
+	
+	public ArrayList<Course> getCourBefore() {
+		return courBefore;
+	}
+	
 	public void addStudent(Student newStudent) {
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i].getStudents().size() < capacity) {
 				sections[i].addStudent(newStudent);
-				System.out.println("added student in session " + i);
+				//System.out.println("added student in session " + i);
 				break;
 			} else {
-				System.out.println("full");
+				//System.out.println("full");
 			}
-		}
-		
+		}		
 	}
 	
 	public String getCode() {
@@ -63,6 +75,44 @@ public class Course {
 			n += sections[i].getNumStudents();
 		}
 		return n;
+	}
+	
+	public void addSimultaneousCourseReciprocal(Course c) {
+		simultaneousCourses.add(c);
+		c.addSimultaneousCourse(this);
+	}
+	
+	public void addSimultaneousCourse(Course c) {
+		simultaneousCourses.add(c);
+	}
+	
+	public void addNotSimultaneousCourseReciprocal(Course c) {
+		notSimultaneousCourses.add(c);
+		c.addNotSimultaneousCourse(this);
+	}
+	
+	public void addNotSimultaneousCourse(Course c) {
+		notSimultaneousCourses.add(c);
+	}
+	
+	public void test() {
+		System.out.println(simultaneousCourses.get(0).getName());
+	}
+	
+	public boolean isCourseNotSimultaneous(Course c) {
+		boolean isFound = false;
+		for(Course d : notSimultaneousCourses) {
+			if(d.equals(c)) isFound = true;
+		}
+		return isFound;
+	}
+	
+	public boolean isCourseSimultaneous(Course c) {
+		boolean isFound = false;
+		for(Course d : simultaneousCourses) {
+			if(d.equals(c)) isFound = true;
+		}
+		return isFound;
 	}
 	
 	public void setTimetablePos(int block, int index) {

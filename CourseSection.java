@@ -24,6 +24,7 @@ public class CourseSection {
 	public void addStudent(Student newStudent) {
 		if (students.size() < course.getCapacity()) {
 			students.add(newStudent);
+			newStudent.addActualCourse(course);
 		}
 	}
 	

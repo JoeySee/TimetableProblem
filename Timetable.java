@@ -42,18 +42,33 @@ public class Timetable {
 		String s = "";
 		CourseSection aSection;
 		Student aStudent;
-		for (int i = 0; i < schedule.length; i++) {
-			s += "Block " + i + ":\n";
-			for (int j = 0; j < schedule[i].size(); j++) {
-				aSection = schedule[i].get(j);
-				s += aSection.getCourse().getCode() + " | " + aSection.getCourse().getName() + "\n";
-				s += "section " + aSection.getSecNum() + " (of " + aSection.getCourse().getNumSections() + ") :\n";
-				for (int k = 0; k < aSection.getStudents().size(); k++) {
-					aStudent = aSection.getStudents().get(k);
-					s += aStudent.getID() + "\n";
+//		for (int i = 0; i < schedule.length; i++) {
+//			s += "Block " + i + ":\n";
+//			for (int j = 0; j < schedule[i].size(); j++) {
+//				aSection = schedule[i].get(j);
+//				s += aSection.getCourse().getCode() + " | " + aSection.getCourse().getName() + "\n";
+//				s += "section " + aSection.getSecNum() + " (of " + aSection.getCourse().getNumSections() + ") :\n";
+//				for (int k = 0; k < aSection.getStudents().size(); k++) {
+//					aStudent = aSection.getStudents().get(k);
+//					s += aStudent.getID() + "\n";
+//				}
+//			}
+//		}
+		
+		// Course Code Columns
+		int maxSize = Math.max(Math.max(Math.max(schedule[0].size(), schedule[1].size()), Math.max(schedule[2].size(), schedule[3].size())), Math.max(Math.max(schedule[4].size(), schedule[5].size()), Math.max(schedule[6].size(), schedule[7].size())));
+		s += "   S1  Ba   *   S1  bB   *   S1  bC   *   S1  bD   *   S2  Ba   *   S2  bB   *   S2  bC   *   S2  bD   \n";
+		for(int i = 0; i < maxSize; i++) {
+			for(int j = 0; j < 8; j++) {
+				if(j != 0) s += "*";
+				if(i < schedule[j].size()) {
+					s += " " + schedule[j].get(i).getCourse().getCode() + " ";
+				} else {
+					s += "            ";
 				}
 			}
-		}
+			s += "\n";
+		}	
 		return s;
 	}
 }
