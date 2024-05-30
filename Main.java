@@ -29,9 +29,9 @@ public class Main {
 		}
 		System.out.println(t);
 
-		System.out.println("All requested courses placed: " + genReqCourseMetrics() * 100 + "%");
-		System.out.println("All students have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
-		System.out.println("All students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
+		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
+		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		
 	}// main
 
@@ -67,6 +67,7 @@ public class Main {
 				for(Course reqCourse: s.getRequestedCourses()) {
 					if(actualCourse.getCode().equals(reqCourse.getCode())) {
 						numReqCoursesGiven++;
+						break;
 					}
 				}// for (student s' requested courses) 
  			} // for (student s' actual courses)
@@ -89,6 +90,7 @@ public class Main {
 				for(Course reqCourse: s.getRequestedCourses()) {
 					if(actualCourse.getCode().equals(reqCourse.getCode())) {
 						numReqCoursesGiven++;
+						break;
 					}
 				}// for (student s' requested courses) 
  			} // for (student s' actual courses)
