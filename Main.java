@@ -30,14 +30,19 @@ public class Main {
 		System.out.println(t);
 		
 		
-		Student s = students.get(0);
+		Student s = null;
 		CourseSection a = null;
-		System.out.println("student id " + s.getID() + "\n");
-		System.out.println(s.getActualCourseSections().size());
-		for (int i = 0; i < s.getActualCourseSections().size(); i++) {
-			a = s.getActualCourseSections().get(i);
-			System.out.println(a.getCourse().getName() + " at section " + a.getSecNum() + " at block " + a.getBlock());
+		for (int i = 0; i < students.size(); i++) {
+			s = students.get(i);
+			System.out.println("student id " + s.getID());
+			System.out.println(s.getActualCourseSections().size());
+			for (int j = 0; j < s.getActualCourseSections().size(); j++) {
+				a = s.getActualCourseSections().get(j);
+				System.out.println(a.getCourse().getName() + " at section " + a.getSecNum() + " at block " + a.getBlock());
+			}
+			System.out.println("---------------------------------------------");
 		}
+		
 		
 	}// main
 	
