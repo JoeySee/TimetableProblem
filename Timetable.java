@@ -11,8 +11,6 @@ public class Timetable {
 	
 	public void addSection(int slot, CourseSection sec) {
 		schedule[slot].add(sec);
-		sec.setBlock(slot);
-		sec.setIndex(schedule[slot].size() - 1);
 	}
 	
 	public void deleteSection(int slot, Course c) {
@@ -59,7 +57,7 @@ public class Timetable {
 		
 		// Course Code Columns
 		int maxSize = Math.max(Math.max(Math.max(schedule[0].size(), schedule[1].size()), Math.max(schedule[2].size(), schedule[3].size())), Math.max(Math.max(schedule[4].size(), schedule[5].size()), Math.max(schedule[6].size(), schedule[7].size())));
-		s += "   S1  Ba   *   S1  bB   *   S1  bC   *   S1  bD   *   S2  Ba   *   S2  bB   *   S2  bC   *   S2  bD   \n";
+		s += "    S1 A    *    S1 B    *    S1 C    *    S1 D    *    S2 A    *   S2  B    *    S2  C    *    S2 D    \n";
 		for(int i = 0; i < maxSize; i++) {
 			for(int j = 0; j < 8; j++) {
 				if(j != 0) s += "*";
