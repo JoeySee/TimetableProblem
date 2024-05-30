@@ -10,8 +10,10 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		generateCourses();
 		generateStudents();
-		Timetable t = generateTimetable();
 		generateCourseSeqRules();
+		generateBlockingRules();
+		
+		Timetable t = generateTimetable();
 		
 		for(Student s : students) {
 			s.addToCourses();
@@ -19,25 +21,26 @@ public class Main {
 		
 		for(Student s : students) {
 			ArrayList <Course> c = s.getActualCourses();
-			System.out.println(s.getID());
+			//System.out.println(s.getID());
 			for(Course a : c) {
-				System.out.println(a.getName());
+//				System.out.println(a.getName());
 			}
-			System.out.println("----------------------------");
+//			System.out.println("----------------------------");
 		}
-		
+		System.out.println(t);
 		
 	}// main
 	
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();
-
-		for (Course c : courses) {
-			int slot = (int) (Math.random() * 8);
-			System.out.println(slot);
-			t.addCourse(slot, c);
+		
+		for(Course c : courses) {
+			for (int i = 0; i < c.getNumSections(); i++) {
+				int slot = (int) (Math.random() * 8);
+				t.addSection(slot, c.getSection(i));
+			}
 		}
-
+		
 		return t;
 	}// generateTimetable
 	
@@ -63,10 +66,6 @@ public class Main {
 			line = in.readLine();
 			//System.out.println(line);
 			data[i] = line.split(",");
-			for (int j = 0; j < data[i].length; j++) {
-				System.out.println(data[i][j]);
-			}
-			System.out.println("-----------------------------------------");
 		}
 		
 		Student student = null;
@@ -90,6 +89,38 @@ public class Main {
 				
 			}
 		}// for i
+	}
+	
+	public static void generateBlockingRules() throws IOException{
+		BufferedReader in = null;
+		
+		// read in data
+		try {
+			in = new BufferedReader(new FileReader("Course Blocking Rules.csv")); // Read student requests 
+		} catch (Exception e) {
+			System.out.println("File input error");
+		}
+
+		int lines = 0;
+		while(in.readLine() != null) {
+			lines++;
+		}
+		in = new BufferedReader(new FileReader("Course Blocking Rules.csv"));
+		String line;
+		for (int i = 0; i < lines; i++) {
+			line = in.readLine();
+			String[] lineSplit = line.split(",");
+			if(getCourse(lineSplit[0]) == null) continue;
+			for(int j = 1; j < lineSplit.length-1; j++) {
+				if(getCourse(lineSplit[j]) == null) continue;
+				
+				if(lineSplit[lineSplit.length-1].equals("Simultaneous")) {
+					getCourse(lineSplit[0]).addSimultaneousCourseReciprocal(getCourse(lineSplit[j]));
+				} else if(lineSplit[lineSplit.length-1].equals("NotSimultaneous")) {
+					getCourse(lineSplit[0]).addNotSimultaneousCourseReciprocal(getCourse(lineSplit[j]));
+				}
+			}
+		}
 	}
 	
 	public static void generateCourses() throws IOException{
@@ -116,15 +147,17 @@ public class Main {
 			if(line.contains("Course"));
 			data[i] = line.split(",");
 			for (int j = 0; j < data[i].length; j++) {
-				System.out.println(data[i][j]);
+//				System.out.println(data[i][j]);
 			}
-			System.out.println("-----------------------------------------");
+//			System.out.println("-----------------------------------------");
 		}
 		
 		Course course = null;
 		for(int i = 0; i < lines; i++) {
-			course = new Course(data[i][1], data[i][0], data[i][7], data[i][8]);
-			courses.add(course);
+			if(data[i].length == 9) {
+				course = new Course(data[i][1], data[i][0], data[i][7], data[i][8]);
+				courses.add(course);
+			}
 		}// for i
 		courses.add(course);
 	}
@@ -167,23 +200,23 @@ public class Main {
 		} // for i
 
 
-		for(Course c : courses) {
-			System.out.print("The following courses must appear before " + c.getName() + ": ");
-			for(int i = 0; i < c.getCourBefore().size(); i++) {
-				System.out.print(c.getCourBefore().get(i).getName() + ",");
-			}
-			System.out.println();
-		} // for
+//		for(Course c : courses) {
+//			if(c.getCourBefore().size() == 0) continue;
+//			System.out.print("The following courses must appear before " + c.getName() + ": ");
+//			for(int i = 0; i < c.getCourBefore().size(); i++) {
+//				System.out.print(c.getCourBefore().get(i).getName() + ",");
+//			}
+//			System.out.println();
+//		} // for
 	} // generateCourseSeqRules
 	
 	// Find course in course arrayList
 	public static Course getCourse(String code) {
-		for(Course c : courses) {
+		for(Course c : courses) { 
 			if(c.getCode().equals(code)) {
 				return c;
 			}
 		}
-		System.out.println(code);
 		return null;
 	}
 }// Main
