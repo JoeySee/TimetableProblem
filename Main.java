@@ -29,8 +29,31 @@ public class Main {
 //			System.out.println("----------------------------");
 		}
 		System.out.println(t);
+		int j = 0;
+		int k = 0;
+		while(true) {
+			
+			j = (int) Math.random()*t.getTimetable()[k].size();
+			k = (int) Math.random() * 8 + 1;
+			t.deleteSection(k, t.getTimetable()[k].get(j).getCourse());
+			
+			for(int i = 0 ; i < 8; i++) {
+				
+				t.addSection(i, t.getTimetable()[k].get(j));
+				
+				for(Student s : students) {
+					ArrayList <Course> c = s.getActualCourses();
+				}
+				if(/* course % stuff*/) {
+					
+				}
+			}
+		}
 		
-		System.out.println(students.get(90).printTimetable());
+		
+		
+		
+		System.out.println(students.get(499).printTimetable());
 		
 	}// main
 	

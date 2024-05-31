@@ -56,7 +56,7 @@ public class Student {
 		for(ArrayList<CourseSection> s :t.getTimetable()) {
 			for(CourseSection n : s) {
 				if(n == null) {
-					return false;
+					continue;
 				}
 				if(n.getCourse().equals(c)) {
 					return true;
