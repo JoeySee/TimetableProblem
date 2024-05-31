@@ -78,8 +78,8 @@ public class Main {
 			
 			for(Student s : students) {
 				int numReqCoursesGiven = 0;
-				for(CourseSection actualCourse : s.getActualCourseSections()) {
-					for(Course reqCourse: s.getRequestedCourses()) {
+				for(Course reqCourse: s.getRequestedCourses()) {
+					for(CourseSection actualCourse : s.getActualCourseSections()) {
 						if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
 							numReqCoursesGiven++;
 							break;
@@ -101,8 +101,8 @@ public class Main {
 			
 			for(Student s : students) {
 				int numReqCoursesGiven = 0;
-				for(CourseSection actualCourse : s.getActualCourseSections()) {
-					for(Course reqCourse: s.getRequestedCourses()) {
+				for(Course reqCourse: s.getRequestedCourses()) {
+					for(CourseSection actualCourse : s.getActualCourseSections()) {
 						if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
 							numReqCoursesGiven++;
 							break;
