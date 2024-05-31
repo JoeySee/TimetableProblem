@@ -38,6 +38,20 @@ public class Timetable {
 		
 	}
 	
+	public ArrayList<CourseSection> getSchedule(int i) {
+		return schedule[i];
+	}
+	
+	public ArrayList<CourseSection> getAllCourseSections() {
+		ArrayList<CourseSection> a = new ArrayList<CourseSection>();
+		for (int i = 0; i < 8; i++) {
+			for (CourseSection cs: schedule[i]) {
+				a.add(cs);
+			}
+		}
+		return a;
+	}
+	
 	public String toString() {
 		String s = "";
 		CourseSection aSection;

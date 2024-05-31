@@ -3,7 +3,8 @@ import java.util.ArrayList;
 public class Student {
 	private ArrayList<Course> requestedCourses = new ArrayList<Course>();
 	private ArrayList<Course> alternateCourses = new ArrayList<Course>();
-	private ArrayList<CourseSection> actualCourseSections = new ArrayList<CourseSection>();
+	//private ArrayList<CourseSection> actualCourseSections = new ArrayList<CourseSection>();
+	Timetable t = new Timetable();
 	private int id;
 	
 	public Student(String id) {
@@ -26,7 +27,7 @@ public class Student {
 			}
 		}
 		//System.out.println(Math.min(requestedCourses.size() - actualCourseSections.size(), alternateCourses.size()));
-		for(int i = 0; i < Math.min(requestedCourses.size() - actualCourseSections.size(), alternateCourses.size()); i++) {
+		for(int i = 0; i < Math.min(requestedCourses.size() - t.getAllCourseSections().size(), alternateCourses.size()); i++) {
 			alternateCourses.get(i).addStudent(this);
 		}
 		
@@ -41,8 +42,8 @@ public class Student {
 		return alternateCourses;
 	}
 	
-	public ArrayList<CourseSection> getActualCourseSections() {
-		return actualCourseSections;
+	public Timetable getTimeTable() {
+		return t;
 	}
 	
 	public void addRequestedCourse(Course newCourse) {
@@ -54,6 +55,6 @@ public class Student {
 	}
 	
 	public void addActualCourse(CourseSection newCourseSec) {
-		actualCourseSections.add(newCourseSec);
+		t.addSection(newCourseSec.getBlock(), newCourseSec);
 	}
 }
