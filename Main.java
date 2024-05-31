@@ -20,95 +20,108 @@ public class Main {
 		}
 		
 		for(Student s : students) {
-			ArrayList <Course> c = s.getActualCourses();
+			ArrayList <CourseSection> cs = s.getActualCourseSections();
 			//System.out.println(s.getID());
-			for(Course a : c) {
-//				System.out.println(a.getName());
+			for(CourseSection a : cs) {
+				//System.out.println(a.getCourse().getName());
 			}
 //			System.out.println("----------------------------");
 		}
 		System.out.println(t);
 		
-		System.out.println(courses.size());
-
+		
+		Student s = null;
+		CourseSection a = null;
+//		for (int i = 0; i < students.size(); i++) {
+//			s = students.get(i);
+//			System.out.println("student id " + s.getID());
+//			System.out.println(s.getActualCourseSections().size());
+//			for (int j = 0; j < s.getActualCourseSections().size(); j++) {
+//				a = s.getActualCourseSections().get(j);
+//				System.out.println(a.getCourse().getName() + " at section " + a.getSecNum() + " at block " + a.getBlock());
+//			}
+//			System.out.println("---------------------------------------------");
+//		}
+		
 		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		
+		
 	}// main
-
+	
 	// returns the metrics all requested courses placed
-	public static double genReqCourseMetrics() {
-		int totalReqCourses = 0;
-		int totalPlacedReqCourses = 0;
-		
-		for (Student s: students) {
-			totalReqCourses += s.getRequestedCourses().size();
-			for(Course reqCourse: s.getRequestedCourses()) {
-				for(Course actualCourse : s.getActualCourses()) {
-					//check if a given actualCourse was requested
-					if(reqCourse.getCode().equals(actualCourse.getCode())) {
-						totalPlacedReqCourses++;
-						break;
-					} // if 
-				} // for (student s' requested courses)
-			} // for (student s' actual courses)
-		} // for (student)
-		
-		return (double)totalPlacedReqCourses / (double)totalReqCourses;
-	} // genReqCourseMetrics
-	
-	// return the metrics of all students have 8/8 requested classes
-	public static double genFullReqMetrics() {
-		int totalNumStudent = 0;
-		int numFullReqStudents = 0;
-		
-		for(Student s : students) {
-			if(s.getRequestedCourses().size() == 8) {
-				totalNumStudent++;
-				int numReqCoursesGiven = 0;
-				for(Course actualCourse : s.getActualCourses()) {
-					for(Course reqCourse: s.getRequestedCourses()) {
-						if(actualCourse.getCode().equals(reqCourse.getCode())) {
-							numReqCoursesGiven++;
+		public static double genReqCourseMetrics() {
+			int totalReqCourses = 0;
+			int totalPlacedReqCourses = 0;
+			
+			for (Student s: students) {
+				totalReqCourses += s.getRequestedCourses().size();
+				for(Course reqCourse: s.getRequestedCourses()) {
+					for(CourseSection actualCourse : s.getActualCourseSections()) {
+						//check if a given actualCourse was requested
+						if(reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
+							totalPlacedReqCourses++;
 							break;
-						}
-					}// for (student s' requested courses) 
-	 			} // for (student s' actual courses)
-				if(numReqCoursesGiven == 8) {
-					numFullReqStudents++;
-				} //if
-			}
-		} // for (students)
+						} // if 
+					} // for (student s' requested courses)
+				} // for (student s' actual courses)
+			} // for (student)
+			
+			return (double)totalPlacedReqCourses / (double)totalReqCourses;
+		} // genReqCourseMetrics
 		
-		return (double) numFullReqStudents / totalNumStudent;
-	}
-	
-	// return the metrics all students have 7-8/8 requested classes
-	public static double genSufficientReqMetrics() {
-		int totalNumStudent = 0;
-		int numFullReqStudents = 0;
+		// return the metrics of all students have 8/8 requested classes
+		public static double genFullReqMetrics() {
+			int totalNumStudent = 0;
+			int numFullReqStudents = 0;
+			
+			for(Student s : students) {
+				if(s.getRequestedCourses().size() == 8) {
+					totalNumStudent++;
+					int numReqCoursesGiven = 0;
+					for(CourseSection actualCourse : s.getActualCourseSections()) {
+						for(Course reqCourse: s.getRequestedCourses()) {
+							if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
+								numReqCoursesGiven++;
+								break;
+							}
+						}// for (student s' requested courses) 
+		 			} // for (student s' actual courses)
+					if(numReqCoursesGiven == 8) {
+						numFullReqStudents++;
+					} //if
+				}
+			} // for (students)
+			
+			return (double) numFullReqStudents / totalNumStudent;
+		}
 		
-		for(Student s : students) {
-			if(s.getRequestedCourses().size() >= 7 && s.getRequestedCourses().size() < 9) {
-				totalNumStudent ++;
-				int numReqCoursesGiven = 0;
-				for(Course actualCourse : s.getActualCourses()) {
-					for(Course reqCourse: s.getRequestedCourses()) {
-						if(actualCourse.getCode().equals(reqCourse.getCode())) {
-							numReqCoursesGiven++;
-							break;
-						}
-					}// for (student s' requested courses) 
-	 			} // for (student s' actual courses)
-				if(numReqCoursesGiven >= 7 && numReqCoursesGiven < 9) {
-					numFullReqStudents++;
-				} //if
-			}
-		} // for (students)
-		
-		return (double) numFullReqStudents / totalNumStudent;
-	}
+		// return the metrics all students have 7-8/8 requested classes
+		public static double genSufficientReqMetrics() {
+			int totalNumStudent = 0;
+			int numFullReqStudents = 0;
+			
+			for(Student s : students) {
+				if(s.getRequestedCourses().size() >= 7 && s.getRequestedCourses().size() < 9) {
+					totalNumStudent++;
+					int numReqCoursesGiven = 0;
+					for(CourseSection actualCourse : s.getActualCourseSections()) {
+						for(Course reqCourse: s.getRequestedCourses()) {
+							if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
+								numReqCoursesGiven++;
+								break;
+							}
+						}// for (student s' requested courses) 
+		 			} // for (student s' actual courses)
+					if(numReqCoursesGiven >= 7 && numReqCoursesGiven < 9) {
+						numFullReqStudents++;
+					} //if
+				}
+			} // for (students)
+			
+			return (double) numFullReqStudents / totalNumStudent;
+		}
 	
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();

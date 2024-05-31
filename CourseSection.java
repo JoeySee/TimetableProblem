@@ -24,6 +24,7 @@ public class CourseSection {
 	public void addStudent(Student newStudent) {
 		if (students.size() < course.getCapacity()) {
 			students.add(newStudent);
+			newStudent.getActualCourseSections().add(this);
 		}
 	}
 	
@@ -54,11 +55,4 @@ public class CourseSection {
 	public void setIndex(int i) {
 		index = i;
 	}
-	/*public void setTimetablePos(int block, int index) {
-		lastIndex++;
-		if(lastIndex < sections){
-			this.block[lastIndex] = block;
-			this.index[lastIndex] = index;
-		}	
-	}*/
 }
