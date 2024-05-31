@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,106 +17,22 @@ public class Main {
 		Timetable t = generateTimetable();
 		
 		for(Student s : students) {
-			s.addToCourses();
+			s.addToCourses(t);
 		}
 		
 		for(Student s : students) {
-			ArrayList <CourseSection> cs = s.getActualCourseSections();
+			ArrayList <Course> c = s.getActualCourses();
 			//System.out.println(s.getID());
-			for(CourseSection a : cs) {
-				//System.out.println(a.getCourse().getName());
+			for(Course a : c) {
+//				System.out.println(a.getName());
 			}
 //			System.out.println("----------------------------");
 		}
 		System.out.println(t);
 		
-		
-		Student s = null;
-		CourseSection a = null;
-//		for (int i = 0; i < students.size(); i++) {
-//			s = students.get(i);
-//			System.out.println("student id " + s.getID());
-//			System.out.println(s.getActualCourseSections().size());
-//			for (int j = 0; j < s.getActualCourseSections().size(); j++) {
-//				a = s.getActualCourseSections().get(j);
-//				System.out.println(a.getCourse().getName() + " at section " + a.getSecNum() + " at block " + a.getBlock());
-//			}
-//			System.out.println("---------------------------------------------");
-//		}
-		
-		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
-		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
-		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
-		
+		System.out.println(students.get(90).printTimetable());
 		
 	}// main
-	
-	// returns the metrics all requested courses placed
-		public static double genReqCourseMetrics() {
-			int totalReqCourses = 0;
-			int totalPlacedReqCourses = 0;
-			
-			for (Student s: students) {
-				totalReqCourses += s.getRequestedCourses().size();
-				for(Course reqCourse: s.getRequestedCourses()) {
-					for(CourseSection actualCourse : s.getActualCourseSections()) {
-						//check if a given actualCourse was requested
-						if(reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
-							totalPlacedReqCourses++;
-							break;
-						} // if 
-					} // for (student s' requested courses)
-				} // for (student s' actual courses)
-			} // for (student)
-			
-			return (double)totalPlacedReqCourses / (double)totalReqCourses;
-		} // genReqCourseMetrics
-		
-		// return the metrics of all students have 8/8 requested classes
-		public static double genFullReqMetrics() {
-			int totalNumStudent = students.size();
-			int numFullReqStudents = 0;
-			
-			for(Student s : students) {
-				int numReqCoursesGiven = 0;
-				for(Course reqCourse: s.getRequestedCourses()) {
-					for(CourseSection actualCourse : s.getActualCourseSections()) {
-						if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
-							numReqCoursesGiven++;
-							break;
-						}
-					}// for (student s' requested courses) 
-	 			} // for (student s' actual courses)
-				if(numReqCoursesGiven == 8) {
-					numFullReqStudents++;
-				} //if
-			} // for (students)
-			
-			return (double) numFullReqStudents / totalNumStudent;
-		}
-		
-		// return the metrics all students have 7-8/8 requested classes
-		public static double genSufficientReqMetrics() {
-			int totalNumStudent = students.size();
-			int numFullReqStudents = 0;
-			
-			for(Student s : students) {
-				int numReqCoursesGiven = 0;
-				for(Course reqCourse: s.getRequestedCourses()) {
-					for(CourseSection actualCourse : s.getActualCourseSections()) {
-						if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
-							numReqCoursesGiven++;
-							break;
-						}
-					}// for (student s' requested courses) 
-	 			} // for (student s' actual courses)
-				if(numReqCoursesGiven >= 7 && numReqCoursesGiven < 9) {
-					numFullReqStudents++;
-				} //if
-			} // for (students)
-			
-			return (double) numFullReqStudents / totalNumStudent;
-		}
 	
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();
