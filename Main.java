@@ -20,7 +20,7 @@ public class Main {
 		}
 		
 		for(Student s : students) {
-			ArrayList <CourseSection> cs = s.getActualCourseSections();
+			ArrayList <CourseSection> cs = s.getTimeTable().getAllCourseSections();
 			//System.out.println(s.getID());
 			for(CourseSection a : cs) {
 				//System.out.println(a.getCourse().getName());
@@ -28,10 +28,8 @@ public class Main {
 //			System.out.println("----------------------------");
 		}
 		System.out.println(t);
-		
-		
-		Student s = null;
-		CourseSection a = null;
+		System.out.println(students.get(0).getTimeTable());
+	
 //		for (int i = 0; i < students.size(); i++) {
 //			s = students.get(i);
 //			System.out.println("student id " + s.getID());
@@ -47,89 +45,139 @@ public class Main {
 		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		
+		// WRITTEN BY JOEY and owne
+		int j = 0;
+		int k = 0;
+		Timetable t1 = null;
+		double highScore = genReqCourseMetrics();
+		double oldScore = highScore;
+		Timetable bestTable = t.clone();
+		int loopCount = 0;
+		Timetable t2 = t.clone();
+		while(true) {
+			k = (int) (Math.random() * 8);
+            j = (int) (Math.random()*t.getTimetable()[k].size());
+            CourseSection c = t.getTimetable()[k].get(j);
+            t.deleteSection(k, t.getTimetable()[k].get(j).getCourse());
+            for(int i = 0 ; i < 8; i++) {
+            	t1 = t.clone();
+                t1.addSection(i, c);
+                
+                
+                
+                students = new ArrayList<Student>();
+                generateStudents();
+                for(Student s : students) {
+        			s.addToCourses();
+        			
+        		}
+                
+                if(genReqCourseMetrics() >= highScore) {
+                   bestTable = t1.clone();
+                   highScore = genReqCourseMetrics();
+                }
+            }
+            
+            if(highScore >= oldScore) {
+            	t = bestTable.clone();
+            }
+            
+//            System.out.println(t2.toString().equals(t.toString()));
+//            System.out.print(loopCount + ": ");
+//            System.out.println(highScore);
+//            System.out.println(t);
+            loopCount++;
+            t2 = t.clone();
+            
+            if(highScore > oldScore || highScore > .7 || loopCount > 20001) {
+            	break;
+            }
+        }
+		System.out.println(t);
+		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
+		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
+		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		
 	}// main
 	
 	// returns the metrics all requested courses placed
-	public static double genReqCourseMetrics() {
-		int totalReqCourses = 0;
-		int totalPlacedReqCourses = 0;
-
-		for (Student s : students) {
-			totalReqCourses += s.getRequestedCourses().size();
-			for (Course reqCourse : s.getRequestedCourses()) {
-				for (CourseSection actualCourse : s.getActualCourseSections()) {
-					// check if a given actualCourse was requested
-					if (reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
-						totalPlacedReqCourses++;
-						break;
-					} // if
-				} // for (student s' requested courses)
-			} // for (student s' actual courses)
-		} // for (student)
-
-		return (double) totalPlacedReqCourses / (double) totalReqCourses;
-	} // genReqCourseMetrics
-
-	// return the metrics of all students have 8/8 requested classes
-	public static double genFullReqMetrics() {
-		int totalNumStudent = 0;
-		int numFullReqStudents = 0;
-
-		for (Student s : students) {
-			if (s.getRequestedCourses().size() == 8) {
-				totalNumStudent++;
+		public static double genReqCourseMetrics() {
+			int totalReqCourses = 0;
+			int totalPlacedReqCourses = 0;
+			
+			for (Student s: students) {
+				totalReqCourses += s.getRequestedCourses().size();
+				for(Course reqCourse: s.getRequestedCourses()) {
+					for(CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+						//check if a given actualCourse was requested
+						if(reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
+							totalPlacedReqCourses++;
+							break;
+						} // if 
+					} // for (student s' requested courses)
+				} // for (student s' actual courses)
+			} // for (student)
+			
+			return (double)totalPlacedReqCourses / (double)totalReqCourses;
+		} // genReqCourseMetrics
+		
+		// return the metrics of all students have 8/8 requested classes
+		public static double genFullReqMetrics() {
+			int totalNumStudent = students.size();
+			int numFullReqStudents = 0;
+			
+			for(Student s : students) {
 				int numReqCoursesGiven = 0;
-				for (CourseSection actualCourse : s.getActualCourseSections()) {
-					for (Course reqCourse : s.getRequestedCourses()) {
-						if (actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
+				for(Course reqCourse: s.getRequestedCourses()) {
+					for(CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+						if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
 							numReqCoursesGiven++;
 							break;
 						}
-					} // for (student s' requested courses)
-				} // for (student s' actual courses)
-				if (numReqCoursesGiven == 8) {
+					}// for (student s' requested courses) 
+	 			} // for (student s' actual courses)
+				if(numReqCoursesGiven == 8) {
+					System.out.println(s.getID());
+					System.out.println(s.getTimeTable());
 					numFullReqStudents++;
-				} // if
-			}
-		} // for (students)
-
-		return (double) numFullReqStudents / totalNumStudent;
-	}
-
-	// return the metrics all students have 7-8/8 requested classes
-	public static double genSufficientReqMetrics() {
-		int totalNumStudent = 0;
-		int numFullReqStudents = 0;
-
-		for (Student s : students) {
-			if (s.getRequestedCourses().size() >= 7 && s.getRequestedCourses().size() < 9) {
-				totalNumStudent++;
+				} //if
+			} // for (students)
+			
+			return (double) numFullReqStudents / totalNumStudent;
+		}
+		
+		// return the metrics all students have 7-8/8 requested classes
+		public static double genSufficientReqMetrics() {
+			int totalNumStudent = students.size();
+			int numFullReqStudents = 0;
+			
+			for(Student s : students) {
 				int numReqCoursesGiven = 0;
-				for (CourseSection actualCourse : s.getActualCourseSections()) {
-					for (Course reqCourse : s.getRequestedCourses()) {
-						if (actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
+				for(Course reqCourse: s.getRequestedCourses()) {
+					for(CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+						if(actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
 							numReqCoursesGiven++;
 							break;
 						}
-					} // for (student s' requested courses)
-				} // for (student s' actual courses)
-				if (numReqCoursesGiven >= 7 && numReqCoursesGiven < 9) {
+					}// for (student s' requested courses) 
+	 			} // for (student s' actual courses)
+				if(numReqCoursesGiven >= 7 && numReqCoursesGiven < 9) {
 					numFullReqStudents++;
-				} // if
-			}
-		} // for (students)
-
-		return (double) numFullReqStudents / totalNumStudent;
-	}
+				} //if
+			} // for (students)
+			
+			return (double) numFullReqStudents / totalNumStudent;
+		}
 	
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();
 		
 		for(Course c : courses) {
 			for (int i = 0; i < c.getNumSections(); i++) {
-				int slot = (int) (Math.random() * 8);
+				int slot = (int) (Math.random() * 8.0);
 				t.addSection(slot, c.getSection(i));
+				c.getSection(i).setBlock(slot);
+				c.getSection(i).setIndex(t.getSchedule(slot).size());
 			}
 		}
 		
@@ -236,7 +284,7 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = in.readLine();
 			//System.out.println(line);
-			if(line.contains("Course"));
+//			if(line.contains("Course"));
 			data[i] = line.split(",");
 			for (int j = 0; j < data[i].length; j++) {
 //				System.out.println(data[i][j]);

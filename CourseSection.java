@@ -23,8 +23,9 @@ public class CourseSection {
 	
 	public void addStudent(Student newStudent) {
 		if (students.size() < course.getCapacity()) {
+			if(newStudent.getTimeTable().getSchedule(block).size() > 0) return;
 			students.add(newStudent);
-			newStudent.getActualCourseSections().add(this);
+			newStudent.getTimeTable().addSection(block, this);
 		}
 	}
 	
