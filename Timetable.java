@@ -16,8 +16,8 @@ public class Timetable {
 	public void deleteSection(int slot, Course c) {
 		ArrayList<CourseSection> courses = schedule[slot];
 		
-		for(int i = courses.size(); i >= 0; i++) {
-			if(courses.get(i).equals(c)) {
+		for(int i = courses.size()-1; i >= 0; i--) {
+			if(courses.get(i).getCourse().equals(c)) {
 				schedule[slot].remove(i);
 				return;
 			}
@@ -34,8 +34,8 @@ public class Timetable {
 		}
 	}
 	
-	public void addStudents(int slot, Course c) {
-		
+	public ArrayList<CourseSection>[] getTimetable() {
+		return schedule;
 	}
 	
 	public ArrayList<CourseSection> getSchedule(int i) {
@@ -84,5 +84,15 @@ public class Timetable {
 			s += "\n";
 		}	
 		return s;
+	}
+	
+	public Timetable clone() {
+		Timetable newTable = new Timetable();
+		for(int i = 0 ; i < 8; i++) {
+			for(CourseSection c : schedule[i]) {
+				newTable.addSection(i, c);
+			}
+		}
+		return newTable;
 	}
 }

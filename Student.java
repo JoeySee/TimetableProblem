@@ -16,16 +16,14 @@ public class Student {
 	}
 	
 	public void addToCourses() {
-		for(Course c : requestedCourses) {
-			//System.out.println(c.getName());
-		}
-		//System.out.println("-------------------------------------------------");
+//		System.out.println(requestedCourses.size());
+		
 		for(int i = 0; i < requestedCourses.size(); i++) {
 			if(requestedCourses.get(i) != null) {
 				requestedCourses.get(i).addStudent(this);
-				//actualCourseSections.add(requestedCourses.get(i));
 			}
 		}
+		
 		//System.out.println(Math.min(requestedCourses.size() - actualCourseSections.size(), alternateCourses.size()));
 		for(int i = 0; i < Math.min(requestedCourses.size() - t.getAllCourseSections().size(), alternateCourses.size()); i++) {
 			alternateCourses.get(i).addStudent(this);

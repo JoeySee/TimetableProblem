@@ -9,6 +9,9 @@ public class Course {
 	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
 	private ArrayList<Course> simultaneousCourses; // Courses that can occur as a split with this one
 	private ArrayList<Course> notSimultaneousCourses; // Courses that can occur linearly with this one
+	private int s1Requests; // Requests for course to be in s1, based on seq rules
+	private int s2Requests; // Requests for course to be in s2, based on seq rules
+	private int totalRequests; // Total requests for this course by students with a placement preference
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
@@ -114,5 +117,22 @@ public class Course {
 			}
 		}
 		return isFound;
+	}
+	
+	public void addS1Request() {
+		s1Requests++;
+		totalRequests++;
+	}
+	
+	public void addS2Request() {
+		s2Requests++;
+		totalRequests++;
+	}
+	
+	// Return percent of students who have an preference for course to appear in s1
+	public double getS2Percent() {
+		System.out.println(totalRequests);
+		if(totalRequests == 0) return -1;
+		return (double)s2Requests/totalRequests;
 	}
 }

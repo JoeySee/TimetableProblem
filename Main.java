@@ -28,10 +28,8 @@ public class Main {
 //			System.out.println("----------------------------");
 		}
 		System.out.println(t);
-		
-		
-		Student s = null;
-		CourseSection a = null;
+		System.out.println(students.get(0).getTimeTable());
+	
 //		for (int i = 0; i < students.size(); i++) {
 //			s = students.get(i);
 //			System.out.println("student id " + s.getID());
@@ -47,6 +45,58 @@ public class Main {
 		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		
+		// WRITTEN BY JOEY and owne
+//		int j = 0;
+//		int k = 0;
+//		Timetable t1 = null;
+//		double highScore = genReqCourseMetrics();
+//		double oldScore = highScore;
+//		Timetable bestTable = t.clone();
+//		int loopCount = 0;
+//		Timetable t2 = t.clone();
+//		while(true) {
+//			k = (int) (Math.random() * 8);
+//            j = (int) (Math.random()*t.getTimetable()[k].size());
+//            CourseSection c = t.getTimetable()[k].get(j);
+//            t.deleteSection(k, t.getTimetable()[k].get(j).getCourse());
+//            for(int i = 0 ; i < 8; i++) {
+//            	t1 = t.clone();
+//                t1.addSection(i, c);
+//                
+//                
+//                
+//                students = new ArrayList<Student>();
+//                generateStudents();
+//                for(Student s : students) {
+//        			s.addToCourses();
+//        			
+//        		}
+//                
+//                if(genReqCourseMetrics() >= highScore) {
+//                   bestTable = t1.clone();
+//                   highScore = genReqCourseMetrics();
+//                }
+//            }
+//            
+//            if(highScore >= oldScore) {
+//            	t = bestTable.clone();
+//            }
+//            
+//            System.out.println(t2.toString().equals(t.toString()));
+//            System.out.print(loopCount + ": ");
+//            System.out.println(highScore);
+//            System.out.println(t);
+//            loopCount++;
+//            t2 = t.clone();
+//            
+//            if(highScore > oldScore || highScore > .7 || loopCount > 20001) {
+//            	break;
+//            }
+//        }
+		System.out.println(t);
+		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
+		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
+		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		
 	}// main
 	
@@ -87,6 +137,8 @@ public class Main {
 					}// for (student s' requested courses) 
 	 			} // for (student s' actual courses)
 				if(numReqCoursesGiven == 8) {
+					System.out.println(s.getID());
+					System.out.println(s.getTimeTable());
 					numFullReqStudents++;
 				} //if
 			} // for (students)
@@ -122,8 +174,20 @@ public class Main {
 		
 		for(Course c : courses) {
 			for (int i = 0; i < c.getNumSections(); i++) {
-				int slot = (int) (Math.random() * 8);
+				int slot;
+				System.out.println(c.getS2Percent());
+				if(c.getS2Percent() < 0) {
+					slot = (int) (Math.random() * 4.0);
+				} else {
+					int offset = 0;
+					if((double)i / c.getNumSections() <= c.getS2Percent()) {
+						offset = 4;
+					}
+					slot = offset + (int) (Math.random() * 4.0);
+				}
 				t.addSection(slot, c.getSection(i));
+				c.getSection(i).setBlock(slot);
+				c.getSection(i).setIndex(t.getSchedule(slot).size());
 			}
 		}
 		
@@ -136,7 +200,7 @@ public class Main {
 		
 		// read in data
 		try {
-			in = new BufferedReader(new FileReader("cleane༼ つ ◕_◕ ༽つdstudentrequests.csv")); // Read student requests 
+			in = new BufferedReader(new FileReader("cleanedstudentrequests.csv")); // Read student requests 
 		} catch (Exception e) {
 			System.out.println("File input error");
 		}
@@ -164,15 +228,20 @@ public class Main {
 				student = new Student(data[i][1]);
 			} else if(!data[i][0].equals("Course")) {
 				c = getCourse(data[i][0]);
-				if (c != null) {
+				if (c != null) {	
 					if(data[i][3].equals("Y")) {
 						student.addAlternateCourse(c);
 					} else if (data[i][3].equals("N")) {
 						student.addRequestedCourse(c);
+						for(Course d : student.getRequestedCourses()) {
+							if(c.getCourBefore().contains(d)) {
+								d.addS2Request();
+								c.addS1Request();
+							}
+							
+						}
 					}
 				}
-				
-				
 			}
 		}// for i
 	}
@@ -230,7 +299,7 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = in.readLine();
 			//System.out.println(line);
-			if(line.contains("Course"));
+//			if(line.contains("Course"));
 			data[i] = line.split(",");
 			for (int j = 0; j < data[i].length; j++) {
 //				System.out.println(data[i][j]);
