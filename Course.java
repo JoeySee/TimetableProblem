@@ -36,9 +36,14 @@ public class Course {
 	
 	public void addCourBefore(Course c) {
 		courBefore.add(c);
+		//System.out.println("39: " + courBefore);
 	}
 	
 	public ArrayList<Course> getCourBefore() {
+		/*System.out.println(courBefore);
+		for(Course c : courBefore) {
+			System.out.println(c);
+		}*/
 		return courBefore;
 	}
 	
@@ -129,9 +134,17 @@ public class Course {
 		totalRequests++;
 	}
 	
+	public int getS1() {
+		return s1Requests;
+	}
+	
+	public int getS2() {
+		return s2Requests;
+	}
+	
 	// Return percent of students who have an preference for course to appear in s1
 	public double getS2Percent() {
-		System.out.println(totalRequests);
+		//System.out.println(totalRequests);
 		if(totalRequests == 0) return -1;
 		return (double)s2Requests/totalRequests;
 	}

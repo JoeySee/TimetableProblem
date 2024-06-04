@@ -9,8 +9,8 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		generateCourses();
-		generateStudents();
 		generateCourseSeqRules();
+		generateStudents();
 		generateBlockingRules();
 		
 		Timetable t = generateTimetable();
@@ -93,7 +93,7 @@ public class Main {
 //            	break;
 //            }
 //        }
-		System.out.println(t);
+		//System.out.println(t);
 		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
@@ -173,9 +173,10 @@ public class Main {
 		Timetable t = new Timetable();
 		
 		for(Course c : courses) {
+			System.out.println(c.getCode() + " | " + c.getS1() + " reqs for s1, " + c.getS2() + " reqs for s2, ");
 			for (int i = 0; i < c.getNumSections(); i++) {
 				int slot;
-				System.out.println(c.getS2Percent());
+				//System.out.println(c.getS2Percent());
 				if(c.getS2Percent() < 0) {
 					slot = (int) (Math.random() * 4.0);
 				} else {
@@ -233,10 +234,15 @@ public class Main {
 						student.addAlternateCourse(c);
 					} else if (data[i][3].equals("N")) {
 						student.addRequestedCourse(c);
-						for(Course d : student.getRequestedCourses()) {
+						for(int j = 0; j < student.getRequestedCourses().size(); j++) {
+							Course d = student.getRequestedCourses().get(j);
+							//System.out.println(c.getCourBefore());
 							if(c.getCourBefore().contains(d)) {
-								d.addS2Request();
-								c.addS1Request();
+								//System.out.println("Hello");
+								d.addS1Request();
+								c.addS2Request();
+							} else {
+								
 							}
 							
 						}
@@ -265,9 +271,9 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = in.readLine();
 			String[] lineSplit = line.split(",");
-			if(getCourse(lineSplit[0]) == null) continue;
+			if(getCourse(lineSplit[0]) == null) { continue;}
 			for(int j = 1; j < lineSplit.length-1; j++) {
-				if(getCourse(lineSplit[j]) == null) continue;
+				if(getCourse(lineSplit[j]) == null) { continue;}
 				
 				if(lineSplit[lineSplit.length-1].equals("Simultaneous")) {
 					getCourse(lineSplit[0]).addSimultaneousCourseReciprocal(getCourse(lineSplit[j]));
@@ -337,20 +343,32 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = br.readLine();
 			data[i] = line.split(",");
+			
+			
 			Course courseZero = null; // uses to store the course corresponding to data[i][0]
 			for (Course cr : courses) {
 				if (cr.getCode().equals(data[i][0])) {
 					courseZero = cr;
+					
 				}
 			}
-			
+			for (int j = 0; j < data[i].length; j++) {
+				//System.out.println(data[i][j]);
+			}
+			System.out.println("------------------------------");
 			//populate CourBefore when needed
+			if (courseZero != null) {
+				System.out.println(courseZero.getCode() + " before:");
+			}
+			
 			for (int j = 1; j < data[i].length; j++) {
-				for (Course c : courses) {
-					if (c.getCode().equals(data[i][j]) && courseZero != null) {
-						c.addCourBefore(courseZero);
+				for(int k = 0; k < courses.size(); k++) {
+					if (courses.get(k).getCode().equals(data[i][j]) && courseZero != null) {
+						
+						System.out.println(courses.get(k).getCode());
+						courses.get(k).addCourBefore(courseZero);
 					} // if
-				} // enhanced for
+				}
 			} // for j
 		} // for i
 
