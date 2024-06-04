@@ -97,55 +97,107 @@ public class Main {
 //            }
 //        }
 		
-		Timetable bestTable = t.clone();
-		double highScore = genReqCourseMetrics();
+//		Timetable bestTable = t.clone();
+//		double highScore = genReqCourseMetrics();
+//		double curScore = 0;
+//		Timetable t2 = t.clone();
+//		System.out.println(bestTable);
+//		System.out.println(highScore);
+//		
+//		for (int it = 0; it < 10; it++) {
+//			t = generateTimetable();
+//			
+//			students = new ArrayList<Student>();
+//			generateStudents();
+//			System.out.println(students.size());
+//			for (Student s : students) {
+//				s.addToCourses();
+//			}
+//			
+//			curScore = genReqCourseMetrics();
+//			if (curScore > highScore) {
+//				System.out.println("CurScore: " + curScore + " is higher than HighScore: " + highScore);
+//				bestTable = t.clone();
+//				highScore = curScore;
+//			}
+//
+//			System.out.print(it + ": ");
+//			System.out.println(curScore);
+//			System.out.println("high score: " + highScore);
+//			//System.out.println(t);
+//
+//			if (highScore > 0.7) {
+//				break;
+//			}
+//
+//		}
+//		resetSections(t);
+//		t = bestTable.clone();
+//		
+//		students = new ArrayList<Student>();
+//		generateStudents();
+//		for (Student s : students) {
+//			s.addToCourses();
+//		}
+//		
+//		System.out.println(t);
+//		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
+//		System.out
+//				.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
+//		System.out.println(
+//				"Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+		
+		// Optimization loop to find the best timetable
+		Timetable bestTable = t.clone(); // Initialize bestTable with the initial timetable
+		double highScore = genReqCourseMetrics(); // Initialize highScore with the metrics of the initial timetable
 		double curScore = 0;
-		Timetable t2 = t.clone();
-		System.out.println(bestTable);
-		System.out.println(highScore);
-		
-		for (int it = 0; it < 3000; it++) {
-			t = generateTimetable();
-			
-			students = new ArrayList<Student>();
-			generateStudents();
-			System.out.println(students.size());
-			for (Student s : students) {
-				s.addToCourses();
-			}
-			
-			curScore = genReqCourseMetrics();
-			if (curScore > highScore) {
-				bestTable = t.clone();
-				highScore = curScore;
-			}
 
-			System.out.println(t2.toString().equals(t.toString()));
-			System.out.print(it + ": ");
-			System.out.println(curScore);
-			System.out.println("high score: " + highScore);
-			System.out.println(t);
-			t2 = t.clone();
+		for (int it = 0; it < 10; it++) { // Example: Run the optimization loop 10 times
+		    t = generateTimetable(); // Generate a new timetable
 
-			if (highScore > .7) {
-				break;
-			}
+		    // Populate the timetable with students and their courses
+		    students = new ArrayList<>();
+		    generateStudents();
+		    for (Student s : students) {
+		        s.addToCourses();
+		    }
 
+		    // Calculate the metrics for the current timetable
+		    curScore = genReqCourseMetrics();
+
+		    // Update the best timetable if the current score is higher
+		    if (curScore > highScore) {
+		        bestTable = t.clone(); // Update the best timetable
+		        highScore = curScore; // Update the high score
+		    }
+
+		    // Output the current score and high score for monitoring
+		    System.out.print(it + ": ");
+		    System.out.println(curScore);
+		    System.out.println("high score: " + highScore);
+
+		    if (highScore > 0.7) { // Example: Stop optimization if high score exceeds 0.7
+		        break;
+		    }
 		}
-		
-		t = bestTable.clone();
-		students = new ArrayList<Student>();
+
+		// Reset the sections of the best timetable
+		resetSections(bestTable);
+
+		// Re-generate students and their courses for the best timetable
+		students = new ArrayList<>();
 		generateStudents();
 		for (Student s : students) {
-			s.addToCourses();
+		    s.addToCourses();
 		}
-		
-		System.out.println(t);
+
+		// Output the best timetable and metrics
+		System.out.println(bestTable);
 		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
-		System.out
-				.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
-		System.out.println(
-				"Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
+		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+
+
 
 	}// main
 
