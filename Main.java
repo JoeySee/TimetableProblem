@@ -115,7 +115,7 @@ public class Main {
 			
 			curScore = genReqCourseMetrics();
 			if (curScore >= highScore) {
-				bestTable = t.clone();
+				//bestTable = t.clone();
 				highScore = curScore;
 			}
 
@@ -132,7 +132,7 @@ public class Main {
 
 		}
 		
-		t = bestTable;
+		t = bestTable.clone();
 		students = new ArrayList<Student>();
 		generateStudents();
 		for (Student s : students) {
