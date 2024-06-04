@@ -63,7 +63,8 @@ public class Main {
 //            t.deleteSection(k, t.getTimetable()[k].get(j).getCourse());
 //            for(int i = 0 ; i < 8; i++) {
 //            	t1 = t.clone();
-//                t1.addSection(i, c);
+//                resetSections(t1);
+//            	t1.addSection(i, c);
 //                
 //                
 //                
@@ -91,7 +92,7 @@ public class Main {
 //            loopCount++;
 //            t2 = t.clone();
 //            
-//            if(highScore > oldScore || highScore > .7 || loopCount > 20001) {
+//            if(highScore > .7 || loopCount > 2001) {
 //            	break;
 //            }
 //        }
@@ -103,7 +104,7 @@ public class Main {
 		System.out.println(bestTable);
 		System.out.println(highScore);
 		
-		for (int it = 0; it < 10; it++) {
+		for (int it = 0; it < 3000; it++) {
 			t = generateTimetable();
 			
 			students = new ArrayList<Student>();
@@ -114,8 +115,8 @@ public class Main {
 			}
 			
 			curScore = genReqCourseMetrics();
-			if (curScore >= highScore) {
-				//bestTable = t.clone();
+			if (curScore > highScore) {
+				bestTable = t.clone();
 				highScore = curScore;
 			}
 
@@ -153,6 +154,7 @@ public class Main {
 		int totalReqCourses = 0;
 		int totalPlacedReqCourses = 0;
 
+//		
 		System.out.println("Student Size: " + students.size());
 		
 		for (Student s : students) {
@@ -168,8 +170,8 @@ public class Main {
 			} // for (student s' actual courses)
 		} // for (student)
 		
-		System.out.println("Total Placed: " + totalPlacedReqCourses);
-		System.out.println("Total Req: " + totalReqCourses);
+//		System.out.println("Total Placed: " + totalPlacedReqCourses);
+//		System.out.println("Total Req: " + totalReqCourses);
 		
 		return (double) totalPlacedReqCourses / (double) totalReqCourses;
 	} // genReqCourseMetrics
@@ -225,9 +227,11 @@ public class Main {
 
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();
+		
 
 		for (Course c : courses) {
 			for (int i = 0; i < c.getNumSections(); i++) {
+				c.getSection(i).clearSection();
 				int slot = (int) (Math.random() * 8.0);
 				t.addSection(slot, c.getSection(i));
 				c.getSection(i).setBlock(slot);
@@ -237,6 +241,16 @@ public class Main {
 
 		return t;
 	}// generateTimetable
+	
+	public static void resetSections(Timetable table) {
+
+		
+		for(int i = 0; i < 8; i++) {
+			for(CourseSection c : table.getTimetable()[i]) {
+				c.clearSection();
+			}
+		}
+	}// resetSections
 
 	public static void generateStudents() throws IOException {
 		BufferedReader in = null;
