@@ -29,6 +29,10 @@ public class CourseSection {
 		}
 	}
 	
+	public void clearSection() {
+		students = new ArrayList<Student>();
+	}
+	
 	public Course getCourse() {
 		return course;
 	}
