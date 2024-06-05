@@ -234,22 +234,62 @@ public class Main {
 						student.addAlternateCourse(c);
 					} else if (data[i][3].equals("N")) {
 						student.addRequestedCourse(c);
-						for(int j = 0; j < student.getRequestedCourses().size(); j++) {
-							Course d = student.getRequestedCourses().get(j);
-							//System.out.println(c.getCourBefore());
-							if(c.getCourBefore().contains(d)) {
-								//System.out.println("Hello");
-								d.addS1Request();
-								c.addS2Request();
-							} else {
-								
-							}
-							
-						}
+						
 					}
 				}
 			}
 		}// for i
+		//
+		for (int i = 0; i < students.size(); i++) {
+			student = students.get(i);
+			for(int j = 0; j < student.getRequestedCourses().size(); j++) {
+				c = student.getRequestedCourses().get(j);
+				//System.out.println(c.getCourBefore());
+				//System.out.println("s1 req: " + d.getCode() + "| s2 req: " + c.getCode());
+				
+				/*System.out.println("d: " + d.getCode());
+				System.out.println("courBefores:");*/
+				/*for (int k = 0; k < courBefores.size(); k++) {
+					System.out.println(courBefores.get(k).getCode());
+				}*/
+				//System.out.println("c: " + c.getCode());
+
+				/*if (student.getID() == 1002) {
+					System.out.println("student 1002 has " + c.getCode() + "with courBefores:");
+					for (int k = 0; k < courBefores.size(); k++) {
+						System.out.println(courBefores.get(k).getCode());
+					}
+				}*/
+				ArrayList<Course> courBefores = c.getCourBefore();
+				Course c2;
+				Course c1;
+				for(int k = 0; k < courBefores.size(); k++) {
+					c1 = courBefores.get(k);
+					
+					for (int l = 0; l < student.getRequestedCourses().size(); l++) {
+						c2 = student.getRequestedCourses().get(l);
+						if (c1.getCode().equals(c2.getCode())) {
+							System.out.println("student ID:" + student.getID() + "| s1 req: " + c1.getCode() + "| s2 req: " + c2.getCode());
+							c1.addS1Request();
+							c2.addS2Request();
+						}
+					}
+				}
+				// to finish
+				
+				
+				/*if(c.getCourBefore().contains(d)) {
+					System.out.println("student ID:" + student.getID() + "| s1 req: " + d.getCode() + "| s2 req: " + c.getCode());
+					d.addS1Request();
+					c.addS2Request();
+					
+				} else {
+					
+				}*/
+				
+			}
+		}
+		
 	}
 	
 	public static void generateBlockingRules() throws IOException{
@@ -347,6 +387,7 @@ public class Main {
 			
 			Course courseZero = null; // uses to store the course corresponding to data[i][0]
 			for (Course cr : courses) {
+				//System.out.println
 				if (cr.getCode().equals(data[i][0])) {
 					courseZero = cr;
 					
@@ -355,24 +396,33 @@ public class Main {
 			for (int j = 0; j < data[i].length; j++) {
 				//System.out.println(data[i][j]);
 			}
-			System.out.println("------------------------------");
+			//System.out.println("------------------------------");
 			//populate CourBefore when needed
 			if (courseZero != null) {
-				System.out.println(courseZero.getCode() + " before:");
+				//System.out.println(courseZero.getCode() + " before:");
 			}
 			
 			for (int j = 1; j < data[i].length; j++) {
 				for(int k = 0; k < courses.size(); k++) {
+					
 					if (courses.get(k).getCode().equals(data[i][j]) && courseZero != null) {
 						
-						System.out.println(courses.get(k).getCode());
+						//System.out.println("added: " + courses.get(k).getCode());
 						courses.get(k).addCourBefore(courseZero);
 					} // if
 				}
 			} // for j
 		} // for i
 
-
+		System.out.println("list of courBefores:");
+		ArrayList<Course> courBefores = null;
+		for (int i = 0; i < courses.size() ; i++) {
+			courBefores = courses.get(i).getCourBefore();
+			System.out.println("course is " + courses.get(i).getCode() + "\ncourBefores are:");
+			for (int j = 0; j < courBefores.size(); j++) {
+				System.out.println(courBefores.get(j).getCode());
+			}
+		}
 //		for(Course c : courses) {
 //			if(c.getCourBefore().size() == 0) continue;
 //			System.out.print("The following courses must appear before " + c.getName() + ": ");
