@@ -8,10 +8,15 @@ public class Main {
 	static ArrayList<Student> students = new ArrayList<Student>();
 
 	public static void main(String[] args) throws IOException {
+		ArrayList<Student> bTableStudents = new ArrayList <Student>();
+		
 		generateCourses();
-		generateStudents();
+		generateStudents(students);
 		generateCourseSeqRules();
 		generateBlockingRules();
+		
+		bTableStudents = new ArrayList<Student>();
+		generateStudents(bTableStudents);
 
 		Timetable t = generateTimetable();
 
@@ -41,11 +46,11 @@ public class Main {
 //			System.out.println("---------------------------------------------");
 //		}
 
-		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
+		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics(students) * 100 + "%");
 		System.out
-				.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
+				.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics(students) * 100 + "%");
 		System.out.println(
-				"Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+			"Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics(students) * 100 + "%");
 
 		// WRITTEN BY JOEY and owne
 //		int j = 0;
@@ -149,26 +154,27 @@ public class Main {
 		
 		// Optimization loop to find the best timetable
 		Timetable bestTable = t.clone(); // Initialize bestTable with the initial timetable
-		double highScore = genReqCourseMetrics(); // Initialize highScore with the metrics of the initial timetable
+		double highScore = genReqCourseMetrics(students); // Initialize highScore with the metrics of the initial timetable
 		double curScore = 0;
 
-		for (int it = 0; it < 10; it++) { // Example: Run the optimization loop 10 times
+		for (int it = 0; it < 100; it++) { // Example: Run the optimization loop 10 times
 		    t = generateTimetable(); // Generate a new timetable
 
 		    // Populate the timetable with students and their courses
 		    students = new ArrayList<>();
-		    generateStudents();
+		    generateStudents(students);
 		    for (Student s : students) {
 		        s.addToCourses();
 		    }
 
 		    // Calculate the metrics for the current timetable
-		    curScore = genReqCourseMetrics();
+		    curScore = genReqCourseMetrics(students);
 
 		    // Update the best timetable if the current score is higher
 		    if (curScore > highScore) {
-		        bestTable = t.clone(); // Update the best timetable
-		        highScore = curScore; // Update the high score
+		        bTableStudents = students;
+		    	bestTable = t.clone(); // Update the best timetable
+		        highScore = genReqCourseMetrics(bTableStudents); // Update the high score
 		    }
 
 		    // Output the current score and high score for monitoring
@@ -185,31 +191,34 @@ public class Main {
 		resetSections(bestTable);
 
 		// Re-generate students and their courses for the best timetable
-		students = new ArrayList<>();
-		generateStudents();
-		for (Student s : students) {
-		    s.addToCourses();
+		
+		for (int i = 0; i < bTableStudents.size(); i++) {
+		    bTableStudents.get(i).addToCourses();
 		}
+		
+		System.out.println(bTableStudents.get(0).getTimeTable());
+		System.out.println(students.get(0).getTimeTable());
 
 		// Output the best timetable and metrics
 		System.out.println(bestTable);
-		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
-		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
-		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
-
+		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics(bTableStudents) * 100 + "%");
+		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics(bTableStudents) * 100 + "%");
+		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics(bTableStudents) * 100 + "%");
+		
+		System.out.println(bestTable);
 
 
 	}// main
 
 	// returns the metrics all requested courses placed
-	public static double genReqCourseMetrics() {
+	public static double genReqCourseMetrics(ArrayList<Student> stuList) {
 		int totalReqCourses = 0;
 		int totalPlacedReqCourses = 0;
 
 //		
-		System.out.println("Student Size: " + students.size());
+//		System.out.println("Student Size: " + students.size());
 		
-		for (Student s : students) {
+		for (Student s : stuList) {
 			totalReqCourses += s.getRequestedCourses().size();
 			for (Course reqCourse : s.getRequestedCourses()) {
 				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
@@ -229,12 +238,12 @@ public class Main {
 	} // genReqCourseMetrics
 
 	// return the metrics of all students have 8/8 requested classes
-	public static double genFullReqMetrics() {
-		int totalNumStudent = students.size();
+	public static double genFullReqMetrics(ArrayList<Student> stuList) {
+		int totalNumStudent = stuList.size();
 		int numFullReqStudents = 0;
 
 		//for every student
-		for (Student s : students) {
+		for (Student s : stuList) {
 			int numReqCoursesGiven = 0;
 			for (Course reqCourse : s.getRequestedCourses()) {
 				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
@@ -255,11 +264,11 @@ public class Main {
 	}
 
 	// return the metrics all students have 7-8/8 requested classes
-	public static double genSufficientReqMetrics() {
-		int totalNumStudent = students.size();
+	public static double genSufficientReqMetrics(ArrayList<Student> stuList) {
+		int totalNumStudent = stuList.size();
 		int numFullReqStudents = 0;
 
-		for (Student s : students) {
+		for (Student s : stuList) {
 			int numReqCoursesGiven = 0;
 			for (Course reqCourse : s.getRequestedCourses()) {
 				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
@@ -304,7 +313,7 @@ public class Main {
 		}
 	}// resetSections
 
-	public static void generateStudents() throws IOException {
+	public static void generateStudents(ArrayList <Student> sList) throws IOException {
 		BufferedReader in = null;
 
 		// read in data
@@ -332,7 +341,7 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			if (data[i][0].equals("ID")) {
 				if (student != null) {
-					students.add(student);
+					sList.add(student);
 				}
 				student = new Student(data[i][1]);
 			} else if (!data[i][0].equals("Course")) {
