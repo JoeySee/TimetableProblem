@@ -4,42 +4,53 @@ public class Course {
 	private String name;
 	private String code;
 	private int capacity;
-	private int [] block; // Position within timetable (0-7)
-	private int [] index; // Position within block (0-?)
-	private int lastIndex;
-	private int sections;
+	private int numSections;
+	private CourseSection [] sections;
+	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
 	private ArrayList<Course> simultaneousCourses; // Courses that can occur as a split with this one
 	private ArrayList<Course> notSimultaneousCourses; // Courses that can occur linearly with this one
-	private ArrayList<Student> [] students;
+	private int s1Requests; // Requests for course to be in s1, based on seq rules
+	private int s2Requests; // Requests for course to be in s2, based on seq rules
+	private int totalRequests; // Total requests for this course by students with a placement preference
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
 		this.code = c;
-		lastIndex = -1;
-		sections = Integer.parseInt(s);
-		block = new int [sections];
-		index = new int [sections];
+		numSections = Integer.parseInt(s);
+		capacity =  Integer.parseInt(cap);
 		simultaneousCourses = new ArrayList<Course>();
 		notSimultaneousCourses = new ArrayList<Course>();
-		capacity =  Integer.parseInt(cap);
-		students = (ArrayList<Student> [])new ArrayList [sections];
-		for (int i = 0; i < students.length; i++) {
-			students[i] = new ArrayList<Student>();
+		sections = new CourseSection [numSections];
+		for (int i = 0; i < sections.length; i++) {
+			sections[i] = new CourseSection (this, i);
 		}
 	}
 	
-	public ArrayList<Student> [] getStudents(){
-		return students;
+	public CourseSection getSection(int i){
+		return sections[i];
 	}
 	
-	public ArrayList<Student> getStudents(int sec){
-		return students[sec];
+	/*public ArrayList<Student> getStudents(int sec){
+		return sections[sec].getStudents();
+	}*/
+	
+	public void addCourBefore(Course c) {
+		courBefore.add(c);
+		//System.out.println("39: " + courBefore);
+	}
+	
+	public ArrayList<Course> getCourBefore() {
+		/*System.out.println(courBefore);
+		for(Course c : courBefore) {
+			System.out.println(c);
+		}*/
+		return courBefore;
 	}
 	
 	public void addStudent(Student newStudent) {
-		for (int i = 0; i < students.length; i++) {
-			if (students[i].size() < capacity) {
-				students[i].add(newStudent);
+		for (int i = 0; i < sections.length; i++) {
+			if (sections[i] != null && sections[i].getStudents().size() < capacity) {
+				sections[i].addStudent(newStudent);
 				//System.out.println("added student in session " + i);
 				break;
 			} else {
@@ -57,40 +68,20 @@ public class Course {
 		return name;
 	}
 	
-	public int getBlock(int sec) {
-		return block[sec];
-	}
-	
-	public int getIndex(int sec) {
-		return index[sec];
-	}
-	
 	public int getCapacity() {
 		return capacity;
 	}
 	
-	public int getSections() {
-		return sections;
+	public int getNumSections() {
+		return numSections;
 	}
 	
 	public int getNumStudents() {
 		int n = 0;
-		for (int i = 0; i < students.length; i++) {
-			n += students[i].size();
+		for (int i = 0; i < numSections; i++) {
+			n += sections[i].getNumStudents();
 		}
 		return n;
-	}
-	
-	public int getNumStudents(int sec) {
-		return students[sec].size();
-	}
-	
-	public void setTimetablePos(int block, int index) {
-		lastIndex++;
-		if(lastIndex < sections){
-			this.block[lastIndex] = block;
-			this.index[lastIndex] = index;
-		}	
 	}
 	
 	public void addSimultaneousCourseReciprocal(Course c) {
@@ -126,8 +117,39 @@ public class Course {
 	public boolean isCourseSimultaneous(Course c) {
 		boolean isFound = false;
 		for(Course d : simultaneousCourses) {
-			if(d.equals(c)) isFound = true;
+			if(d.equals(c)) {
+				isFound = true;
+			}
 		}
 		return isFound;
+	}
+	
+	public void removeSection(int i) {
+		sections[i] = null;
+	}
+	
+	public void addS1Request() {
+		s1Requests++;
+		totalRequests++;
+	}
+	
+	public void addS2Request() {
+		s2Requests++;
+		totalRequests++;
+	}
+	
+	public int getS1() {
+		return s1Requests;
+	}
+	
+	public int getS2() {
+		return s2Requests;
+	}
+	
+	// Return percent of students who have an preference for course to appear in s1
+	public double getS2Percent() {
+		//System.out.println(totalRequests);
+		if(totalRequests == 0) return -1;
+		return (double)s2Requests/totalRequests;
 	}
 }
