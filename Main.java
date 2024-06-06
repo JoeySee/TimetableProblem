@@ -261,17 +261,17 @@ public class Main {
 					}
 				}*/
 				ArrayList<Course> courBefores = c.getCourBefore();
-				Course c2;
-				Course c1;
+				Course c1 = null;
+				//Course c1;
 				for(int k = 0; k < courBefores.size(); k++) {
-					c1 = courBefores.get(k);
-					
+					//c1 = courBefores.get(k);
+
 					for (int l = 0; l < student.getRequestedCourses().size(); l++) {
-						c2 = student.getRequestedCourses().get(l);
-						if (c1.getCode().equals(c2.getCode())) {
-							System.out.println("student ID:" + student.getID() + "| s1 req: " + c1.getCode() + "| s2 req: " + c2.getCode());
+						c1 = student.getRequestedCourses().get(l);
+						if (courBefores.get(k).getCode().equals(c1.getCode())) {
+							System.out.println("student ID:" + student.getID() + "| s1 req: " + c1.getCode() + "| s2 req: " + c.getCode());
 							c1.addS1Request();
-							c2.addS2Request();
+							c.addS2Request();
 						}
 					}
 				}
