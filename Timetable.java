@@ -76,9 +76,9 @@ public class Timetable {
 			for(int j = 0; j < 8; j++) {
 				if(j != 0) s += "*";
 				if(i < schedule[j].size()) {
-					s += " " + schedule[j].get(i).getCourse().getCode() + " ";
+					s += " " + schedule[j].get(i).getCourse().getCode() + " " + schedule[j].get(i).getNumStudents() + " ";
 				} else {
-					s += "            ";
+					s += "               ";
 				}
 			}
 			s += "\n";

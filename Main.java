@@ -94,11 +94,79 @@ public class Main {
 //            }
 //        }
 		//System.out.println(t);
+		
+		for(int i = 0; i < 100; i++) {
+			purgeExcessCourses();
+			students = new ArrayList<Student>();
+			resetSections(t);
+			generateStudents();
+			for(Student s : students) {
+				s.addToCourses();	
+			}
+		}
+		
+
+		System.out.println(t);
+		
 		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+		System.out.println("Courses Requested");
 		
 	}// main
+	
+	
+	public static void resetSections(Timetable table) {
+		for(int i = 0; i < 8; i++) {
+			for(CourseSection c : table.getTimetable()[i]) {
+				c.clearSection();
+			}
+		}
+	}// resetSections
+
+	// purge courses from course array running at less than half cap
+	public static void purgeExcessCourses() {
+		for(int i = courses.size()-1; i >= 0; i--) {
+			for(int k = 0; k < courses.get(i).getNumSections(); k++) {
+				if(courses.get(i).getSection(k) == null) continue;
+				if((double)courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() < .5 || (double)courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() == 0) {
+					courses.get(i).removeSection(k);
+				}
+			}
+			
+		}
+	}
+	
+	public static double getCoursesRequested() {
+		int totalReqCourses = 0;
+		for (Student s: students) {
+			totalReqCourses += s.getRequestedCourses().size();
+		} // for (student)
+		return (double)totalReqCourses;
+	} // genReqCourseMetrics
+
+	
+
+	public static double getCoursesPlaced() {
+
+		int totalPlacedReqCourses = 0;
+
+		
+
+		for (Student s: students) {
+			for(Course reqCourse: s.getRequestedCourses()) {
+				for(CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+					//check if a given actualCourse was requested
+					if(reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
+						totalPlacedReqCourses++;
+						break;
+					} // if 
+				} // for (student s' requested courses)
+			} // for (student s' actual courses)
+		} // for (student)
+
+		return (double)totalPlacedReqCourses;
+	} // genReqCourseMetrics
 	
 	// returns the metrics all requested courses placed
 		public static double genReqCourseMetrics() {
@@ -178,7 +246,7 @@ public class Main {
 				int slot;
 				//System.out.println(c.getS2Percent());
 				if(c.getS2Percent() < 0) {
-					slot = (int) (Math.random() * 4.0);
+					slot = (int) (Math.random() * 8.0);
 				} else {
 					int offset = 0;
 					if((double)i / c.getNumSections() <= c.getS2Percent()) {

@@ -49,7 +49,7 @@ public class Course {
 	
 	public void addStudent(Student newStudent) {
 		for (int i = 0; i < sections.length; i++) {
-			if (sections[i].getStudents().size() < capacity) {
+			if (sections[i] != null && sections[i].getStudents().size() < capacity) {
 				sections[i].addStudent(newStudent);
 				//System.out.println("added student in session " + i);
 				break;
@@ -122,6 +122,10 @@ public class Course {
 			}
 		}
 		return isFound;
+	}
+	
+	public void removeSection(int i) {
+		sections[i] = null;
 	}
 	
 	public void addS1Request() {
