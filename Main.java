@@ -107,7 +107,8 @@ public class Main {
 		
 
 		System.out.println(t);
-		
+		System.out.println("number requested courses placed: " + getCoursesPlaced());
+		System.out.println("number of requested courses: " + getCoursesRequested());
 		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
