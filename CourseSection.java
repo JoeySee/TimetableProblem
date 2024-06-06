@@ -28,6 +28,10 @@ public class CourseSection {
 			newStudent.getTimeTable().addSection(block, this);
 		}
 	}
+
+	public void clearSection() {
+		students = new ArrayList<Student>();
+	}
 	
 	public Course getCourse() {
 		return course;
