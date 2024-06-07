@@ -21,9 +21,7 @@ public class Course {
 		simultaneousCourses = new ArrayList<Course>();
 		notSimultaneousCourses = new ArrayList<Course>();
 		sections = new CourseSection [numSections];
-		for (int i = 0; i < sections.length; i++) {
-			sections[i] = new CourseSection (this, i);
-		}
+		resetSections();
 	}
 	
 	public CourseSection getSection(int i){
@@ -126,6 +124,12 @@ public class Course {
 	
 	public void removeSection(int i) {
 		sections[i] = null;
+	}
+	
+	public void resetSections() {
+		for (int i = 0; i < sections.length; i++) {
+			sections[i] = new CourseSection (this, i);
+		}
 	}
 	
 	public void addS1Request() {

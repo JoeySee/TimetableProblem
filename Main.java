@@ -8,10 +8,10 @@ public class Main {
 	static ArrayList<Student> students = new ArrayList<Student>();
 	
 	public static void main(String[] args) throws IOException {
-		generateCourses();
-		generateCourseSeqRules();
-		generateStudents();
-		generateBlockingRules();
+		generateCourses(); // run once
+		generateCourseSeqRules(); // run once
+		generateStudents(); // run once
+		generateBlockingRules(); // run once
 		
 		Timetable t = generateTimetable();
 		
@@ -27,7 +27,47 @@ public class Main {
 			}
 //			System.out.println("----------------------------");
 		}
-		System.out.println(t);
+		
+		
+		Timetable bestTable = t.clone(); // Initialize bestTable with the initial timetable
+		double highScore = genReqCourseMetrics(); // Initialize highScore with the metrics of the initial
+															// timetable
+		double curScore = 0;
+
+		for (int it = 0; it < 10; it++) { // Example: Run the optimization loop 10 times
+			for (int j = 0; j < courses.size(); j++) {
+				courses.get(j).resetSections();
+			}
+			t = generateTimetable(); // Generate a new timetable
+			
+			
+			// Populate the timetable with students and their courses
+			//students = new ArrayList<>();
+			generateStudentRequests();
+			for (Student s : students) {
+				s.addToCourses();
+			}
+
+			// Calculate the metrics for the current timetable
+			curScore = genReqCourseMetrics();
+
+			// Update the best timetable if the current score is higher
+			if (curScore > highScore) {
+				bestTable = t.clone(); // Update the best timetable
+				highScore = genReqCourseMetrics(); // Update the high score
+			}
+
+			// Output the current score and high score for monitoring
+			System.out.print(it + ": ");
+			System.out.println(curScore);
+			System.out.println("high score: " + highScore);
+
+			if (highScore > 0.7) { // Example: Stop optimization if high score exceeds 0.7
+				break;
+			}
+		}
+		
+		System.out.println(bestTable);
 		System.out.println(students.get(0).getTimeTable());
 	
 //		for (int i = 0; i < students.size(); i++) {
@@ -97,9 +137,9 @@ public class Main {
 		
 		for(int i = 0; i < 100; i++) {
 			purgeExcessCourses();
-			students = new ArrayList<Student>();
+			//students = new ArrayList<Student>();
 			resetSections(t);
-			generateStudents();
+			generateStudentRequests();
 			for(Student s : students) {
 				s.addToCourses();	
 			}
@@ -151,9 +191,6 @@ public class Main {
 	public static double getCoursesPlaced() {
 
 		int totalPlacedReqCourses = 0;
-
-		
-
 		for (Student s: students) {
 			for(Course reqCourse: s.getRequestedCourses()) {
 				for(CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
@@ -171,23 +208,7 @@ public class Main {
 	
 	// returns the metrics all requested courses placed
 		public static double genReqCourseMetrics() {
-			int totalReqCourses = 0;
-			int totalPlacedReqCourses = 0;
-			
-			for (Student s: students) {
-				totalReqCourses += s.getRequestedCourses().size();
-				for(Course reqCourse: s.getRequestedCourses()) {
-					for(CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
-						//check if a given actualCourse was requested
-						if(reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
-							totalPlacedReqCourses++;
-							break;
-						} // if 
-					} // for (student s' requested courses)
-				} // for (student s' actual courses)
-			} // for (student)
-			
-			return (double)totalPlacedReqCourses / (double)totalReqCourses;
+			return getCoursesPlaced() / getCoursesRequested();
 		} // genReqCourseMetrics
 		
 		// return the metrics of all students have 8/8 requested classes
@@ -308,7 +329,11 @@ public class Main {
 				}
 			}
 		}// for i
-		//
+	}
+	
+	public static void generateStudentRequests() {
+		Student student = null;
+		Course c = null;
 		for (int i = 0; i < students.size(); i++) {
 			student = students.get(i);
 			for(int j = 0; j < student.getRequestedCourses().size(); j++) {
@@ -358,7 +383,6 @@ public class Main {
 				
 			}
 		}
-		
 	}
 	
 	public static void generateBlockingRules() throws IOException{
