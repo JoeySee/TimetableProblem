@@ -167,7 +167,7 @@ public class Main {
 				+ genFullCorMetrics(students) * 100 + "%");
 		
 	}// main
-	
+	// Written by Joey and owne
 	public static Timetable friendshipSolution(Timetable friendT) {
 		
 		if(students.size() == 0) return friendT;
