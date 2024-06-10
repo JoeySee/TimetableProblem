@@ -32,6 +32,18 @@ public class Student {
 		
 	}
 	
+	public void addToReqCourses() {
+//		System.out.println(requestedCourses.size());
+		
+		for(int i = 0; i < requestedCourses.size(); i++) {
+			if(requestedCourses.get(i) != null) {
+				requestedCourses.get(i).addStudent(this);
+			}
+		}
+		
+		
+	}
+	
 	public ArrayList<Course> getRequestedCourses() {
 		return requestedCourses;
 	}
