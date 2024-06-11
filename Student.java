@@ -1,14 +1,11 @@
-
 import java.util.ArrayList;
 
 public class Student {
 	private ArrayList<Course> requestedCourses = new ArrayList<Course>();
 	private ArrayList<Course> alternateCourses = new ArrayList<Course>();
-	private ArrayList<Course> actualCourses = new ArrayList<Course>();
+	//private ArrayList<CourseSection> actualCourseSections = new ArrayList<CourseSection>();
 	Timetable t = new Timetable();
-	private int block = 0;
 	private int id;
-	
 	
 	public Student(String id) {
 		this.id = Integer.parseInt(id);
@@ -18,88 +15,33 @@ public class Student {
 		return id;
 	}
 	
-	public void addToCourses(Timetable courses) {
-		for(Course c : requestedCourses) {
-			//System.out.println(c.getName());
-		}
-		//System.out.println("-------------------------------------------------");
+	public void addToCourses() {
+//		System.out.println(requestedCourses.size());
+		
 		for(int i = 0; i < requestedCourses.size(); i++) {
-			block = 0;
-			while(block < 8) {
-				if(requestedCourses.get(i).getCapacity() > 0 && requestedCourses.get(i) != null  && !isCourseInBlock()){
-					if(!hasCourse(requestedCourses.get(i))) {
-						t.addSection(block, getCourseSection(courses, requestedCourses.get(i)));
-					}
-				}
-				block++;
-			}
-		}
-		for(int i = 0; i < Math.min(requestedCourses.size() - actualCourses.size(), alternateCourses.size()); i++) {
-				while(block < 8) {
-				if(alternateCourses.get(i).getCapacity() > 0 && getCourseSection(courses, alternateCourses.get(i)) != null   && !isCourseInBlock()) {
-					
-					if(!hasCourse(alternateCourses.get(i))) {
-						t.addSection(block, getCourseSection(courses, alternateCourses.get(i)));
-					}
-					
-					
-					
-					
-				}
-				block++;
+			if(requestedCourses.get(i) != null) {
+				requestedCourses.get(i).addStudent(this);
 			}
 		}
 		
-	}
-	public boolean hasCourse(Course c) {
-		
-		for(ArrayList<CourseSection> s :t.getTimetable()) {
-			for(CourseSection n : s) {
-				if(n == null) {
-					continue;
-				}
-				if(n.getCourse().equals(c)) {
-					return true;
-				}
-			}
+		//System.out.println(Math.min(requestedCourses.size() - actualCourseSections.size(), alternateCourses.size()));
+		for(int i = 0; i < Math.min(requestedCourses.size() - t.getAllCourseSections().size(), alternateCourses.size()); i++) {
+			alternateCourses.get(i).addStudent(this);
 		}
 		
-		return false;		
+		
 	}
 	
-	
-	public CourseSection getCourseSection(Timetable courses, Course c){
+	public void addToReqCourses() {
+//		System.out.println(requestedCourses.size());
 		
-		ArrayList<CourseSection> g = courses.getTimetable()[block];
-				
-		for(int i = 0; i < g.size(); i++) {
-			if(g.get(i).getCourse().equals(c)) {
-				return  g.get(i);
+		for(int i = 0; i < requestedCourses.size(); i++) {
+			if(requestedCourses.get(i) != null) {
+				requestedCourses.get(i).addStudent(this);
 			}
 		}
 		
-		/*
-		for(ArrayList<CourseSection> s :courses.getTimetable() ) {
-			for(CourseSection n : s) {
-				if(n.getCourse().equals(c)) {
-					return n;
-				}
-			}
-		}*/
-		return null;
-	}
-	public boolean isCourseInBlock() {
 		
-		
-		if(t.getTimetable()[block].size() == 0) {
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public String printTimetable() {
-		return t.toString();
 	}
 	
 	public ArrayList<Course> getRequestedCourses() {
@@ -110,8 +52,8 @@ public class Student {
 		return alternateCourses;
 	}
 	
-	public ArrayList<Course> getActualCourses() {
-		return actualCourses;
+	public Timetable getTimeTable() {
+		return t;
 	}
 	
 	public void addRequestedCourse(Course newCourse) {
@@ -122,7 +64,7 @@ public class Student {
 		alternateCourses.add(newCourse);
 	}
 	
-	public void addActualCourse(Course newCourse) {
-		actualCourses.add(newCourse);
+	public void addActualCourse(CourseSection newCourseSec) {
+		t.addSection(newCourseSec.getBlock(), newCourseSec);
 	}
 }

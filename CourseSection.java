@@ -23,8 +23,14 @@ public class CourseSection {
 	
 	public void addStudent(Student newStudent) {
 		if (students.size() < course.getCapacity()) {
+			if(newStudent.getTimeTable().getSchedule(block).size() > 0) return;
 			students.add(newStudent);
+			newStudent.getTimeTable().addSection(block, this);
 		}
+	}
+	
+	public void clearSection() {
+		students = new ArrayList<Student>();
 	}
 	
 	public Course getCourse() {
@@ -54,11 +60,4 @@ public class CourseSection {
 	public void setIndex(int i) {
 		index = i;
 	}
-	/*public void setTimetablePos(int block, int index) {
-		lastIndex++;
-		if(lastIndex < sections){
-			this.block[lastIndex] = block;
-			this.index[lastIndex] = index;
-		}	
-	}*/
 }
