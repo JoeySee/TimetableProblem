@@ -17,10 +17,14 @@ public class Student {
 	
 	public void addToCourses() {
 //		System.out.println(requestedCourses.size());
-		
+
 		for(int i = 0; i < requestedCourses.size(); i++) {
 			if(requestedCourses.get(i) != null) {
+				/*if (requestedCourses.get(i).getCode().equals("ACAL-12---")) {
+					System.out.println("one AP calc");
+				}*/
 				requestedCourses.get(i).addStudent(this);
+				
 			}
 		}
 		
@@ -28,8 +32,25 @@ public class Student {
 		for(int i = 0; i < Math.min(requestedCourses.size() - t.getAllCourseSections().size(), alternateCourses.size()); i++) {
 			alternateCourses.get(i).addStudent(this);
 		}
+	}
+	
+	public void addToCoursesIgnoreBlocking() {
+//		System.out.println(requestedCourses.size());
+
+		for(int i = 0; i < requestedCourses.size(); i++) {
+			if(requestedCourses.get(i) != null) {
+				/*if (requestedCourses.get(i).getCode().equals("ACAL-12---")) {
+					System.out.println("one AP calc");
+				}*/
+				requestedCourses.get(i).addStudentIgnoreBlocking(this);
+				
+			}
+		}
 		
-		
+		//System.out.println(Math.min(requestedCourses.size() - actualCourseSections.size(), alternateCourses.size()));
+		for(int i = 0; i < Math.min(requestedCourses.size() - t.getAllCourseSections().size(), alternateCourses.size()); i++) {
+			alternateCourses.get(i).addStudentIgnoreBlocking(this);
+		}
 	}
 	
 	public ArrayList<Course> getRequestedCourses() {

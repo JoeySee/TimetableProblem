@@ -16,6 +16,9 @@ public class Course {
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
 		this.code = c;
+		s1Requests = 0; 
+		s2Requests = 0; 
+		totalRequests = 0; 
 		numSections = Integer.parseInt(s);
 		capacity =  Integer.parseInt(cap);
 		simultaneousCourses = new ArrayList<Course>();
@@ -48,6 +51,7 @@ public class Course {
 	public void addStudent(Student newStudent) {
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i] != null && sections[i].getStudents().size() < capacity) {
+				//System.out.println("course: " + code + " section block: " + sections[i].getBlock() + " student: " + newStudent.getID());
 				sections[i].addStudent(newStudent);
 				//System.out.println("added student in session " + i);
 				break;
@@ -55,7 +59,19 @@ public class Course {
 				//System.out.println("full");
 			}
 		}
-		
+	}
+	
+	public void addStudentIgnoreBlocking(Student newStudent) {
+		for (int i = 0; i < sections.length; i++) {
+			if (sections[i] != null && sections[i].getStudents().size() < capacity) {
+				//System.out.println("course: " + code + " section block: " + sections[i].getBlock() + " student: " + newStudent.getID());
+				sections[i].addStudentIgnoreBlocking(newStudent);
+				//System.out.println("added student in session " + i);
+				break;
+			} else {
+				//System.out.println("full");
+			}
+		}
 	}
 	
 	public String getCode() {
@@ -77,7 +93,9 @@ public class Course {
 	public int getNumStudents() {
 		int n = 0;
 		for (int i = 0; i < numSections; i++) {
-			n += sections[i].getNumStudents();
+			if (sections[i] != null) {
+				n += sections[i].getNumStudents();
+			}
 		}
 		return n;
 	}
@@ -127,9 +145,16 @@ public class Course {
 	}
 	
 	public void resetSections() {
+		resetSectionsLeaveRemovedSectionsNull();
 		for (int i = 0; i < sections.length; i++) {
 			sections[i] = new CourseSection (this, i);
 		}
+	}
+	
+	public void resetSectionsLeaveRemovedSectionsNull() {
+		s1Requests = 0; // Requests for course to be in s1, based on seq rules
+		s2Requests = 0; // Requests for course to be in s2, based on seq rules
+		totalRequests = 0; // Total requests for this course by students with a placement preference
 	}
 	
 	public void addS1Request() {

@@ -33,20 +33,18 @@ public class Main {
 		double highScore = genReqCourseMetrics(); // Initialize highScore with the metrics of the initial
 															// timetable
 		double curScore = 0;
+		
+		
+		System.out.println("---------------------------------------------------------------------------------------");
+		System.out.println("number of students: " + students.size());
+		//System.out.println("number of course sections: " + students.size());
+		for (int it = 0; it < 1; it++) { // Example: Run the optimization loop 10 times
 
-		for (int it = 0; it < 10; it++) { // Example: Run the optimization loop 10 times
-			for (int j = 0; j < courses.size(); j++) {
-				courses.get(j).resetSections();
-			}
 			t = generateTimetable(); // Generate a new timetable
 			
-			
-			// Populate the timetable with students and their courses
-			//students = new ArrayList<>();
-			generateStudentRequests();
-			for (Student s : students) {
+			/*for (Student s : students) {
 				s.addToCourses();
-			}
+			}*/
 
 			// Calculate the metrics for the current timetable
 			curScore = genReqCourseMetrics();
@@ -65,10 +63,12 @@ public class Main {
 			if (highScore > 0.7) { // Example: Stop optimization if high score exceeds 0.7
 				break;
 			}
+			System.out.println("---------------------------------------------------------------------------------------");
+			System.out.println("number of students: " + students.size());
 		}
 		
 		System.out.println(bestTable);
-		System.out.println(students.get(0).getTimeTable());
+		//System.out.println(students.get(0).getTimeTable());
 	
 //		for (int i = 0; i < students.size(); i++) {
 //			s = students.get(i);
@@ -81,9 +81,9 @@ public class Main {
 //			System.out.println("---------------------------------------------");
 //		}
 		
-		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
+		/*System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
-		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");*/
 		
 		// WRITTEN BY JOEY and owne
 //		int j = 0;
@@ -135,7 +135,7 @@ public class Main {
 //        }
 		//System.out.println(t);
 		
-		for(int i = 0; i < 100; i++) {
+		/*for(int i = 0; i < 100; i++) {
 			purgeExcessCourses();
 			//students = new ArrayList<Student>();
 			resetSections(t);
@@ -143,10 +143,10 @@ public class Main {
 			for(Student s : students) {
 				s.addToCourses();	
 			}
-		}
+		}*/
 		
 
-		System.out.println(t);
+		//System.out.println(t);
 		System.out.println("number requested courses placed: " + getCoursesPlaced());
 		System.out.println("number of requested courses: " + getCoursesRequested());
 		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
@@ -157,21 +157,23 @@ public class Main {
 	}// main
 	
 	
-	public static void resetSections(Timetable table) {
+	/*public static void resetSections(Timetable table) {
 		for(int i = 0; i < 8; i++) {
 			for(CourseSection c : table.getTimetable()[i]) {
 				c.clearSection();
 			}
 		}
-	}// resetSections
+	}// resetSections*/
 
 	// purge courses from course array running at less than half cap
 	public static void purgeExcessCourses() {
 		for(int i = courses.size()-1; i >= 0; i--) {
 			for(int k = 0; k < courses.get(i).getNumSections(); k++) {
-				if(courses.get(i).getSection(k) == null) continue;
+				if(courses.get(i).getSection(k) == null) { continue;}
 				if((double)courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() < .5 || (double)courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() == 0) {
+					System.out.println("purged " + courses.get(i).getCode() + " with " + courses.get(i).getSection(k).getNumStudents() + " stdts. Course has " + courses.get(i).getNumStudents() + " students, " + courses.get(i).getS1() + " reqs in s1, " + courses.get(i).getS2() + " in s2");
 					courses.get(i).removeSection(k);
+					
 				}
 			}
 			
@@ -262,6 +264,11 @@ public class Main {
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();
 		
+		for (int j = 0; j < courses.size(); j++) {
+			courses.get(j).resetSections();
+		}
+		generateStudentRequests();
+		
 		for(Course c : courses) {
 			System.out.println(c.getCode() + " | " + c.getS1() + " reqs for s1, " + c.getS2() + " reqs for s2, ");
 			for (int i = 0; i < c.getNumSections(); i++) {
@@ -276,12 +283,38 @@ public class Main {
 					}
 					slot = offset + (int) (Math.random() * 4.0);
 				}
-				t.addSection(slot, c.getSection(i));
+				//t.addSection(slot, c.getSection(i));
 				c.getSection(i).setBlock(slot);
-				c.getSection(i).setIndex(t.getSchedule(slot).size());
+				//c.getSection(i).setIndex(t.getSchedule(slot).size());
 			}
 		}
+		for (Student s : students) {
+			s.addToCourses(); // change to addToCoursesIgnoreBlocking to evaluate the number of students in each class before purge more accurately (this will drop metrics dramatically however for some reason)
+		}
 		
+		purgeExcessCourses();
+		
+		for (int j = 0; j < courses.size(); j++) {
+			courses.get(j).resetSectionsLeaveRemovedSectionsNull();
+		}
+		generateStudentRequests();
+		int slot;
+		for(Course c : courses) {
+			System.out.println(c.getCode() + " | " + c.getS1() + " reqs for s1, " + c.getS2() + " reqs for s2, ");
+			for (int i = 0; i < c.getNumSections(); i++) {
+				if (c.getSection(i) != null) {
+					slot = c.getSection(i).getBlock();
+				
+					t.addSection(slot, c.getSection(i));
+					c.getSection(i).setIndex(t.getSchedule(slot).size());
+				}
+				
+				
+			}
+		}
+		for (Student s : students) {
+			s.addToCourses();
+		}
 		return t;
 	}// generateTimetable
 	
@@ -329,6 +362,7 @@ public class Main {
 				}
 			}
 		}// for i
+		
 	}
 	
 	public static void generateStudentRequests() {
