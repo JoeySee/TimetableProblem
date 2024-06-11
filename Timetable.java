@@ -71,14 +71,21 @@ public class Timetable {
 		
 		// Course Code Columns
 		int maxSize = Math.max(Math.max(Math.max(schedule[0].size(), schedule[1].size()), Math.max(schedule[2].size(), schedule[3].size())), Math.max(Math.max(schedule[4].size(), schedule[5].size()), Math.max(schedule[6].size(), schedule[7].size())));
-		s += "    S1 A    *    S1 B    *    S1 C    *    S1 D    *    S2 A    *   S2  B    *    S2  C    *    S2 D    \n";
+		s += "     S1 A     *     S1 B     *    S1 C    *    S1 D    *    S2 A    *   S2  B    *    S2  C    *    S2 D    \n";
+		String s2 = null;
+		
 		for(int i = 0; i < maxSize; i++) {
 			for(int j = 0; j < 8; j++) {
 				if(j != 0) s += "*";
 				if(i < schedule[j].size()) {
-					s += " " + schedule[j].get(i).getCourse().getCode() + " ";
+					s2 = " " + schedule[j].get(i).getCourse().getCode() + " " + schedule[j].get(i).getNumStudents() + " ";
+					s += s2;
+					// add spaces. assume that columns will never be wider than 15 characters
+					for (int k = 0; k < 15 - s2.length(); k++) {
+						s += " ";
+					}
 				} else {
-					s += "            ";
+					s += "               ";
 				}
 			}
 			s += "\n";
