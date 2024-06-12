@@ -15,7 +15,7 @@ public class Course {
 	private int s2Requests; // Requests for course to be in s2, based on seq rules
 	private int totalRequests; // Total requests for this course by students with a placement preference
 	private double[] placementPreference = new double[8]; // Preference for block to appear in certain positions
-	private int totalPrefs = 0;
+	private double totalPrefs = 0;
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
@@ -150,8 +150,8 @@ public class Course {
 	
 	// Add percent of sections to slot in t
 	public void addPercentSections(Timetable t, int slot) {
-		int sectionsToRun = (int) ((placementPreference[slot]/totalPrefs)*numSections);
-		for(int i = 0; i < Math.min(sectionsToRun, sections.length); i++) {
+		double sectionsToRun = ((placementPreference[slot]/totalPrefs)*numSections);
+		for(int i = 0; i < Math.min(Math.ceil(sectionsToRun), sections.length); i++) {
 			if(sections[i].getBlock() == -1) {
 				sections[i].setIndex(t.getSchedule(slot).size());
 				sections[i].setBlock(slot);
@@ -162,7 +162,19 @@ public class Course {
 		}
 	}
 	
-	public int getTotalPref() {
+	// Assign any unassigned sections to random positions
+	public void addExcessSections(Timetable t) {
+		for(int i = 0; i < sections.length; i++) {
+			if(sections[i].getBlock() == -1) {
+				int slot = (int)(Math.random()*7+1);
+				sections[i].setIndex(t.getSchedule(slot).size());
+				sections[i].setBlock(slot);
+				t.addSection(slot, sections[i]);
+			}
+		}
+	}
+	
+	public double getTotalPref() {
 		return totalPrefs;
 	}
 	
@@ -170,7 +182,7 @@ public class Course {
 	public void addPreferences(ArrayList<Integer> slots) {
 		for(int i : slots) {
 			placementPreference[i] += 1.0/(double)slots.size();
-			totalPrefs += placementPreference[i];
+			totalPrefs += 1.0/(double)slots.size();
 		}
 	}
 	
@@ -207,5 +219,9 @@ public class Course {
 		//System.out.println(totalRequests);
 		if(totalRequests == 0) return -1;
 		return (double)s2Requests/totalRequests;
+	}
+
+	public ArrayList<Student> getStudentsInSection(int k) {
+		return sections[k].getStudents();
 	}
 }

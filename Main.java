@@ -16,18 +16,23 @@ public class Main {
 		
 		generateStudentPreferences();
 		
-		Timetable t = generateTimetable();
+		for(int i = 0; i < courses.size(); i++) {
+			coursesToCheck.add(courses.get(i));
+		}
+		
+		Timetable t = generateGreedyTable();
 		
 		for(Student s : students) {
 			s.addToCourses();		
 		}
-//		generateStudents(students);
 		
-		//TODO: CLONE COURSES INTO COURSESTOCHECK
-
+		System.out.println(t);
+		
+		purgeExcessCourses(t);
+		
+		
 		// Output the best timetable and metrics
 		System.out.println(t);
-		System.out.println(generateGreedyTable());
 		
 		System.out.println(reqCoursePlaced(students));
 		System.out
@@ -44,10 +49,10 @@ public class Main {
 	public static Timetable generateGreedyTable() {
 		Timetable solution = new Timetable();
 		// Get course with highest single requestPriority
-		int highIndices = 0;
-		int[] prefsInOrder = new int[8]; // Slot Preference indices stored in order of preference
-		double highPref = 0;
 		while(coursesToCheck.size() != 0) {
+			int highIndices = 0;
+			int[] prefsInOrder = {0,1,2,3,4,5,6,7}; // Slot Preference indices stored in order of preference
+			double highPref = 0;
 			for(int i = 0; i < coursesToCheck.size(); i++) {
 				double[] preferences = coursesToCheck.get(i).getPreferences();
 				double highPrefLoop = 0;
@@ -70,8 +75,9 @@ public class Main {
 				int temp = prefsInOrder[i];
 				highPref = preferences[i];
 				int highIndex = i;
+
 				for(int j = i+1; j < prefsInOrder.length; j++) {
-					if(preferences[j] > highPref) {
+					if(preferences[j] > highPref || (preferences[j] == highPref)) {
 						highIndex = j;
 						highPref = preferences[j];
 					}
@@ -84,8 +90,13 @@ public class Main {
 			for(int slot : prefsInOrder) {
 				coursesToCheck.get(highIndices).addPercentSections(solution, slot);
 			}
+			coursesToCheck.get(highIndices).addExcessSections(solution);
+			coursesToCheck.get(highIndices).addRequestedStudents();
 			
+			// Re-generate preferences with new student courses
 			coursesToCheck.remove(highIndices);
+			resetStudentPreferences(coursesToCheck);
+			generateStudentPreferences();
 		}
 		return solution;
 	}
@@ -158,7 +169,11 @@ public class Main {
 						}
 					}
 					if(innerBreak) continue;
+					ArrayList<Student> studentsToEnroll = courses.get(i).getStudentsInSection(k);
 					courses.get(i).removeSection(k);
+					for(Student s : studentsToEnroll) {
+						s.addToCourses();		
+					}
 				}
 			}
 			
