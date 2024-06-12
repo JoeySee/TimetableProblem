@@ -40,8 +40,6 @@ public class Student {
 				requestedCourses.get(i).addStudent(this);
 			}
 		}
-		
-		
 	}
 	
 	public ArrayList<Course> getRequestedCourses() {
@@ -66,5 +64,13 @@ public class Student {
 	
 	public void addActualCourse(CourseSection newCourseSec) {
 		t.addSection(newCourseSec.getBlock(), newCourseSec);
+	}
+	
+	public ArrayList<Integer> getEmptySlots(){
+		ArrayList<Integer> emptySlots = new ArrayList<Integer>();
+		for(int slot = 0; slot < 8; slot++) {
+			if(t.getTimetable()[slot].size() == 0) emptySlots.add(slot);
+		}
+		return emptySlots;
 	}
 }
