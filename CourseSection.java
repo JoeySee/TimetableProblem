@@ -31,11 +31,11 @@ public class CourseSection {
 		}
 	}
 	
-	public void addStudentIgnoreBlocking(Student newStudent) {
+	/*public void addStudentIgnoreBlocking(Student newStudent) {
 		if (students.size() < course.getCapacity()) {
 			students.add(newStudent);
 		}
-	}
+	}*/
 	
 	public void clearSection() {
 		students = new ArrayList<Student>();

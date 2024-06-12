@@ -61,7 +61,7 @@ public class Course {
 		}
 	}
 	
-	public void addStudentIgnoreBlocking(Student newStudent) {
+	/*public void addStudentIgnoreBlocking(Student newStudent) {
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i] != null && sections[i].getStudents().size() < capacity) {
 				//System.out.println("course: " + code + " section block: " + sections[i].getBlock() + " student: " + newStudent.getID());
@@ -72,7 +72,7 @@ public class Course {
 				//System.out.println("full");
 			}
 		}
-	}
+	}*/
 	
 	public String getCode() {
 		return code;
@@ -145,8 +145,13 @@ public class Course {
 	}
 	
 	public void resetSections() {
-		resetSectionsLeaveRemovedSectionsNull();
+		s1Requests = 0; // Requests for course to be in s1, based on seq rules
+		s2Requests = 0; // Requests for course to be in s2, based on seq rules
+		totalRequests = 0; // Total requests for this course by students with a placement preference
 		for (int i = 0; i < sections.length; i++) {
+			if (sections[i] == null) {
+				//System.out.println("section restored");
+			}
 			sections[i] = new CourseSection (this, i);
 		}
 	}
@@ -155,6 +160,12 @@ public class Course {
 		s1Requests = 0; // Requests for course to be in s1, based on seq rules
 		s2Requests = 0; // Requests for course to be in s2, based on seq rules
 		totalRequests = 0; // Total requests for this course by students with a placement preference
+		for (int i = 0; i < sections.length; i++) {
+			if (sections[i] != null) {
+				sections[i].clearSection();
+			}
+			
+		}
 	}
 	
 	public void addS1Request() {

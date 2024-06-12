@@ -15,9 +15,9 @@ public class Main {
 		
 		Timetable t = generateTimetable();
 		
-		for(Student s : students) {
+		/*for(Student s : students) {
 			s.addToCourses();
-		}
+		}*/
 		
 		for(Student s : students) {
 			ArrayList <CourseSection> cs = s.getTimeTable().getAllCourseSections();
@@ -38,7 +38,7 @@ public class Main {
 		System.out.println("---------------------------------------------------------------------------------------");
 		System.out.println("number of students: " + students.size());
 		//System.out.println("number of course sections: " + students.size());
-		for (int it = 0; it < 1; it++) { // Example: Run the optimization loop 10 times
+		for (int it = 0; it < 1000; it++) { // Example: Run the optimization loop 10 times
 
 			t = generateTimetable(); // Generate a new timetable
 			
@@ -65,6 +65,17 @@ public class Main {
 			}
 			System.out.println("---------------------------------------------------------------------------------------");
 			System.out.println("number of students: " + students.size());
+			
+			int numCourses = 0;
+			for (int i = 0; i < courses.size(); i++) {
+				for (int j = 0; j < courses.get(i).getNumSections(); j++) {
+					if (courses.get(i).getSection(j) != null) {
+						numCourses++;
+					}
+				}
+			}
+			System.out.println("total number of sections:" + numCourses);
+			//System.out.println(t);
 		}
 		
 		System.out.println(bestTable);
@@ -154,6 +165,8 @@ public class Main {
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		System.out.println("Courses Requested");
 		
+		
+		
 	}// main
 	
 	
@@ -171,7 +184,7 @@ public class Main {
 			for(int k = 0; k < courses.get(i).getNumSections(); k++) {
 				if(courses.get(i).getSection(k) == null) { continue;}
 				if((double)courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() < .5 || (double)courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() == 0) {
-					System.out.println("purged " + courses.get(i).getCode() + " with " + courses.get(i).getSection(k).getNumStudents() + " stdts. Course has " + courses.get(i).getNumStudents() + " students, " + courses.get(i).getS1() + " reqs in s1, " + courses.get(i).getS2() + " in s2");
+					//System.out.println("purged " + courses.get(i).getCode() + " with " + courses.get(i).getSection(k).getNumStudents() + " stdts. Course has " + courses.get(i).getNumStudents() + " students, " + courses.get(i).getS1() + " reqs in s1, " + courses.get(i).getS2() + " in s2");
 					courses.get(i).removeSection(k);
 					
 				}
@@ -228,7 +241,7 @@ public class Main {
 						}
 					}// for (student s' requested courses) 
 	 			} // for (student s' actual courses)
-				if(numReqCoursesGiven == 8) {
+				if(numReqCoursesGiven == 8 /*|| s.getID() < 1010*/) {
 					System.out.println(s.getID());
 					System.out.println(s.getTimeTable());
 					numFullReqStudents++;
@@ -269,27 +282,29 @@ public class Main {
 		}
 		generateStudentRequests();
 		
-		for(Course c : courses) {
-			System.out.println(c.getCode() + " | " + c.getS1() + " reqs for s1, " + c.getS2() + " reqs for s2, ");
-			for (int i = 0; i < c.getNumSections(); i++) {
+		for(int i = 0; i < courses.size(); i++) {
+			Course c = courses.get(i);
+			//System.out.println(c.getCode() + " | " + c.getS1() + " reqs for s1, " + c.getS2() + " reqs for s2, ");
+			for (int j = 0; j < c.getNumSections(); j++) {
 				int slot;
 				//System.out.println(c.getS2Percent());
 				if(c.getS2Percent() < 0) {
 					slot = (int) (Math.random() * 8.0);
 				} else {
 					int offset = 0;
-					if((double)i / c.getNumSections() <= c.getS2Percent()) {
+					if((double)j / c.getNumSections() <= c.getS2Percent()) {
 						offset = 4;
 					}
 					slot = offset + (int) (Math.random() * 4.0);
 				}
 				//t.addSection(slot, c.getSection(i));
-				c.getSection(i).setBlock(slot);
+				c.getSection(j).setBlock(slot);
 				//c.getSection(i).setIndex(t.getSchedule(slot).size());
 			}
 		}
 		for (Student s : students) {
-			s.addToCourses(); // change to addToCoursesIgnoreBlocking to evaluate the number of students in each class before purge more accurately (this will drop metrics dramatically however for some reason)
+			s.clearTimetable();
+			s.addToCourses(); // change to addToCoursesIgnoreBlocking ?
 		}
 		
 		purgeExcessCourses();
@@ -299,20 +314,23 @@ public class Main {
 		}
 		generateStudentRequests();
 		int slot;
-		for(Course c : courses) {
-			System.out.println(c.getCode() + " | " + c.getS1() + " reqs for s1, " + c.getS2() + " reqs for s2, ");
-			for (int i = 0; i < c.getNumSections(); i++) {
-				if (c.getSection(i) != null) {
-					slot = c.getSection(i).getBlock();
+		for(int i = 0; i < courses.size(); i++) {
+			Course c = courses.get(i);
+			for (int j = 0; j < c.getNumSections(); j++) {
+				if (c.getSection(j) != null) {
+					slot = c.getSection(j).getBlock();
 				
-					t.addSection(slot, c.getSection(i));
-					c.getSection(i).setIndex(t.getSchedule(slot).size());
+					t.addSection(slot, c.getSection(j));
+					c.getSection(j).setIndex(t.getSchedule(slot).size());
+				} else {
+					//System.out.println("removed section ");
 				}
 				
 				
 			}
 		}
 		for (Student s : students) {
+			s.clearTimetable();
 			s.addToCourses();
 		}
 		return t;
@@ -397,7 +415,7 @@ public class Main {
 					for (int l = 0; l < student.getRequestedCourses().size(); l++) {
 						c1 = student.getRequestedCourses().get(l);
 						if (courBefores.get(k).getCode().equals(c1.getCode())) {
-							System.out.println("student ID:" + student.getID() + "| s1 req: " + c1.getCode() + "| s2 req: " + c.getCode());
+							//System.out.println("student ID:" + student.getID() + "| s1 req: " + c1.getCode() + "| s2 req: " + c.getCode());
 							c1.addS1Request();
 							c.addS2Request();
 						}
