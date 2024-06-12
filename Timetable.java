@@ -26,9 +26,9 @@ public class Timetable {
 	}
 	
 	public void deleteAllSections(Course c) {
-		for(int i = c.getNumSections(); i > 0; i--) {
+		for(int i = 0; i < c.getNumSections(); i++) {
 			for(int j = 0 ; j < 8; j++) {
-				if(schedule[j].contains(c)) {
+				if(schedule[j].contains(c.getSection(i))) {
 					deleteSection(j,c);
 				}
 			}

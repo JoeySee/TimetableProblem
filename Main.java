@@ -137,33 +137,30 @@ public class Main {
 //			}
 //		}
 //		
-		t = friendshipSolution(t);
-		students =  new ArrayList<Student>();
+		//t = friendshipSolution(t);
+	//	students =  new ArrayList<Student>();
+		//for(Student s : students) {
+	//		s.addToCourses();
+//		}
+		
+		int count = 0;
+		while(count < courses.size()) {
+			t = brutus(t,courses.get(count)).clone();
+			count++;
+		}
+		
+		
+		
+		
+		
+		students = new ArrayList<Student>();
+		generateStudents(students);
 		for(Student s : students) {
-			s.addToCourses();
-		}
-		
-		
-		while(true) {
-			break;
-		}
-		
-		
-		
-		t = child(t,courses.get(24));
-		
-		
-		
-		
-		
-		
-		
-		for(Student s : friends) {
 			s.addToCourses();		
 		}
-		for(int i = 0;i < friends.length;i++ ) {
-			students.add(friends[i]);
-		}
+//		for(int i = 0;i < friends.length;i++ ) {
+//			students.add(friends[i]);
+//		}
 		
 
 		// Output the best timetable and metrics
@@ -181,64 +178,65 @@ public class Main {
 		
 	}// main
 	
-	public static Timetable child(Timetable t, Course c) {
+	public static Timetable brutus(Timetable t, Course c) {
 		int s = c.getNumSections();
+		int section = 0;
 		int options[][] = new int[70][8];
 		int loc = 0;
 		for(int i = 0; i < 2; i++) {
 			if(i == s) {
 				options[loc] = new int[] {i,0,0,0,0,0,0,0};
 				loc++;
-				System.out.println(i + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0);
+				//System.out.println(i + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0);
 				continue;
 			}
 			for(int j = 0; j < 2; j++) {
 				if(i + j== s) {
 					options[loc] = new int[] {i,j,0,0,0,0,0,0};
 					loc++;
-					System.out.println(i + " " + j + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0);
+					//System.out.println(i + " " + j + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0);
 					continue;
 				}
 				for(int k = 0; k < 2; k++) {
 					if(i + j + k== s) {
 						options[loc] = new int[] {i,j,k,0,0,0,0,0};
 						loc++;
-						System.out.println(i + " " + j + " " + k + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0);
+						//System.out.println(i + " " + j + " " + k + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0);
 						continue;
 					}
 					for(int l = 0; l < 2; l++) {
 						if(i + j + k + l == s) {
 							options[loc] = new int[] {i,j,k,l,0,0,0,0};
 							loc++;
-							System.out.println(i + " " + j + " " + k + " " + l + " " + 0 + " " + 0 + " " + 0 + " " + 0);
+							//System.out.println(i + " " + j + " " + k + " " + l + " " + 0 + " " + 0 + " " + 0 + " " + 0);
 							continue;
 						}
 						for(int z = 0; z < 2; z++) {
 							if(i + j + k + l + z == s) {
 								options[loc] = new int[] {i,j,k,l,z,0,0,0};
 								loc++;
-								System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + 0 + " " + 0 + " " + 0);
+								//System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + 0 + " " + 0 + " " + 0);
 								continue;
 							}
 							for(int x = 0; x < 2; x++) {
 								if(i + j + k + l + z + x == s) {
 									options[loc] = new int[] {i,j,k,l,z,x,0,0};
 									loc++;
-									System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + x + " " + 0 + " " + 0);
+									//System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + x + " " + 0 + " " + 0);
 									continue;
 								}
 								for(int v = 0; v < 2; v++) {
 									if(i + j + k + l + z + x + v == s) {
 										options[loc] = new int[] {i,j,k,l,z,x,v,0};
 										loc++;
-										System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + x + " " + v + " " + 0);
+										//System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + x + " " + v + " " + 0);
 										continue;
 									}
 									for(int b = 0; b < 2; b++) {
 										if(i + j + k + l + z + x + v + b == s) {
 											options[loc] = new int[] {i,j,k,l,z,x,v,b};
 											loc++;
-											System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + x + " " + v + " " + b);
+											//System.out.println(i + " " + j + " " + k + " " + l + " " + z + " " + x + " " + v + " " + b);
 											continue;
 										}
 									}
@@ -250,8 +248,40 @@ public class Main {
 			}
 		}
 		
-		
-		return t;
+		int highscore = (int) placed(t);
+		Timetable bestT = t.clone();
+		for(int i = 0 ; i < options.length; i++) {
+			t.deleteAllSections(c);
+			section = 0;
+			for(int j = 0; j < options[i].length; j++) {
+				if(options[i][j] == 1) {
+					//System.out.println(section);
+					t.addSection(j,c.getSection(section));
+					section++;
+					if(section == s) {
+						break;
+					}
+				}
+			}
+			resetSections(t);
+			students = new ArrayList<Student>();
+			try {
+				generateStudents(students);
+			} catch (IOException e) {
+				System.out.println("e");
+			}
+			for(Student stu : students) {
+				stu.addToCourses();
+			}
+			if(placed(t) > highscore) {
+				highscore = placed(t);
+				bestT = t.clone();
+				System.out.println(highscore);
+			}
+		}
+		//System.out.println(bestT);
+		System.out.println("one done");
+		return bestT;
 	}
 	
 	
@@ -341,7 +371,7 @@ public class Main {
 			
 		}
 	}
-	public static double placed (Timetable t) {
+	public static int placed (Timetable t) {
 		int place = 0;
 		
 		for(int i = 0; i < 8; i++) {
