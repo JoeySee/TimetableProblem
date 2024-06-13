@@ -148,6 +148,17 @@ public class Course {
 		sections[i] = null;
 	}
 	
+	public void addCourseToBlock(Timetable t, int slot) {
+		for(int i = 0; i < sections.length; i++) {
+			if(sections[i].getBlock() == -1) {
+				sections[i].setIndex(t.getSchedule(slot).size());
+				sections[i].setBlock(slot);
+				t.addSection(slot, sections[i]);
+				return;
+			}
+		}
+	}
+	
 	// Add percent of sections to slot in t
 	public void addPercentSections(Timetable t, int slot) {
 		double sectionsToRun = ((placementPreference[slot]/totalPrefs)*numSections);
@@ -166,7 +177,8 @@ public class Course {
 	public void addExcessSections(Timetable t) {
 		for(int i = 0; i < sections.length; i++) {
 			if(sections[i].getBlock() == -1) {
-				int slot = (int)(Math.random()*7+1);
+				int slot = (int)(Math.random()*(7-2)+2);
+				System.out.println(slot);
 				sections[i].setIndex(t.getSchedule(slot).size());
 				sections[i].setBlock(slot);
 				t.addSection(slot, sections[i]);

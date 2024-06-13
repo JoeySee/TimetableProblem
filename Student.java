@@ -13,6 +13,10 @@ public class Student {
 	
 	public int getID() {
 		return id;
+	} 
+	
+	public void removeCourse(int block) {
+		t.clearBlock(block);
 	}
 	
 	public void addToCourses() {

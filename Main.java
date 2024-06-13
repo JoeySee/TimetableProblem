@@ -7,42 +7,69 @@ public class Main {
 	static ArrayList<Course> courses = new ArrayList<Course>();
 	static ArrayList<Course> coursesToCheck = new ArrayList<Course>();
 	static ArrayList<Student> students = new ArrayList<Student>();
+	static ArrayList<Student> bestStudents = new ArrayList<Student>();
 	
 	public static void main(String[] args) throws IOException {
-		generateCourses();
-		generateCourseSeqRules();
-		generateStudents(students);
-		generateBlockingRules();
 		
-		generateStudentPreferences();
 		
-		for(int i = 0; i < courses.size(); i++) {
-			coursesToCheck.add(courses.get(i));
+		
+		double highScore = 0;
+		Timetable bestTable = null;
+		
+		for(int loopCounter = 0; loopCounter < 1000; loopCounter++) {
+			courses = new ArrayList<Course>();
+			coursesToCheck = new ArrayList<Course>();
+			students = new ArrayList<Student>();
+			generateCourses();
+			generateCourseSeqRules();
+			generateStudents(students);
+			generateBlockingRules();
+			
+			generateStudentPreferences();
+			
+			for(int i = 0; i < courses.size(); i++) {
+				coursesToCheck.add(courses.get(i));
+			}
+			
+			Timetable t = generateGreedyTable();
+			
+			for(Student s : students) {
+				s.addToCourses();		
+			}
+			
+			purgeExcessCourses(t);
+			
+			double newScore = genReqCourseMetrics(students);
+			if(newScore > highScore) {
+				highScore = newScore;
+				bestTable = t;
+				bestStudents = students;
+			}
 		}
 		
-		Timetable t = generateGreedyTable();
 		
-		for(Student s : students) {
-			s.addToCourses();		
+		
+		// Print split courses
+		for(ArrayList<CourseSection> courses : bestTable.getTimetable()) {
+			for(CourseSection c : courses) {
+				if(c.getPairedCourse() != null) {
+					System.out.println(c.getCourse().getCode() + " paired with " + c.getPairedCourse().getCourse().getCode() + "!");
+				}
+			}
 		}
-		
-		System.out.println(t);
-		
-		purgeExcessCourses(t);
-		
 		
 		// Output the best timetable and metrics
-		System.out.println(t);
+		System.out.println(bestTable);
 		
-		System.out.println(reqCoursePlaced(students));
+		System.out.println(reqCoursePlaced(bestStudents));
 		System.out
-				.println("Percent of all requested courses placed: " + genReqCourseMetrics(students) * 100 + "%");
+				.println("Percent of all requested courses placed: " + genReqCourseMetrics(bestStudents) * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: "
-				+ genFullReqMetrics(students) * 100 + "%");
+				+ genFullReqMetrics(bestStudents) * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: "
-				+ genSufficientReqMetrics(students) * 100 + "%");
+				+ genSufficientReqMetrics(bestStudents) * 100 + "%");
 		System.out.println("The % of students with 8/8 courses (requested or alternate): "
-				+ genFullCorMetrics(students) * 100 + "%");
+				+ genFullCorMetrics(bestStudents) * 100 + "%");
 		
 	}// main
 	
@@ -70,6 +97,7 @@ public class Main {
 			}// for
 			double[] preferences = coursesToCheck.get(highIndices).getPreferences();
 			
+			
 			// Sort preferences
 			for(int i = 0; i < prefsInOrder.length; i++) {
 				int temp = prefsInOrder[i];
@@ -77,9 +105,9 @@ public class Main {
 				int highIndex = i;
 
 				for(int j = i+1; j < prefsInOrder.length; j++) {
-					if(preferences[j] > highPref || (preferences[j] == highPref)) {
+					if(preferences[prefsInOrder[j]] > highPref || (preferences[prefsInOrder[j]] == highPref && (int)(Math.random()*2) == 1)) {
 						highIndex = j;
-						highPref = preferences[j];
+						highPref = preferences[prefsInOrder[j]];
 					}
 				}
 				prefsInOrder[i] = prefsInOrder[highIndex];
@@ -87,9 +115,35 @@ public class Main {
 			}
 			
 			// Assign the course to the timetable based on preferences
-			for(int slot : prefsInOrder) {
-				coursesToCheck.get(highIndices).addPercentSections(solution, slot);
+//			for(int slot : prefsInOrder) {
+//				coursesToCheck.get(highIndices).addPercentSections(solution, slot);
+//			}
+//			int runStart = 0;
+//			double runValue = preferences[prefsInOrder[0]];
+//			for(int i = 1; i < prefsInOrder.length; i++) {
+//				System.out.println(prefsInOrder.length);
+//				if(preferences[prefsInOrder[i]] != runValue) {
+//					for(int j = runStart; j < i; j++) {
+//						int slot = (int) (Math.random()*(j-i) + i);
+//						coursesToCheck.get(highIndices).addPercentSections(solution, prefsInOrder[slot]);
+//					}
+//					runStart = i;
+//					runValue = preferences[prefsInOrder[i]];
+//				}
+//			}
+			
+			if(coursesToCheck.get(highIndices).getNumSections() <= 1) {
+				coursesToCheck.get(highIndices).addCourseToBlock(solution, prefsInOrder[0]);
+			} else {
+				while(coursesToCheck.get(highIndices).getSection(coursesToCheck.get(highIndices).getNumSections()-1).getBlock() == -1) {
+					for(int i = 0; i < prefsInOrder.length; i++) {
+						int slot = prefsInOrder[i];
+						coursesToCheck.get(highIndices).addCourseToBlock(solution, slot);
+					}
+				}
 			}
+			
+			
 			coursesToCheck.get(highIndices).addExcessSections(solution);
 			coursesToCheck.get(highIndices).addRequestedStudents();
 			
@@ -161,18 +215,23 @@ public class Main {
 				boolean innerBreak = false;
 				if(courses.get(i).getSection(k) == null) continue;
 				if((double)courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() < .5) {
+					// Loop through course sections in this block to see if any can be run as a split
 					for(CourseSection c : t.getTimetable()[courses.get(i).getSection(k).getBlock()]) {
 						if(courses.get(i).getSimultaneousCourses().contains(c.getCourse())) {
+//							System.out.println(courses.get(i).getCode() + " split with " + c.getCourse().getCode() + "!");
 							courses.get(i).getSection(k).addPairedCourse(c);
 							innerBreak = true;
 							break;
 						}
 					}
 					if(innerBreak) continue;
+					int block = courses.get(i).getSection(k).getBlock();
 					ArrayList<Student> studentsToEnroll = courses.get(i).getStudentsInSection(k);
+					t.deleteSection(block, courses.get(i).getSection(k));
 					courses.get(i).removeSection(k);
-					for(Student s : studentsToEnroll) {
-						s.addToCourses();		
+					for(int j = 0; j < courses.size(); j++) {
+						students.get(j).removeCourse(block);
+						students.get(j).addToCourses();		
 					}
 				}
 			}
@@ -545,15 +604,15 @@ public class Main {
 			} // for j
 		} // for i
 
-		System.out.println("list of courBefores:");
-		ArrayList<Course> courBefores = null;
-		for (int i = 0; i < courses.size() ; i++) {
-			courBefores = courses.get(i).getCourBefore();
-			System.out.println("course is " + courses.get(i).getCode() + "\ncourBefores are:");
-			for (int j = 0; j < courBefores.size(); j++) {
-				System.out.println(courBefores.get(j).getCode());
-			}
-		}
+//		System.out.println("list of courBefores:");
+//		ArrayList<Course> courBefores = null;
+//		for (int i = 0; i < courses.size() ; i++) {
+//			courBefores = courses.get(i).getCourBefore();
+//			System.out.println("course is " + courses.get(i).getCode() + "\ncourBefores are:");
+//			for (int j = 0; j < courBefores.size(); j++) {
+//				System.out.println(courBefores.get(j).getCode());
+//			}
+//		}
 //		for(Course c : courses) {
 //			if(c.getCourBefore().size() == 0) continue;
 //			System.out.print("The following courses must appear before " + c.getName() + ": ");

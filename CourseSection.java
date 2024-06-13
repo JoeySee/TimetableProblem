@@ -35,6 +35,10 @@ public class CourseSection {
 		return 0;
 	}
 	
+	public CourseSection getPairedCourse() {
+		return pairedWith;
+	}
+	
 	public void addPairedCourse(CourseSection c) {
 		if(pairedWith ==  null) {
 			pairedWith = c;
