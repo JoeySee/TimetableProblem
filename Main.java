@@ -16,7 +16,7 @@ public class Main {
 		double highScore = 0;
 		Timetable bestTable = null;
 		
-		for(int loopCounter = 0; loopCounter < 10000; loopCounter++) {
+		for(int loopCounter = 0; loopCounter < 1000; loopCounter++) {
 			courses = new ArrayList<Course>();
 			coursesToCheck = new ArrayList<Course>();
 			students = new ArrayList<Student>();
@@ -40,6 +40,7 @@ public class Main {
 			purgeExcessCourses(t);
 			
 			double newScore = genReqCourseMetrics(students);
+//			double newScore = genFullCorMetrics(students);
 			if(newScore > highScore) {
 				highScore = newScore;
 				bestTable = t;
@@ -58,6 +59,8 @@ public class Main {
 			}
 		}
 		
+		
+		
 		// Output the best timetable and metrics
 		System.out.println(bestTable);
 		
@@ -70,6 +73,12 @@ public class Main {
 				+ genSufficientReqMetrics(bestStudents) * 100 + "%");
 		System.out.println("The % of students with 8/8 courses (requested or alternate): "
 				+ genFullCorMetrics(bestStudents) * 100 + "%");
+		
+		// Print Student
+		System.out.println("\n");
+		int id = 537;
+		System.out.println("Student 1" + id + " has timetable:");
+		System.out.println(students.get(id).getTimeTable());
 		
 	}// main
 	
@@ -110,7 +119,7 @@ public class Main {
 				int highIndex = i;
 
 				for(int j = i+1; j < prefsInOrder.length; j++) {
-					if(preferences[prefsInOrder[j]] > highPref || (preferences[prefsInOrder[j]] == highPref && (int)(Math.random()*2) == 1)) {
+					if(preferences[prefsInOrder[j]] > highPref || (preferences[prefsInOrder[j]] == highPref && (int)(Math.random()*4) != 1)) {
 						highIndex = j;
 						highPref = preferences[prefsInOrder[j]];
 					}
@@ -171,7 +180,7 @@ public class Main {
 					if(s.getRequestedCourses().contains(cSeq)) {
 						semesterPriority = true;
 						for(int i = 0; i < slotPreferences.size(); i++) {
-							if(i > 4) slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, i, slotPreferences.size());
+							if(slotPreferences.get(i) > 4) slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, i, slotPreferences.size());
 						}
 					}// if
 				}// for cSeq
@@ -180,11 +189,12 @@ public class Main {
 						if(s.getRequestedCourses().contains(cSeq)) {
 							semesterPriority = true;
 							for(int i = 0; i < slotPreferences.size(); i++) {
-								if(i > 4) slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, 0, i);
+								if(slotPreferences.get(i) > 4) slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, 0, i);
 							}
 						}// if
 					}// for cSeq
 				}
+//				if(c.getCode().equals("ACSC-2A---")) System.out.println(slotPreferences);
 				c.addPreferences(slotPreferences);
 			}// for c
 		}// for s
@@ -234,9 +244,9 @@ public class Main {
 					ArrayList<Student> studentsToEnroll = courses.get(i).getStudentsInSection(k);
 					t.deleteSection(block, courses.get(i).getSection(k));
 					courses.get(i).removeSection(k);
-					for(int j = 0; j < courses.size(); j++) {
-						students.get(j).removeCourse(block);
-						students.get(j).addToCourses();		
+					for(int j = 0; j < studentsToEnroll.size(); j++) {
+						studentsToEnroll.get(j).removeCourse(block);
+						studentsToEnroll.get(j).addToCourses();		
 					}
 				}
 			}
