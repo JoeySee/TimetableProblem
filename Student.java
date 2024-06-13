@@ -13,6 +13,10 @@ public class Student {
 	
 	public int getID() {
 		return id;
+	} 
+	
+	public void removeCourse(int block) {
+		t.clearBlock(block);
 	}
 	
 	public void addToCourses() {
@@ -40,8 +44,6 @@ public class Student {
 				requestedCourses.get(i).addStudent(this);
 			}
 		}
-		
-		
 	}
 	
 	public ArrayList<Course> getRequestedCourses() {
@@ -67,9 +69,12 @@ public class Student {
 	public void addActualCourse(CourseSection newCourseSec) {
 		t.addSection(newCourseSec.getBlock(), newCourseSec);
 	}
-
-	public void resetCourses() {
-		t = new Timetable();
-		
+	
+	public ArrayList<Integer> getEmptySlots(){
+		ArrayList<Integer> emptySlots = new ArrayList<Integer>();
+		for(int slot = 0; slot < 8; slot++) {
+			if(t.getTimetable()[slot].size() == 0) emptySlots.add(slot);
+		}
+		return emptySlots;
 	}
 }
