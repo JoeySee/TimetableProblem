@@ -16,7 +16,7 @@ public class Main {
 		double highScore = 0;
 		Timetable bestTable = null;
 		
-		for(int loopCounter = 0; loopCounter < 1000; loopCounter++) {
+		for(int loopCounter = 0; loopCounter < 10000; loopCounter++) {
 			courses = new ArrayList<Course>();
 			coursesToCheck = new ArrayList<Course>();
 			students = new ArrayList<Student>();
@@ -81,20 +81,25 @@ public class Main {
 			int[] prefsInOrder = {0,1,2,3,4,5,6,7}; // Slot Preference indices stored in order of preference
 			double highPref = 0;
 			for(int i = 0; i < coursesToCheck.size(); i++) {
-				double[] preferences = coursesToCheck.get(i).getPreferences();
-				double highPrefLoop = 0;
-				int highIndexLoop = 0;
-				for(int j = 0; j < preferences.length; j++) {
-					if(preferences[j] > highPrefLoop) {
-						highPrefLoop = preferences[j];
-						highIndexLoop = j;
-					}
-				}
-				if(highPrefLoop > highPref) {
-					highPref = highPrefLoop;
+//				double[] preferences = coursesToCheck.get(i).getPreferences();
+//				double highPrefLoop = 0;
+//				for(int j = 0; j < preferences.length; j++) {
+//					if(preferences[j] > highPrefLoop) {
+//						highPrefLoop = preferences[j];
+//					}
+//				}
+//				if(highPrefLoop >= highPref) {
+//					highPref = highPrefLoop;
+//					highIndices = i;
+//				}
+				
+				double pref = courses.get(i).getTotalPref();
+				if(pref >= highPref) {
 					highIndices = i;
-				}
+					highPref = pref;
+				}// if
 			}// for
+//			highIndices = (int)(Math.random() * coursesToCheck.size());
 			double[] preferences = coursesToCheck.get(highIndices).getPreferences();
 			
 			
@@ -326,8 +331,8 @@ public class Main {
 					} // for (student s' requested courses)
 				} // for (student s' actual courses)
 				if (numReqCoursesGiven == 8) {
-					System.out.println(s.getID());
-					System.out.println(s.getTimeTable());
+//					System.out.println(s.getID());
+//					System.out.println(s.getTimeTable());
 					numFullReqStudents++;
 				} // if
 			} // for (students)
