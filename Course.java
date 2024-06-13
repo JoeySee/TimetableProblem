@@ -7,24 +7,30 @@ public class Course {
 	private int numSections;
 	private CourseSection [] sections;
 	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
+	private ArrayList<Course> courAfter = new ArrayList <Course>(); // these courses must appear after the current course
 	private ArrayList<Course> simultaneousCourses; // Courses that can occur as a split with this one
 	private ArrayList<Course> notSimultaneousCourses; // Courses that can occur linearly with this one
+	private ArrayList<Student> requestedStudents = new ArrayList<Student>(); // Students who have requested this course
 	private int s1Requests; // Requests for course to be in s1, based on seq rules
 	private int s2Requests; // Requests for course to be in s2, based on seq rules
 	private int totalRequests; // Total requests for this course by students with a placement preference
+	private double[] placementPreference = new double[8]; // Preference for block to appear in certain positions
+	private double totalPrefs = 0;
 	
 	public Course(String name, String c, String cap, String s) {
 		this.name = name;
 		this.code = c;
-		s1Requests = 0; 
-		s2Requests = 0; 
-		totalRequests = 0; 
 		numSections = Integer.parseInt(s);
 		capacity =  Integer.parseInt(cap);
 		simultaneousCourses = new ArrayList<Course>();
 		notSimultaneousCourses = new ArrayList<Course>();
 		sections = new CourseSection [numSections];
-		resetSections();
+		for (int i = 0; i < sections.length; i++) {
+			sections[i] = new CourseSection (this, i);
+		}
+		for(int i = 0; i < placementPreference.length; i++) {
+			placementPreference[i] = 0;
+		}
 	}
 	
 	public CourseSection getSection(int i){
@@ -37,21 +43,23 @@ public class Course {
 	
 	public void addCourBefore(Course c) {
 		courBefore.add(c);
-		//System.out.println("39: " + courBefore);
+	}
+	
+	public void addCourAfter(Course c) {
+		courAfter.add(c);
 	}
 	
 	public ArrayList<Course> getCourBefore() {
-		/*System.out.println(courBefore);
-		for(Course c : courBefore) {
-			System.out.println(c);
-		}*/
 		return courBefore;
+	}
+	
+	public ArrayList<Course> getCourAfter() {
+		return courAfter;
 	}
 	
 	public void addStudent(Student newStudent) {
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i] != null && sections[i].getStudents().size() < capacity) {
-				//System.out.println("course: " + code + " section block: " + sections[i].getBlock() + " student: " + newStudent.getID());
 				sections[i].addStudent(newStudent);
 				//System.out.println("added student in session " + i);
 				break;
@@ -59,20 +67,22 @@ public class Course {
 				//System.out.println("full");
 			}
 		}
+		
 	}
 	
-	/*public void addStudentIgnoreBlocking(Student newStudent) {
-		for (int i = 0; i < sections.length; i++) {
-			if (sections[i] != null && sections[i].getStudents().size() < capacity) {
-				//System.out.println("course: " + code + " section block: " + sections[i].getBlock() + " student: " + newStudent.getID());
-				sections[i].addStudentIgnoreBlocking(newStudent);
-				//System.out.println("added student in session " + i);
-				break;
-			} else {
-				//System.out.println("full");
-			}
+	public void addRequestedStudents() {
+		for(Student s : requestedStudents) {
+			addStudent(s);
 		}
-	}*/
+	}
+	
+	public void addRequestStudent(Student s) {
+		requestedStudents.add(s);
+	}
+	
+	public ArrayList<Course> getSimultaneousCourses(){
+		return simultaneousCourses;
+	}
 	
 	public String getCode() {
 		return code;
@@ -93,9 +103,7 @@ public class Course {
 	public int getNumStudents() {
 		int n = 0;
 		for (int i = 0; i < numSections; i++) {
-			if (sections[i] != null) {
-				n += sections[i].getNumStudents();
-			}
+			n += sections[i].getNumStudents();
 		}
 		return n;
 	}
@@ -116,10 +124,6 @@ public class Course {
 	
 	public void addNotSimultaneousCourse(Course c) {
 		notSimultaneousCourses.add(c);
-	}
-	
-	public void test() {
-		System.out.println(simultaneousCourses.get(0).getName());
 	}
 	
 	public boolean isCourseNotSimultaneous(Course c) {
@@ -144,27 +148,63 @@ public class Course {
 		sections[i] = null;
 	}
 	
-	public void resetSections() {
-		s1Requests = 0; // Requests for course to be in s1, based on seq rules
-		s2Requests = 0; // Requests for course to be in s2, based on seq rules
-		totalRequests = 0; // Total requests for this course by students with a placement preference
-		for (int i = 0; i < sections.length; i++) {
-			if (sections[i] == null) {
-				//System.out.println("section restored");
+	public void addCourseToBlock(Timetable t, int slot) {
+		for(int i = 0; i < sections.length; i++) {
+			if(sections[i].getBlock() == -1) {
+				sections[i].setIndex(t.getSchedule(slot).size());
+				sections[i].setBlock(slot);
+				t.addSection(slot, sections[i]);
+				return;
 			}
-			sections[i] = new CourseSection (this, i);
 		}
 	}
 	
-	public void resetSectionsLeaveRemovedSectionsNull() {
-		s1Requests = 0; // Requests for course to be in s1, based on seq rules
-		s2Requests = 0; // Requests for course to be in s2, based on seq rules
-		totalRequests = 0; // Total requests for this course by students with a placement preference
-		for (int i = 0; i < sections.length; i++) {
-			if (sections[i] != null) {
-				sections[i].clearSection();
+	// Add percent of sections to slot in t
+	public void addPercentSections(Timetable t, int slot) {
+		double sectionsToRun = ((placementPreference[slot]/totalPrefs)*numSections);
+		for(int i = 0; i < Math.min(Math.ceil(sectionsToRun), sections.length); i++) {
+			if(sections[i].getBlock() == -1) {
+				sections[i].setIndex(t.getSchedule(slot).size());
+				sections[i].setBlock(slot);
+				t.addSection(slot, sections[i]);
+			} else {
+				sectionsToRun++;
 			}
-			
+		}
+	}
+	
+	// Assign any unassigned sections to random positions
+	public void addExcessSections(Timetable t) {
+		for(int i = 0; i < sections.length; i++) {
+			if(sections[i].getBlock() == -1) {
+				int slot = (int)(Math.random()*(7-2)+2);
+				System.out.println(slot);
+				sections[i].setIndex(t.getSchedule(slot).size());
+				sections[i].setBlock(slot);
+				t.addSection(slot, sections[i]);
+			}
+		}
+	}
+	
+	public double getTotalPref() {
+		return totalPrefs;
+	}
+	
+	// Add preference to slots
+	public void addPreferences(ArrayList<Integer> slots) {
+		for(int i : slots) {
+			placementPreference[i] += 1.0/(double)slots.size();
+			totalPrefs += 1.0/(double)slots.size();
+		}
+	}
+	
+	public double[] getPreferences() {
+		return placementPreference;
+	}
+	
+	public void resetPreference() {
+		for(int i = 0; i < placementPreference.length; i++) {
+			placementPreference[i] = 0;
 		}
 	}
 	
@@ -191,5 +231,9 @@ public class Course {
 		//System.out.println(totalRequests);
 		if(totalRequests == 0) return -1;
 		return (double)s2Requests/totalRequests;
+	}
+
+	public ArrayList<Student> getStudentsInSection(int k) {
+		return sections[k].getStudents();
 	}
 }
