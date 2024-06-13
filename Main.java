@@ -8,14 +8,15 @@ public class Main {
 	static ArrayList<Student> students = new ArrayList<Student>();
 	static ArrayList<Student> students2 = new ArrayList<Student>();
 	static Student[] friends = null;
-	
+	static int highScore = 0;
+	static double best8of8 = 0;
 	public static void main(String[] args) throws IOException {
 		generateCourses();
 		generateCourseSeqRules();
 		generateStudents(students);
+		generateStudents(students2);
 		generateBlockingRules();
 		friends = new Student[students.size()];
-		
 		
 		Timetable t = generateTimetable();
 		
@@ -24,137 +25,23 @@ public class Main {
 		}
 		
 		
-		students2 = students;
+		
 		System.out.println(t);
 		System.out.println(students.get(0).getTimeTable());
-	
-//		for (int i = 0; i < students.size(); i++) {
-//			s = students.get(i);
-//			System.out.println("student id " + s.getID());
-//			System.out.println(s.getActualCourseSections().size());
-//			for (int j = 0; j < s.getActualCourseSections().size(); j++) {
-//				a = s.getActualCourseSections().get(j);
-//				System.out.println(a.getCourse().getName() + " at section " + a.getSecNum() + " at block " + a.getBlock());
-//			}
-//			System.out.println("---------------------------------------------");
-//		}
-		// WRITTEN BY JOEY and owne
-//		int j = 0;
-//		int k = 0;
-//		Timetable t1 = null;
-//		double highScore = genReqCourseMetrics();
-//		double oldScore = highScore;
-//		Timetable bestTable = t.clone();
-//		int loopCount = 0;
-//		Timetable t2 = t.clone();
-//		while(true) {
-//			k = (int) (Math.random() * 8);
-//            j = (int) (Math.random()*t.getTimetable()[k].size());
-//            CourseSection c = t.getTimetable()[k].get(j);
-//            t.deleteSection(k, t.getTimetable()[k].get(j).getCourse());
-//            for(int i = 0 ; i < 8; i++) {
-//            	t1 = t.clone();
-//                t1.addSection(i, c);
-//                
-//                
-//                
-//                students = new ArrayList<Student>();
-//                generateStudents();
-//                for(Student s : students) {
-//        			s.addToCourses();
-//        			
-//        		}
-//                
-//                if(genReqCourseMetrics() >= highScore) {
-//                   bestTable = t1.clone();
-//                   highScore = genReqCourseMetrics();
-//                }
-//            }
-//            
-//            if(highScore >= oldScore) {
-//            	t = bestTable.clone();
-//            }
-//            
-//            System.out.println(t2.toString().equals(t.toString()));
-//            System.out.print(loopCount + ": ");
-//            System.out.println(highScore);
-//            System.out.println(t);
-//            loopCount++;
-//            t2 = t.clone();
-//            
-//            if(highScore > oldScore || highScore > .7 || loopCount > 20001) {
-//            	break;
-//            }
-//        }
-		//System.out.println(t);
-		
-//		Timetable bestTable = t.clone(); // Initialize bestTable with the initial timetable
-//		double highScore = genReqCourseMetrics(students); // Initialize highScore with the metrics of the initial
-//		ArrayList<Student> bTableStudents = new ArrayList<Student>();													// timetable
-//		double curScore = 0;
-//		
-//		for (int it = 0; it < 50; it++) { // Example: Run the optimization loop 10 times
-//			resetSections(t);
-//			courses = new ArrayList<Course>();
-//			generateCourses();
-//			t = null;
-//			t = generateTimetable(); // Generate a new timetable
-//
-//			// Populate the timetable with students and their courses
-//			students = new ArrayList<>();
-//			generateStudents(students);
-//			for (Student s : students) {
-//				s.addToCourses();
-//			}
-//			
-//			for(int i = 0; i < 20; i++) {
-//				purgeExcessCourses();
-//				students = new ArrayList<Student>();
-//				resetSections(t);
-//				generateStudents(students);
-//				for(Student s : students) {
-//					s.addToCourses();	
-//				}
-//			}
-//
-//			// Calculate the metrics for the current timetable
-//			curScore = genReqCourseMetrics(students);
-//
-//			// Update the best timetable if the current score is higher
-//			if (curScore > highScore) {
-//				bTableStudents = students;
-//				bestTable = t.clone(); // Update the best timetable
-//				highScore = genReqCourseMetrics(bTableStudents); // Update the high score
-//			}
-//
-//			// Output the current score and high score for monitoring
-//			System.out.print(it + ": ");
-//			System.out.println(curScore);
-//			System.out.println("high score: " + highScore);
-//
-//			if (highScore > 0.7) { // Example: Stop optimization if high score exceeds 0.7
-//				break;
-//			}
-//		}
-//		
-		//t = friendshipSolution(t);
-	//	students =  new ArrayList<Student>();
-		//for(Student s : students) {
-	//		s.addToCourses();
-//		}
-		
-		int count = 0;
-		while(count < courses.size()) {
-			t = brutus(t,courses.get(count)).clone();
-			count++;
-		}
+
+		//for(int i = 0; i < 10; i++) {
+			
+			int count = 0;
+			highScore = placed(t);
+			while(count < courses.size()) {
+				brutus(t,courses.get(count));
+				count++;
+			}
+			resetSections(t);
+		//}
 		
 		
-		
-		
-		
-		students = new ArrayList<Student>();
-		generateStudents(students);
+		students = students2;
 		for(Student s : students) {
 			s.addToCourses();		
 		}
@@ -178,7 +65,7 @@ public class Main {
 		
 	}// main
 	
-	public static Timetable brutus(Timetable t, Course c) {
+	public static Timetable brutus(Timetable t, Course c) throws IOException {
 		int s = c.getNumSections();
 		int section = 0;
 		int options[][] = new int[70][8];
@@ -248,14 +135,13 @@ public class Main {
 			}
 		}
 		
-		int highscore = (int) placed(t);
+		
 		Timetable bestT = t.clone();
 		for(int i = 0 ; i < options.length; i++) {
 			t.deleteAllSections(c);
 			section = 0;
 			for(int j = 0; j < options[i].length; j++) {
 				if(options[i][j] == 1) {
-					//System.out.println(section);
 					t.addSection(j,c.getSection(section));
 					section++;
 					if(section == s) {
@@ -265,22 +151,30 @@ public class Main {
 			}
 			resetSections(t);
 			students = new ArrayList<Student>();
-			try {
-				generateStudents(students);
-			} catch (IOException e) {
-				System.out.println("e");
-			}
+			generateStudents(students);
 			for(Student stu : students) {
 				stu.addToCourses();
 			}
-			if(placed(t) > highscore) {
-				highscore = placed(t);
+			if(genFullCorMetrics(students) > best8of8) {
+				best8of8 = genFullCorMetrics(students);
+				System.out.println("peepee");
 				bestT = t.clone();
-				System.out.println(highscore);
 			}
+			/*
+			if(placed(t) > highScore) {
+				highScore = placed(t);
+				bestT = t.clone();
+			}*/
 		}
-		//System.out.println(bestT);
-		System.out.println("one done");
+		//System.out.println(genFullReqMetrics(students));
+		resetSections(t);
+		students = new ArrayList<Student>();
+		generateStudents(students);
+		for(Student stu : students) {
+			stu.addToCourses();
+		}
+		System.out.println(genFullCorMetrics(students)*100 + " " + best8of8*100);
+		resetSections(bestT);
 		return bestT;
 	}
 	
