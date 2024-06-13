@@ -28,11 +28,12 @@ public class Main {
 		for (Student s : students) {
 			ArrayList<CourseSection> cs = s.getTimeTable().getAllCourseSections();
 			// System.out.println(s.getID());
-			for (CourseSection a : cs) {
-				// System.out.println(a.getCourse().getName());
-			}
+//			for (CourseSection a : cs) {
+//				// System.out.println(a.getCourse().getName());
+//			}
 //			System.out.println("----------------------------");
 		}
+
 		System.out.println(t);
 		System.out.println(students.get(0).getTimeTable());
 
@@ -118,6 +119,7 @@ public class Main {
 		double curScore = 0;
 
 		for (int it = 0; it < 100; it++) { // Example: Run the optimization loop 10 times
+
 			resetSections(t);
 			t = generateTimetable(); // Generate a new timetable
 
@@ -132,16 +134,27 @@ public class Main {
 			curScore = genReqCourseMetrics(students);
 
 			// Update the best timetable if the current score is higher
-			if (curScore > highScore) {
+			if (curScore > highScore || it == 0) {
 				bTableStudents = students;
 				bestTable = t.clone(); // Update the best timetable
 				highScore = genReqCourseMetrics(bTableStudents); // Update the high score
+				System.out.println(reqCoursePlaced(students));
 			}
 
 			// Output the current score and high score for monitoring
 			System.out.print(it + ": ");
 			System.out.println(curScore);
 			System.out.println("high score: " + highScore);
+
+//			for (int p = 0; p < 2; p++) {
+//				purgeExcessCourses();
+//				students = new ArrayList<Student>();
+//				resetSections(t);
+//				generateStudents(students);
+//				for (Student s : students) {
+//					s.addToCourses();
+//				}
+//			}
 
 			if (highScore > 0.7) { // Example: Stop optimization if high score exceeds 0.7
 				break;

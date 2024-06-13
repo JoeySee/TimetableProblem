@@ -67,4 +67,9 @@ public class Student {
 	public void addActualCourse(CourseSection newCourseSec) {
 		t.addSection(newCourseSec.getBlock(), newCourseSec);
 	}
+
+	public void resetCourses() {
+		t = new Timetable();
+		
+	}
 }
