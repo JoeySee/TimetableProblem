@@ -13,7 +13,7 @@ public class Main {
 		generateStudents(); // run once
 		generateBlockingRules(); // run once
 		
-		Timetable t = generateTimetable();
+		//Timetable t = generateTimetable();
 		
 		/*for(Student s : students) {
 			s.addToCourses();
@@ -28,12 +28,12 @@ public class Main {
 //			System.out.println("----------------------------");
 		}
 		
-		
-		Timetable bestTable = t.clone(); // Initialize bestTable with the initial timetable
-		double highScore = genReqCourseMetrics(); // Initialize highScore with the metrics of the initial
+		Timetable t = generateTimetable();
+		Timetable bestTable = t; // Initialize bestTable with the initial timetable
+		double highScore = 0; // Initialize highScore with the metrics of the initial
 															// timetable
 		double curScore = 0;
-		
+		int bestTableNum = -1;
 		
 		System.out.println("---------------------------------------------------------------------------------------");
 		System.out.println("number of students: " + students.size());
@@ -50,7 +50,9 @@ public class Main {
 			curScore = genReqCourseMetrics();
 
 			// Update the best timetable if the current score is higher
+			
 			if (curScore > highScore) {
+				bestTableNum = it;
 				bestTable = t.clone(); // Update the best timetable
 				highScore = genReqCourseMetrics(); // Update the high score
 			}
@@ -77,9 +79,10 @@ public class Main {
 			System.out.println("total number of sections:" + numCourses);
 			//System.out.println(t);
 		}
-		
+		System.out.println("best table is " + bestTableNum);
 		System.out.println(bestTable);
-		//System.out.println(students.get(0).getTimeTable());
+		
+		System.out.println(students.get(0).getTimeTable());
 	
 //		for (int i = 0; i < students.size(); i++) {
 //			s = students.get(i);
@@ -165,7 +168,7 @@ public class Main {
 		System.out.println("Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
 		System.out.println("Courses Requested");
 		
-		
+		// TO DO: display metrics from the state of the students arraylist at the time of the high score timetable
 		
 	}// main
 	
