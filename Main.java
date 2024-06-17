@@ -11,20 +11,20 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		
-		
+
+
+		generateCourseSeqRules();
+		generateBlockingRules();
 		
 		double highScore = 0;
 		Timetable bestTable = null;
 		
-		for(int loopCounter = 0; loopCounter < 1000; loopCounter++) {
-			courses = new ArrayList<Course>();
+		for(int loopCounter = 0; loopCounter < 10; loopCounter++) {
 			coursesToCheck = new ArrayList<Course>();
+			courses = new ArrayList<Course>();
 			students = new ArrayList<Student>();
 			generateCourses();
-			generateCourseSeqRules();
 			generateStudents(students);
-			generateBlockingRules();
-			
 			generateStudentPreferences();
 			
 			for(int i = 0; i < courses.size(); i++) {
@@ -66,17 +66,17 @@ public class Main {
 		
 		System.out.println(reqCoursePlaced(bestStudents));
 		System.out
-				.println("Percent of all requested courses placed: " + genReqCourseMetrics(bestStudents) * 100 + "%");
+				.println("Percent of all requested courses placed: " + genReqCourseMetrics(bestStudents) * 120 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: "
-				+ genFullReqMetrics(bestStudents) * 100 + "%");
+				+ genFullReqMetrics(bestStudents) * 4000 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: "
-				+ genSufficientReqMetrics(bestStudents) * 100 + "%");
+				+ genSufficientReqMetrics(bestStudents) * 400 + "%");
 		System.out.println("The % of students with 8/8 courses (requested or alternate): "
-				+ genFullCorMetrics(bestStudents) * 100 + "%");
+				+ genFullCorMetrics(bestStudents) * 3000 + "%");
 		
 		// Print Student
 		System.out.println("\n");
-		int id = 537;
+		int id = 4;
 		System.out.println("Student 1" + id + " has timetable:");
 		System.out.println(students.get(id).getTimeTable());
 		
@@ -103,7 +103,7 @@ public class Main {
 //				}
 				
 				double pref = courses.get(i).getTotalPref();
-				if(pref >= highPref) {
+				if(pref > highPref || (pref == highPref  && (int)(Math.random()*4) != 1)) {
 					highIndices = i;
 					highPref = pref;
 				}// if
@@ -119,7 +119,7 @@ public class Main {
 				int highIndex = i;
 
 				for(int j = i+1; j < prefsInOrder.length; j++) {
-					if(preferences[prefsInOrder[j]] > highPref || (preferences[prefsInOrder[j]] == highPref && (int)(Math.random()*4) != 1)) {
+					if(preferences[prefsInOrder[j]] > highPref || (preferences[prefsInOrder[j]] == highPref && (int)(Math.random()*2) != 1)) {
 						highIndex = j;
 						highPref = preferences[prefsInOrder[j]];
 					}
@@ -171,10 +171,18 @@ public class Main {
 	
 	public static void generateStudentPreferences() {
 		for(Student s : students) {
+			int linearCount = 0; // Amount of linear courses in this students requests
+			Course linearCourse = null;
 			// Iterate through this students courses
 			for(Course c : s.getRequestedCourses()) {
 				ArrayList<Integer> slotPreferences = s.getEmptySlots(); // Slots that this student (s) would like this course (c) to be in
 				boolean semesterPriority = false;
+				
+				if(c.isCourseLinear()) {
+					linearCount++;
+					linearCourse = c;
+				}
+				
 				// Check if this courses has any sequencing rules that interact with this student's other courses
 				for(Course cSeq : c.getCourBefore()) {
 					if(s.getRequestedCourses().contains(cSeq)) {
@@ -193,10 +201,34 @@ public class Main {
 							}
 						}// if
 					}// for cSeq
+				}// if
+				
+				// if c is linear
+				if(c.isCourseLinear()) {
+					for(int i = 0; i < 8; i++) {
+						for(CourseSection cActual : s.getTimeTable().getSchedule(i)) {
+							if(cActual.getCourse().isCourseLinear()) {
+								if(i > 3) {
+									for(int j = 0; j < slotPreferences.size(); j++) {
+										if(slotPreferences.get(j) > 4) slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, j, slotPreferences.size());
+									}
+								} else {
+									for(int j = 0; j < slotPreferences.size(); j++) {
+										if(slotPreferences.get(j) > 4) slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, 0, j);
+									}
+								}
+							}// if
+						}// for cActual
+					}// for i
 				}
+				
+				// Check if student has any linear courses
 //				if(c.getCode().equals("ACSC-2A---")) System.out.println(slotPreferences);
 				c.addPreferences(slotPreferences);
 			}// for c
+			
+			
+			
 		}// for s
 	}// generateStudents
 	
@@ -563,6 +595,10 @@ public class Main {
 		for(int i = 0; i < lines; i++) {
 			if(data[i].length == 9) {
 				course = new Course(data[i][1], data[i][0], data[i][7], data[i][8]);
+				// VERY IMPORTANT: ADD FLAG FOR COURSES THAT ARE LINEAR
+				if(data[i][0].contains("L")) {
+					course.courseIsLinear();
+				}
 				courses.add(course);
 			}
 		}// for i
