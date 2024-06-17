@@ -25,14 +25,18 @@ public class Timetable {
 		return false;
 	}
 	
-	public void deleteAllSections(Course c) {
+	public int deleteAllSections(Course c) {
+		int deleted = 0;
 		for(int i = 0; i < c.getNumSections(); i++) {
 			for(int j = 0 ; j < 8; j++) {
 				if(schedule[j].contains(c.getSection(i))) {
 					deleteSection(j,c);
+					deleted++;
+					System.out.println(deleted);
 				}
 			}
 		}
+		return deleted;
 	}
 	
 	public ArrayList<CourseSection>[] getTimetable() {
