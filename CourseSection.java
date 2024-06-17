@@ -5,6 +5,7 @@ public class CourseSection {
 	private int block; // Position within timetable (0-7)
 	private int index; // Position within block (0-?)
 	private int secNum;
+	private CourseSection pairedWith = null;
 	private ArrayList<Student> students;
 	
 	public CourseSection(Course c, int n) {
@@ -22,21 +23,29 @@ public class CourseSection {
 	}
 	
 	public void addStudent(Student newStudent) {
-		if (students.size() < course.getCapacity()) {
-			if(newStudent.getTimeTable().getSchedule(block).size() > 0) {
-				return;
-			}
+		if (students.size() + getLinkedStudentSize() < course.getCapacity()) {
+			if(newStudent.getTimeTable().getSchedule(block).size() > 0) return;
 			students.add(newStudent);
 			newStudent.getTimeTable().addSection(block, this);
 		}
 	}
 	
-	/*public void addStudentIgnoreBlocking(Student newStudent) {
-		if (students.size() < course.getCapacity()) {
-			students.add(newStudent);
-		}
-	}*/
+	private int getLinkedStudentSize() {
+		if(pairedWith != null) return pairedWith.students.size();
+		return 0;
+	}
 	
+	public CourseSection getPairedCourse() {
+		return pairedWith;
+	}
+	
+	public void addPairedCourse(CourseSection c) {
+		if(pairedWith ==  null) {
+			pairedWith = c;
+			c.pairedWith = this;
+		} 
+	}
+
 	public void clearSection() {
 		students = new ArrayList<Student>();
 	}
