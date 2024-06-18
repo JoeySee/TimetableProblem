@@ -13,16 +13,26 @@ public class Timetable {
 		schedule[slot].add(sec);
 	}
 	
-	public boolean deleteSection(int slot, Course c) {
+	public void deleteSection(int slot, Course c) {
 		ArrayList<CourseSection> courses = schedule[slot];
 		
 		for(int i = courses.size()-1; i >= 0; i--) {
 			if(courses.get(i).getCourse().equals(c)) {
 				schedule[slot].remove(i);
-				return true;
+				return;
 			}
 		}
-		return false;
+	}
+	
+	public void deleteSection(int slot, CourseSection c) {
+		ArrayList<CourseSection> courses = schedule[slot];
+		
+		for(int i = courses.size()-1; i >= 0; i--) {
+			if(courses.get(i).equals(c)) {
+				schedule[slot].remove(i);
+				return;
+			}
+		}
 	}
 	
 	public int deleteAllSections(Course c) {
@@ -37,6 +47,10 @@ public class Timetable {
 			}
 		}
 		return deleted;
+	}
+	
+	public void clearBlock(int block) {
+		schedule[block] = new ArrayList<CourseSection>();
 	}
 	
 	public ArrayList<CourseSection>[] getTimetable() {
@@ -76,7 +90,7 @@ public class Timetable {
 		
 		// Course Code Columns
 		int maxSize = Math.max(Math.max(Math.max(schedule[0].size(), schedule[1].size()), Math.max(schedule[2].size(), schedule[3].size())), Math.max(Math.max(schedule[4].size(), schedule[5].size()), Math.max(schedule[6].size(), schedule[7].size())));
-		s += "    S1 A    *    S1 B    *    S1 C    *    S1 D    *    S2 A    *   S2  B    *    S2  C    *    S2 D    \n";
+		s += "      S1 A     *      S1 B     *     S1 C      *     S1 D      *     S2 A      *    S2  B      *     S2  C     *     S2 D      \n";
 		String s2 = null;
 		
 		for(int i = 0; i < maxSize; i++) {
