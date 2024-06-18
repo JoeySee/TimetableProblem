@@ -12,7 +12,6 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		
 		generateCourses();
-		
 		generateStudents();
 		generateBlockingRules();
 		generateCourseSeqRules();
@@ -20,7 +19,7 @@ public class Main {
 		double highScore = 0;
 		Timetable bestTable = null;
 		
-		for(int loopCounter = 0; loopCounter < 10; loopCounter++) {
+		for(int loopCounter = 0; loopCounter < 1000; loopCounter++) {
 			//courses = new ArrayList<Course>();
 			for(int i = 0; i < courses.size(); i++) {
 				courses.get(i).resetSections();
@@ -34,7 +33,7 @@ public class Main {
 			
 			//generateStudents(students);
 			generateStudentRequests();
-			generateBlockingRules();
+			//generateBlockingRules();
 			//generateCourseSeqRules();
 			
 			generateStudentPreferences();
@@ -42,10 +41,19 @@ public class Main {
 			for(int i = 0; i < courses.size(); i++) {
 				coursesToCheck.add(courses.get(i));
 			}
-			
+			Student s = null;
+			for(int i = 0; i < students.size(); i++) {
+				s = students.get(i);
+				for (int j = 0; j < 8; j++) {
+					
+					s.getTimeTable().clearBlock(j);
+
+				}	
+			}
 			Timetable t = generateGreedyTable();
 			
-			for(Student s : students) {
+			for(int i = 0; i < students.size(); i++) {
+				
 				s.addToCourses();		
 			}
 			
@@ -55,13 +63,17 @@ public class Main {
 			if(newScore > highScore) {
 				highScore = newScore;
 				bestTable = t;
-				bestStudents = students;
+				bestStudents.removeAll(bestStudents);
+				for (int i = 0; i < students.size(); i++) {
+					s = students.get(i);
+					bestStudents.add(new Student(s.getID(), s.getRequestedCourses(), s.getAlternateCourses(), s.getTimeTable()));
+				}
 			}
-			for (int i = 0; i < courses.size(); i++) {
+			/*for (int i = 0; i < courses.size(); i++) {
 				if (courses.get(i).getCode().equals("ACAL-12---")) {
 					System.out.println("num of courses: " + courses.size() + " num of students: " + students.size() + " requested students: " + courses.get(i).getRequestedStudents().size() + " actual students: " + courses.get(i).getNumStudents() + " semester requests: " + courses.get(i).getS1() + " | " + courses.get(i).getS2());
 				}
-			}
+			}*/
 			System.out.println("Percent of all requested courses placed: " + newScore + " | record: " + genReqCourseMetrics(bestStudents) * 100 + "%");
 		}
 		
@@ -289,23 +301,23 @@ public class Main {
 	
 	// returns the metrics all requested courses placed
 
-			public static double genReqCourseMetrics(ArrayList<Student> stuList) {
-				int totalReqCourses = 0;
-				int totalPlacedReqCourses = 0;
-				for (Student s : stuList) {
-					totalReqCourses += s.getRequestedCourses().size();
-					for (Course reqCourse : s.getRequestedCourses()) {
-						for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
-							// check if a given actualCourse was requested
-							if (reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
-								totalPlacedReqCourses++;
-								break;
-							} // if
-						} // for (student s' requested courses)
-					} // for (student s' actual courses)
-				} // for (student)
-				return (double) totalPlacedReqCourses / (double) totalReqCourses;
-			} // genReqCourseMetrics
+		public static double genReqCourseMetrics(ArrayList<Student> stuList) {
+			int totalReqCourses = 0;
+			int totalPlacedReqCourses = 0;
+			for (Student s : stuList) {
+				totalReqCourses += s.getRequestedCourses().size();
+				for (Course reqCourse : s.getRequestedCourses()) {
+					for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+						// check if a given actualCourse was requested
+						if (reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
+							totalPlacedReqCourses++;
+							break;
+						} // if
+					} // for (student s' requested courses)
+				} // for (student s' actual courses)
+			} // for (student)
+			return (double) totalPlacedReqCourses / (double) totalReqCourses;
+		} // genReqCourseMetrics
 	
 	// returns the metrics all requested courses placed
 		/*public static double genReqCourseMetrics(ArrayList<Student> stuList) {
@@ -478,7 +490,7 @@ public class Main {
 		}// for i
 		//
 		
-		generateStudentRequests();
+		//generateStudentRequests();
 	}
 	
 	public static void generateStudentRequests() {
