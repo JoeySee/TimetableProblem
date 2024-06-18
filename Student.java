@@ -4,11 +4,20 @@ public class Student {
 	private ArrayList<Course> requestedCourses = new ArrayList<Course>();
 	private ArrayList<Course> alternateCourses = new ArrayList<Course>();
 	//private ArrayList<CourseSection> actualCourseSections = new ArrayList<CourseSection>();
-	Timetable t = new Timetable();
+	Timetable t;
 	private int id;
 	
 	public Student(String id) {
 		this.id = Integer.parseInt(id);
+		t = new Timetable();
+	}
+	
+	// for deep copies when setting record
+	public Student(int id, ArrayList<Course> reqCourses, ArrayList<Course> altCourses, Timetable tt) {
+		this.id = id;
+		t = tt.clone();
+		requestedCourses = reqCourses;
+		alternateCourses = altCourses;
 	}
 	
 	public int getID() {
@@ -55,6 +64,10 @@ public class Student {
 	}
 	
 	public Timetable getTimeTable() {
+		return t;
+	}
+	
+	public Timetable clearSection() {
 		return t;
 	}
 	
