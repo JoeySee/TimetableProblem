@@ -6,30 +6,34 @@ public class Course {
 	private int capacity;
 	private int numSections;
 	private CourseSection [] sections;
-	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
-	private ArrayList<Course> courAfter = new ArrayList <Course>(); // these courses must appear after the current course
+	private ArrayList<Course> courBefore; // these courses must appear before the current course
+	private ArrayList<Course> courAfter; // these courses must appear after the current course
 	private ArrayList<Course> simultaneousCourses; // Courses that can occur as a split with this one
 	private ArrayList<Course> notSimultaneousCourses; // Courses that can occur linearly with this one
 	private ArrayList<Student> requestedStudents; // Students who have requested this course
-	private int s1Requests; // Requests for course to be in s1, based on seq rules
-	private int s2Requests; // Requests for course to be in s2, based on seq rules
-	private int totalRequests; // Total requests for this course by students with a placement preference
-	private double[] placementPreference = new double[8]; // Preference for block to appear in certain positions
-	private double totalPrefs = 0;
+	private boolean isCourseLinear;
+	private double[] preferenceStudent = new double[8]; // Preference for block to appear in certain positions
+	private double[] preferenceSequencing = new double[8]; // Preference for block to appear in certain positions
+	private double[] preferenceLinear = new double[8]; // Preference for block to appear in certain positions
+	private double totalPrefsStudent = 0;
+	private double totalPrefsSequencing = 0;
+	private double totalPrefsLinear = 0;
 	
-	public Course(String name, String c, String cap, String s) {
-		this.name = name;
-		this.code = c;
+	public Course(String n, String c, String cap, String s, boolean isLinear) {
+		name = n;
+		code = c;
 		numSections = Integer.parseInt(s);
 		capacity =  Integer.parseInt(cap);
+		isCourseLinear = isLinear;
+		courBefore = new ArrayList <Course>(); // these courses must appear before the current course
+		courAfter = new ArrayList <Course>(); // these courses must appear after the current course
 		simultaneousCourses = new ArrayList<Course>();
 		notSimultaneousCourses = new ArrayList<Course>();
 		requestedStudents = new ArrayList<Student>();
+		isCourseLinear = false;
 		sections = new CourseSection [numSections];
 		resetSections();
-		for(int i = 0; i < placementPreference.length; i++) {
-			placementPreference[i] = 0;
-		}
+		resetPreferences();
 	}
 	
 	public CourseSection getSection(int i){
@@ -65,9 +69,9 @@ public class Course {
 			} else {
 				//System.out.println("full");
 			}
-			if (code == "ACAL-12---" && i == sections.length - 1) {
+			/*if (code == "ACAL-12---" && i == sections.length - 1) {
 				System.out.println("unable to find section");
-			}
+			}*/
 		}
 		
 	}
@@ -152,6 +156,10 @@ public class Course {
 		return isFound;
 	}
 	
+	public boolean isCourseLinear() {
+		return isCourseLinear;
+	}
+	
 	public void removeSection(int i) {
 		sections[i] = null;
 	}
@@ -186,7 +194,7 @@ public class Course {
 		for(int i = 0; i < sections.length; i++) {
 			if(sections[i].getBlock() == -1) {
 				int slot = (int)(Math.random()*(7-2)+2);
-				System.out.println(slot);
+				//System.out.println(slot);
 				sections[i].setIndex(t.getSchedule(slot).size());
 				sections[i].setBlock(slot);
 				t.addSection(slot, sections[i]);
@@ -194,51 +202,58 @@ public class Course {
 		}
 	}
 	
-	public double getTotalPref() {
-		return totalPrefs;
+	public double getTotalPrefStudent() {
+		return totalPrefsStudent;
+	}
+	
+	public double getTotalPrefSequencing() {
+		return totalPrefsSequencing;
+	}
+	
+	public double getTotalPrefLinear() {
+		return totalPrefsLinear;
 	}
 	
 	// Add preference to slots
-	public void addPreferences(ArrayList<Integer> slots) {
+	public void addPreferencesStudent(ArrayList<Integer> slots) {
 		for(int i : slots) {
-			placementPreference[i] += 1.0/(double)slots.size();
-			totalPrefs += 1.0/(double)slots.size();
+			preferenceStudent[i] += 1.0/(double)slots.size();
+			totalPrefsStudent += 1.0/(double)slots.size();
 		}
 	}
 	
-	public double[] getPreferences() {
-		return placementPreference;
-	}
-	
-	public void resetPreference() {
-		for(int i = 0; i < placementPreference.length; i++) {
-			placementPreference[i] = 0;
+	public void addPreferencesSequencing(ArrayList<Integer> slots) {
+		for(int i : slots) {
+			preferenceSequencing[i] += 1.0/(double)slots.size();
+			totalPrefsSequencing += 1.0/(double)slots.size();
 		}
 	}
 	
-	public void addS1Request() {
-		s1Requests++;
-		totalRequests++;
+	public void addPreferencesLinear(ArrayList<Integer> slots) {
+		for(int i : slots) {
+			preferenceLinear[i] += 1.0/(double)slots.size();
+			totalPrefsLinear += 1.0/(double)slots.size();
+		}
 	}
 	
-	public void addS2Request() {
-		s2Requests++;
-		totalRequests++;
+	public double[] getPreferencesStudent() {
+		return preferenceStudent;
 	}
 	
-	public int getS1() {
-		return s1Requests;
+	public double[] getPreferencesSequencing() {
+		return preferenceSequencing;
 	}
 	
-	public int getS2() {
-		return s2Requests;
+	public double[] getPreferencesLinear() {
+		return preferenceLinear;
 	}
 	
-	// Return percent of students who have an preference for course to appear in s1
-	public double getS2Percent() {
-		//System.out.println(totalRequests);
-		if(totalRequests == 0) return -1;
-		return (double)s2Requests/totalRequests;
+	public void resetPreferences() {
+		for(int i = 0; i < preferenceStudent.length; i++) {
+			preferenceStudent[i] = 0;
+			preferenceSequencing[i] = 0;
+			preferenceLinear[i] = 0;
+		}
 	}
 
 	public ArrayList<Student> getStudentsInSection(int k) {
@@ -249,11 +264,5 @@ public class Course {
 		for (int i = 0; i < sections.length; i++) {
 			sections[i] = new CourseSection (this, i);
 		}
-	}
-
-	public void resetRequests() {
-		s1Requests = 0;
-		s2Requests = 0;
-		totalRequests = 0;
 	}
 }

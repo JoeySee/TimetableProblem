@@ -24,7 +24,8 @@ public class CourseSection {
 	
 	public void addStudent(Student newStudent) {
 		if (students.size() + getLinkedStudentSize() < course.getCapacity()) {
-			if(newStudent.getTimeTable().getSchedule(block).size() > 0) return;
+			// TODO: Add authentication for linear and sequenced courses
+			if(newStudent.getTimeTable().getSchedule(block).size() > 0) {return;}
 			students.add(newStudent);
 			newStudent.getTimeTable().addSection(block, this);
 		}
