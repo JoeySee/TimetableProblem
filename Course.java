@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 public class Course {
@@ -7,28 +6,32 @@ public class Course {
 	private int capacity;
 	private int numSections;
 	private CourseSection [] sections;
-	private ArrayList<Course> courBefore = new ArrayList <Course>(); // these courses must appear before the current course
-	private ArrayList<Course> courAfter = new ArrayList <Course>(); // these courses must appear after the current course
+	private ArrayList<Course> courBefore; // these courses must appear before the current course
+	private ArrayList<Course> courAfter; // these courses must appear after the current course
 	private ArrayList<Course> simultaneousCourses; // Courses that can occur as a split with this one
 	private ArrayList<Course> notSimultaneousCourses; // Courses that can occur linearly with this one
-	private ArrayList<Student> requestedStudents = new ArrayList<Student>(); // Students who have requested this course
+	private ArrayList<Student> requestedStudents; // Students who have requested this course
+	private boolean isCourseLinear;
 	private int s1Requests; // Requests for course to be in s1, based on seq rules
 	private int s2Requests; // Requests for course to be in s2, based on seq rules
 	private int totalRequests; // Total requests for this course by students with a placement preference
 	private double[] placementPreference = new double[8]; // Preference for block to appear in certain positions
 	private double totalPrefs = 0;
 	
-	public Course(String name, String c, String cap, String s) {
-		this.name = name;
-		this.code = c;
+	public Course(String n, String c, String cap, String s, boolean isLinear) {
+		name = n;
+		code = c;
 		numSections = Integer.parseInt(s);
 		capacity =  Integer.parseInt(cap);
+		isCourseLinear = isLinear;
+		courBefore = new ArrayList <Course>(); // these courses must appear before the current course
+		courAfter = new ArrayList <Course>(); // these courses must appear after the current course
 		simultaneousCourses = new ArrayList<Course>();
 		notSimultaneousCourses = new ArrayList<Course>();
+		requestedStudents = new ArrayList<Student>();
+		isCourseLinear = false;
 		sections = new CourseSection [numSections];
-		for (int i = 0; i < sections.length; i++) {
-			sections[i] = new CourseSection (this, i);
-		}
+		resetSections();
 		for(int i = 0; i < placementPreference.length; i++) {
 			placementPreference[i] = 0;
 		}
@@ -67,6 +70,9 @@ public class Course {
 			} else {
 				//System.out.println("full");
 			}
+			/*if (code == "ACAL-12---" && i == sections.length - 1) {
+				System.out.println("unable to find section");
+			}*/
 		}
 		
 	}
@@ -104,9 +110,15 @@ public class Course {
 	public int getNumStudents() {
 		int n = 0;
 		for (int i = 0; i < numSections; i++) {
-			n += sections[i].getNumStudents();
+			if (sections[i] != null) {
+				n += sections[i].getNumStudents();
+			}
 		}
 		return n;
+	}
+	
+	public ArrayList<Student> getRequestedStudents() {
+		return requestedStudents;
 	}
 	
 	public void addSimultaneousCourseReciprocal(Course c) {
@@ -145,6 +157,10 @@ public class Course {
 		return isFound;
 	}
 	
+	public boolean isCourseLinear() {
+		return isCourseLinear;
+	}
+	
 	public void removeSection(int i) {
 		sections[i] = null;
 	}
@@ -179,7 +195,7 @@ public class Course {
 		for(int i = 0; i < sections.length; i++) {
 			if(sections[i].getBlock() == -1) {
 				int slot = (int)(Math.random()*(7-2)+2);
-				System.out.println(slot);
+				//System.out.println(slot);
 				sections[i].setIndex(t.getSchedule(slot).size());
 				sections[i].setBlock(slot);
 				t.addSection(slot, sections[i]);
@@ -236,5 +252,17 @@ public class Course {
 
 	public ArrayList<Student> getStudentsInSection(int k) {
 		return sections[k].getStudents();
+	}
+
+	public void resetSections() {
+		for (int i = 0; i < sections.length; i++) {
+			sections[i] = new CourseSection (this, i);
+		}
+	}
+
+	public void resetRequests() {
+		s1Requests = 0;
+		s2Requests = 0;
+		totalRequests = 0;
 	}
 }
