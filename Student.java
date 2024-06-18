@@ -4,15 +4,28 @@ public class Student {
 	private ArrayList<Course> requestedCourses = new ArrayList<Course>();
 	private ArrayList<Course> alternateCourses = new ArrayList<Course>();
 	//private ArrayList<CourseSection> actualCourseSections = new ArrayList<CourseSection>();
-	Timetable t = new Timetable();
+	Timetable t;
 	private int id;
 	
 	public Student(String id) {
 		this.id = Integer.parseInt(id);
+		t = new Timetable();
+	}
+	
+	// for deep copies when setting record
+	public Student(int id, ArrayList<Course> reqCourses, ArrayList<Course> altCourses, Timetable tt) {
+		this.id = id;
+		t = tt.clone();
+		requestedCourses = reqCourses;
+		alternateCourses = altCourses;
 	}
 	
 	public int getID() {
 		return id;
+	} 
+	
+	public void removeCourse(int block) {
+		t.clearBlock(block);
 	}
 	
 	public void addToCourses() {
@@ -32,6 +45,16 @@ public class Student {
 		
 	}
 	
+	public void addToReqCourses() {
+//		System.out.println(requestedCourses.size());
+		
+		for(int i = 0; i < requestedCourses.size(); i++) {
+			if(requestedCourses.get(i) != null) {
+				requestedCourses.get(i).addStudent(this);
+			}
+		}
+	}
+	
 	public ArrayList<Course> getRequestedCourses() {
 		return requestedCourses;
 	}
@@ -41,6 +64,10 @@ public class Student {
 	}
 	
 	public Timetable getTimeTable() {
+		return t;
+	}
+	
+	public Timetable clearSection() {
 		return t;
 	}
 	
@@ -54,5 +81,13 @@ public class Student {
 	
 	public void addActualCourse(CourseSection newCourseSec) {
 		t.addSection(newCourseSec.getBlock(), newCourseSec);
+	}
+	
+	public ArrayList<Integer> getEmptySlots(){
+		ArrayList<Integer> emptySlots = new ArrayList<Integer>();
+		for(int slot = 0; slot < 8; slot++) {
+			if(t.getTimetable()[slot].size() == 0) emptySlots.add(slot);
+		}
+		return emptySlots;
 	}
 }

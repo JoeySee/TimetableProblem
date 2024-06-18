@@ -5,227 +5,357 @@ import java.util.ArrayList;
 
 public class Main {
 	static ArrayList<Course> courses = new ArrayList<Course>();
+	static ArrayList<Course> coursesToCheck = new ArrayList<Course>();
 	static ArrayList<Student> students = new ArrayList<Student>();
+	static ArrayList<Student> bestStudents = new ArrayList<Student>();
 
 	public static void main(String[] args) throws IOException {
-		ArrayList<Student> bTableStudents = new ArrayList<Student>();
 
 		generateCourses();
-		generateStudents(students);
-		generateCourseSeqRules();
+		generateStudents();
 		generateBlockingRules();
+		generateCourseSeqRules();
 
-		bTableStudents = new ArrayList<Student>();
-		generateStudents(bTableStudents);
+		double highScore = 0;
+		Timetable bestTable = null;
 
-		Timetable t = generateTimetable();
-
-		for (Student s : students) {
-			s.addToCourses();
-		}
-
-		for (Student s : students) {
-			ArrayList<CourseSection> cs = s.getTimeTable().getAllCourseSections();
-			// System.out.println(s.getID());
-			for (CourseSection a : cs) {
-				// System.out.println(a.getCourse().getName());
+		for (int loopCounter = 0; loopCounter < 10; loopCounter++) {
+			// courses = new ArrayList<Course>();
+			for (int i = 0; i < courses.size(); i++) {
+				courses.get(i).resetSections();
+				courses.get(i).resetRequests();
 			}
-//			System.out.println("----------------------------");
-		}
-		System.out.println(t);
-		System.out.println(students.get(0).getTimeTable());
+			coursesToCheck = new ArrayList<Course>();
+			/* students = new ArrayList<Student>(); */
+			// students = new ArrayList<Student>();
 
-//		for (int i = 0; i < students.size(); i++) {
-//			s = students.get(i);
-//			System.out.println("student id " + s.getID());
-//			System.out.println(s.getActualCourseSections().size());
-//			for (int j = 0; j < s.getActualCourseSections().size(); j++) {
-//				a = s.getActualCourseSections().get(j);
-//				System.out.println(a.getCourse().getName() + " at section " + a.getSecNum() + " at block " + a.getBlock());
-//			}
-//			System.out.println("---------------------------------------------");
-//		}
+			// generateCourses();
 
-		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics(students) * 100 + "%");
-		System.out.println(
-				"Percent of all students who have 8/8 requested classes: " + genFullReqMetrics(students) * 100 + "%");
-		System.out.println("Percent of all students have 7-8/8 requested classes: "
-				+ genSufficientReqMetrics(students) * 100 + "%");
+			// generateStudents(students);
+			generateStudentRequests();
+			// generateBlockingRules();
+			// generateCourseSeqRules();
 
-		// WRITTEN BY JOEY and owne
-		int j = 0;
-		int k = 0;
-		Timetable t1 = null;
-		double highScore = genReqCourseMetrics(students);
-		double oldScore = highScore;
-		Timetable bestTable = t.clone();
-		int loopCount = 0;
-		Timetable t2 = t.clone();
-		while(true) {
-			k = (int) (Math.random() * 8);
-            j = (int) (Math.random()*t.getTimetable()[k].size());
-            CourseSection c = t.getTimetable()[k].get(j);
-            t.deleteSection(k, t.getTimetable()[k].get(j).getCourse());
-            for(int i = 0 ; i < 8; i++) {
-            	t1 = t.clone();
-                resetSections(t1);
-            	t1.addSection(i, c);
-                
-                
-                
-                students = new ArrayList<Student>();
-                generateStudents(students);
-                for(Student s : students) {
-        			s.addToCourses();
-        			
-        		}
-                
-                if(genReqCourseMetrics(students) > highScore) {
-                   bestTable = t1.clone();
-                   bTableStudents = students;
-                   highScore = genFullCorMetrics(bTableStudents);
-                   System.out.println(loopCount);
-                }
-            }
-            
-            if(highScore >= oldScore) {
-            	t = bestTable.clone();
-            }
-            
-//            System.out.println(t2.toString().equals(t.toString()));
-//            System.out.print(loopCount + ": ");
-//            System.out.println(highScore);
-//            System.out.println(t);
-            loopCount++;
-            t2 = t.clone();
-            
-            if(highScore > .7 || loopCount > 2001) {
-            	break;
-            }
-        }
+			generateStudentPreferences();
 
-//		Timetable bestTable = t.clone();
-//		double highScore = genReqCourseMetrics();
-//		double curScore = 0;
-//		Timetable t2 = t.clone();
-//		System.out.println(bestTable);
-//		System.out.println(highScore);
-//		
-//		for (int it = 0; it < 10; it++) {
-//			t = generateTimetable();
-//			
-//			students = new ArrayList<Student>();
-//			generateStudents();
-//			System.out.println(students.size());
-//			for (Student s : students) {
-//				s.addToCourses();
-//			}
-//			
-//			curScore = genReqCourseMetrics();
-//			if (curScore > highScore) {
-//				System.out.println("CurScore: " + curScore + " is higher than HighScore: " + highScore);
-//				bestTable = t.clone();
-//				highScore = curScore;
-//			}
-//
-//			System.out.print(it + ": ");
-//			System.out.println(curScore);
-//			System.out.println("high score: " + highScore);
-//			//System.out.println(t);
-//
-//			if (highScore > 0.7) {
-//				break;
-//			}
-//
-//		}
-//		resetSections(t);
-//		t = bestTable.clone();
-//		
-//		students = new ArrayList<Student>();
-//		generateStudents();
-//		for (Student s : students) {
-//			s.addToCourses();
-//		}
-//		
-//		System.out.println(t);
-//		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics() * 100 + "%");
-//		System.out
-//				.println("Percent of all students who have 8/8 requested classes: " + genFullReqMetrics() * 100 + "%");
-//		System.out.println(
-//				"Percent of all students have 7-8/8 requested classes: " + genSufficientReqMetrics() * 100 + "%");
+			for (int i = 0; i < courses.size(); i++) {
+				coursesToCheck.add(courses.get(i));
+			}
+			Student s = null;
+			for (int i = 0; i < students.size(); i++) {
+				s = students.get(i);
+				for (int j = 0; j < 8; j++) {
+					s.getTimeTable().clearBlock(j);
+				}
+			}
+			Timetable t = generateGreedyTable();
 
-//		// Optimization loop to find the best timetable
-//		Timetable bestTable = t.clone(); // Initialize bestTable with the initial timetable
-//		double highScore = genReqCourseMetrics(students); // Initialize highScore with the metrics of the initial
-//															// timetable
-//		double curScore = 0;
-//
-//		for (int it = 0; it < 1000; it++) { // Example: Run the optimization loop 10 times
-//			t = generateTimetable(); // Generate a new timetable
-//
-//			// Populate the timetable with students and their courses
-//			students = new ArrayList<>();
-//			generateStudents(students);
-//			for (Student s : students) {
-//				s.addToCourses();
-//			}
-//
-//			// Calculate the metrics for the current timetable
-//			curScore = genReqCourseMetrics(students);
-//
-//			// Update the best timetable if the current score is higher
-//			if (curScore > highScore) {
-//				bTableStudents = students;
-//				bestTable = t.clone(); // Update the best timetable
-//				highScore = genReqCourseMetrics(bTableStudents); // Update the high score
-//				
-//				System.out.print(it + ": ");
-//				System.out.println(curScore);
-//				System.out.println("high score: " + highScore);
-//			}
-//
-//			// Output the current score and high score for monitoring
-////			System.out.print(it + ": ");
-////			System.out.println(curScore);
-////			System.out.println("high score: " + highScore);
-//
-//			if (highScore > 0.7) { // Example: Stop optimization if high score exceeds 0.7
-//				break;
-//			}
-//		}
+			for (int i = 0; i < students.size(); i++) {
+				s.addToCourses();
+			}
 
-		// Reset the sections of the best timetable
-		resetSections(bestTable);
+			purgeExcessCourses(t);
 
-		// Re-generate students and their courses for the best timetable
-
-		for (int i = 0; i < bTableStudents.size(); i++) {
-			bTableStudents.get(i).addToCourses();
+			double newScore = genReqCourseMetrics(students);
+			if (newScore > highScore) {
+				highScore = newScore;
+				bestTable = t;
+				bestStudents.removeAll(bestStudents);
+				for (int i = 0; i < students.size(); i++) {
+					s = students.get(i);
+					bestStudents.add(
+							new Student(s.getID(), s.getRequestedCourses(), s.getAlternateCourses(), s.getTimeTable()));
+				}
+			}
+			/*
+			 * for (int i = 0; i < courses.size(); i++) { if
+			 * (courses.get(i).getCode().equals("ACAL-12---")) {
+			 * System.out.println("num of courses: " + courses.size() + " num of students: "
+			 * + students.size() + " requested students: " +
+			 * courses.get(i).getRequestedStudents().size() + " actual students: " +
+			 * courses.get(i).getNumStudents() + " semester requests: " +
+			 * courses.get(i).getS1() + " | " + courses.get(i).getS2()); } }
+			 */
+			System.out.println("Percent of all requested courses placed: " + newScore + " | record: "
+					+ genReqCourseMetrics(bestStudents) * 100 + "%");
 		}
 
-		System.out.println(bTableStudents.get(0).getTimeTable());
-		System.out.println(students.get(0).getTimeTable());
+		// Print split courses
+		for (ArrayList<CourseSection> courses : bestTable.getTimetable()) {
+			for (CourseSection c : courses) {
+				if (c.getPairedCourse() != null) {
+					System.out.println(c.getCourse().getCode() + " paired with "
+							+ c.getPairedCourse().getCourse().getCode() + "!");
+				}
+			}
+		}
 
 		// Output the best timetable and metrics
 		System.out.println(bestTable);
-		System.out.println(reqCoursePlaced(bTableStudents));
-		System.out
-				.println("Percent of all requested courses placed: " + genReqCourseMetrics(bTableStudents) * 100 + "%");
-		System.out.println("Percent of all students who have 8/8 requested classes: "
-				+ genFullReqMetrics(bTableStudents) * 100 + "%");
+
+		System.out.println(getCoursesPlaced(bestStudents) + " / " + getCoursesRequested(bestStudents));
+		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics(bestStudents) * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: "
-				+ genSufficientReqMetrics(bTableStudents) * 100 + "%");
+				+ genCorMetrics(bestStudents, 7, false, false) * 100 + "%");
+		System.out.println("Percent of all students who have 8/8 requested classes: "
+				+ genCorMetrics(bestStudents, 8, false, false) * 100 + "%");
 		System.out.println("The % of students with 8/8 courses (requested or alternate): "
-				+ genFullCorMetrics(bTableStudents) * 100 + "%");
-		
+				+ genCorMetrics(bestStudents, 8, true, true) * 100 + "%");
+		System.out.println("% of students with 1-2 courses not fulfilled (alt or requested): "
+				+ genNotFullfilledMetrics(bestStudents, 6, 8, true, false) * 100 + "%");
+		System.out.println("% of students with 3-8 courses not fulfilled (alt or requested): "
+				+ genNotFullfilledMetrics(bestStudents, 0, 6, true, false) * 100 + "%");
 
 	}// main
 
+	public static Timetable generateGreedyTable() {
+		Timetable solution = new Timetable();
+		// Get course with highest single requestPriority
+		while (coursesToCheck.size() != 0) {
+			int highIndices = 0;
+			int[] prefsInOrder = { 0, 1, 2, 3, 4, 5, 6, 7 }; // Slot Preference indices stored in order of preference
+			double highPref = 0;
+			for (int i = 0; i < coursesToCheck.size(); i++) {
+//				double[] preferences = coursesToCheck.get(i).getPreferences();
+//				double highPrefLoop = 0;
+//				for(int j = 0; j < preferences.length; j++) {
+//					if(preferences[j] > highPrefLoop) {
+//						highPrefLoop = preferences[j];
+//					}
+//				}
+//				if(highPrefLoop >= highPref) {
+//					highPref = highPrefLoop;
+//					highIndices = i;
+//				}
+
+				double pref = courses.get(i).getTotalPref();
+				if (pref > highPref || (pref == highPref && (int) (Math.random() * 4) != 1)) {
+					highIndices = i;
+					highPref = pref;
+				} // if
+			} // for
+//			highIndices = (int)(Math.random() * coursesToCheck.size());
+			double[] preferences = coursesToCheck.get(highIndices).getPreferences();
+
+			// System.out.println("checkpoint. courses to check size: " +
+			// coursesToCheck.size());
+			// Sort preferences
+			for (int i = 0; i < prefsInOrder.length; i++) {
+				int temp = prefsInOrder[i];
+				highPref = preferences[i];
+				int highIndex = i;
+
+				for (int j = i + 1; j < prefsInOrder.length; j++) {
+					if (preferences[prefsInOrder[j]] > highPref
+							|| (preferences[prefsInOrder[j]] == highPref && (int) (Math.random() * 2) != 1)) {
+						highIndex = j;
+						highPref = preferences[prefsInOrder[j]];
+					}
+				}
+				prefsInOrder[i] = prefsInOrder[highIndex];
+				prefsInOrder[highIndex] = temp;
+			}
+
+			// Assign the course to the timetable based on preferences
+//			for(int slot : prefsInOrder) {
+//				coursesToCheck.get(highIndices).addPercentSections(solution, slot);
+//			}
+//			int runStart = 0;
+//			double runValue = preferences[prefsInOrder[0]];
+//			for(int i = 1; i < prefsInOrder.length; i++) {
+//				System.out.println(prefsInOrder.length);
+//				if(preferences[prefsInOrder[i]] != runValue) {
+//					for(int j = runStart; j < i; j++) {
+//						int slot = (int) (Math.random()*(j-i) + i);
+//						coursesToCheck.get(highIndices).addPercentSections(solution, prefsInOrder[slot]);
+//					}
+//					runStart = i;
+//					runValue = preferences[prefsInOrder[i]];
+//				}
+//			}
+
+			if (coursesToCheck.get(highIndices).getNumSections() <= 1) {
+				coursesToCheck.get(highIndices).addCourseToBlock(solution, prefsInOrder[0]);
+			} else {
+				while (coursesToCheck.get(highIndices).getSection(coursesToCheck.get(highIndices).getNumSections() - 1)
+						.getBlock() == -1) {
+					for (int i = 0; i < prefsInOrder.length; i++) {
+						int slot = prefsInOrder[i];
+						coursesToCheck.get(highIndices).addCourseToBlock(solution, slot);
+					}
+				}
+			}
+
+			coursesToCheck.get(highIndices).addExcessSections(solution);
+			coursesToCheck.get(highIndices).addRequestedStudents();
+
+			// Re-generate preferences with new student courses
+			coursesToCheck.remove(highIndices);
+			resetStudentPreferences(coursesToCheck);
+			generateStudentPreferences();
+		}
+		return solution;
+	}
+
+	public static void generateStudentPreferences() {
+		for (Student s : students) {
+			// Iterate through this students courses
+			int linearCount = 0; // Amount of linear courses in this students requests
+
+			Course linearCourse = null;
+			for (Course c : s.getRequestedCourses()) {
+				ArrayList<Integer> slotPreferences = s.getEmptySlots(); // Slots that this student (s) would like this
+																		// course (c) to be in
+				boolean semesterPriority = false;
+				if (c.isCourseLinear()) {
+					linearCount++;
+					linearCourse = c;
+				}
+				// Check if this courses has any sequencing rules that interact with this
+				// student's other courses
+				for (Course cSeq : c.getCourBefore()) {
+					if (s.getRequestedCourses().contains(cSeq)) {
+						semesterPriority = true;
+						for (int i = 0; i < slotPreferences.size(); i++) {
+							if (slotPreferences.get(i) > 4) {
+								slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, i,
+										slotPreferences.size());
+							}
+						}
+					} // if
+				} // for cSeq
+				if (!semesterPriority) {
+					for (Course cSeq : c.getCourAfter()) {
+						if (s.getRequestedCourses().contains(cSeq)) {
+							semesterPriority = true;
+							for (int i = 0; i < slotPreferences.size(); i++) {
+								if (slotPreferences.get(i) > 4) {
+									slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, 0, i);
+								}
+							}
+						} // if
+					} // for cSeq
+				}
+				// if c is linear
+
+				if (c.isCourseLinear()) {
+					for (int i = 0; i < 8; i++) {
+						for (CourseSection cActual : s.getTimeTable().getSchedule(i)) {
+							if (cActual.getCourse().isCourseLinear()) {
+								if (i > 3) {
+									for (int j = 0; j < slotPreferences.size(); j++) {
+										if (slotPreferences.get(j) > 4)
+											slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences,
+													j, slotPreferences.size());
+									}
+								} else {
+									for (int j = 0; j < slotPreferences.size(); j++) {
+										if (slotPreferences.get(j) > 4)
+											slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences,
+													0, j);
+									}
+								}
+							} // if
+						} // for cActual
+					} // for i
+				}
+				/*
+				 * if(c.getCode().equals("ACSC-2A---")) { System.out.println(slotPreferences); }
+				 */
+				c.addPreferences(slotPreferences);
+			} // for c
+		} // for s
+	}// generateStudents
+
+	// Copy portion of arrayList from i (inclusive) to j (exclusive)
+	public static ArrayList copyArrayListPortion(ArrayList a, int i, int j) {
+		ArrayList newA = new ArrayList();
+		for (int n = i; n < j; n++) {
+			newA.add(a.get(n));
+		}
+		return a;
+	}
+
+	public static void resetStudentPreferences(ArrayList<Course> c) {
+		for (int i = 0; i < c.size(); i++) {
+			c.get(i).resetPreference();
+		}
+	}
+
+	public static void resetSections(Timetable table) {
+		for (int i = 0; i < 8; i++) {
+			for (CourseSection c : table.getTimetable()[i]) {
+				c.clearSection();
+			}
+		}
+	}// resetSections
+
+	// purge courses from course array running at less than half cap
+	public static void purgeExcessCourses(Timetable t) {
+		for (int i = courses.size() - 1; i >= 0; i--) {
+			for (int k = 0; k < courses.get(i).getNumSections(); k++) {
+				boolean innerBreak = false;
+				if (courses.get(i).getSection(k) == null)
+					continue;
+				if ((double) courses.get(i).getSection(k).getNumStudents() / courses.get(i).getCapacity() < .5) {
+					// Loop through course sections in this block to see if any can be run as a
+					// split
+					for (CourseSection c : t.getTimetable()[courses.get(i).getSection(k).getBlock()]) {
+						if (courses.get(i).getSimultaneousCourses().contains(c.getCourse())) {
+//							System.out.println(courses.get(i).getCode() + " split with " + c.getCourse().getCode() + "!");
+							courses.get(i).getSection(k).addPairedCourse(c);
+							innerBreak = true;
+							break;
+						}
+					}
+					if (innerBreak) {
+						continue;
+					}
+					int block = courses.get(i).getSection(k).getBlock();
+					ArrayList<Student> studentsToEnroll = courses.get(i).getStudentsInSection(k);
+					t.deleteSection(block, courses.get(i).getSection(k));
+					courses.get(i).removeSection(k);
+					for (int j = 0; j < studentsToEnroll.size(); j++) {
+						studentsToEnroll.get(j).removeCourse(block);
+						studentsToEnroll.get(j).addToCourses();
+					}
+				}
+			}
+
+		}
+	}
+
+	public static int getCoursesPlaced(ArrayList<Student> stuList) {
+		int totalPlacedReqCourses = 0;
+		for (Student s : stuList) {
+			for (Course reqCourse : s.getRequestedCourses()) {
+				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+					// check if a given actualCourse was requested
+					if (reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
+						totalPlacedReqCourses++;
+						break;
+					} // if
+				} // for (student s' requested courses)
+			} // for (student s' actual courses)
+		} // for (student)
+		return totalPlacedReqCourses;
+	}
+
+	public static int getCoursesRequested(ArrayList<Student> stuList) {
+		int totalReqCourses = 0;
+
+		for (Student s : stuList) {
+			totalReqCourses += s.getRequestedCourses().size();
+		} // for (student)
+
+		return totalReqCourses;
+	}
+
 	// returns the metrics all requested courses placed
+
 	public static double genReqCourseMetrics(ArrayList<Student> stuList) {
 		int totalReqCourses = 0;
 		int totalPlacedReqCourses = 0;
-
 		for (Student s : stuList) {
 			totalReqCourses += s.getRequestedCourses().size();
 			for (Course reqCourse : s.getRequestedCourses()) {
@@ -238,41 +368,43 @@ public class Main {
 				} // for (student s' requested courses)
 			} // for (student s' actual courses)
 		} // for (student)
-
 		return (double) totalPlacedReqCourses / (double) totalReqCourses;
 	} // genReqCourseMetrics
-	
-	public static String reqCoursePlaced(ArrayList<Student> stuList) {
-		int totalReqCourses = 0;
-		int totalPlacedReqCourses = 0;
 
-		for (Student s : stuList) {
-			totalReqCourses += s.getRequestedCourses().size();
-			for (Course reqCourse : s.getRequestedCourses()) {
-				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
-					// check if a given actualCourse was requested
-					if (reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
-						totalPlacedReqCourses++;
-						break;
-					} // if
-				} // for (student s' requested courses)
-			} // for (student s' actual courses)
-		} // for (student)
-		
-		return totalPlacedReqCourses + "/" + totalReqCourses;
-	}
+	// returns the metrics all requested courses placed
+	/*
+	 * public static double genReqCourseMetrics(ArrayList<Student> stuList) { return
+	 * (double)getCoursesPlaced(stuList) / getCoursesRequested(stuList); } //
+	 * genReqCourseMetrics
+	 */
+	/*
+	 * public static String reqCoursePlaced(ArrayList<Student> stuList) { int
+	 * totalReqCourses = 0; int totalPlacedReqCourses = 0;
+	 * 
+	 * for (Student s : stuList) { totalReqCourses +=
+	 * s.getRequestedCourses().size(); for (Course reqCourse :
+	 * s.getRequestedCourses()) { for (CourseSection actualCourse :
+	 * s.getTimeTable().getAllCourseSections()) { // check if a given actualCourse
+	 * was requested if
+	 * (reqCourse.getCode().equals(actualCourse.getCourse().getCode())) {
+	 * totalPlacedReqCourses++; break; } // if } // for (student s' requested
+	 * courses) } // for (student s' actual courses) } // for (student)
+	 * 
+	 * return getCoursesPlaced(stuList) + "/" + getCoursesRequested(stuList); }
+	 */
 
 	// return the metrics of all students have 8/8 requested classes
-	public static double genFullCorMetrics(ArrayList<Student> stuList) {
-		int totalNumStudent = stuList.size();
+	public static double genCorMetrics(ArrayList<Student> stuList, int lowerLim, boolean includeAlts, boolean toPrint) {
 		int numFullCorStudents = 0;
 
 		// for every student
 		for (Student s : stuList) {
 			int numReqCoursesGiven = 0;
 			ArrayList<Course> reqAndAltCourses = s.getRequestedCourses();
-			for (Course alt : s.getAlternateCourses()) {
-				reqAndAltCourses.add(alt);
+			if (includeAlts) {
+				for (Course alt : s.getAlternateCourses()) {
+					reqAndAltCourses.add(alt);
+				}
 			}
 
 			for (Course reqOrAltCourse : reqAndAltCourses) {
@@ -283,89 +415,104 @@ public class Main {
 					}
 				} // for (student s' requested courses)
 			} // for (student s' actual courses)
-			if (numReqCoursesGiven == 8) {
+			if (numReqCoursesGiven >= lowerLim && numReqCoursesGiven < 9) {
+				if (toPrint) {
+					System.out.println(s.getID());
+					System.out.println(s.getTimeTable());
+				}
 				numFullCorStudents++;
 			} // if
 		} // for (students)
 
-		return (double) numFullCorStudents / totalNumStudent;
+		return (double) numFullCorStudents / stuList.size();
 	}
 
-	// return the metrics of all students have 8/8 requested classes
-	public static double genFullReqMetrics(ArrayList<Student> stuList) {
-		int totalNumStudent = stuList.size();
-		int numFullReqStudents = 0;
+	// return % of students with 1-2 courses not fulfilled (alt or requested)
+	public static double genNotFullfilledMetrics(ArrayList<Student> stuList, int lowerLim, int higherLim,
+			boolean includeAlts, boolean toPrint) {
+		int numNotFullfilledStudents = 0;
 
 		// for every student
 		for (Student s : stuList) {
 			int numReqCoursesGiven = 0;
-			for (Course reqCourse : s.getRequestedCourses()) {
+			ArrayList<Course> reqAndAltCourses = s.getRequestedCourses();
+			if (includeAlts) {
+				for (Course alt : s.getAlternateCourses()) {
+					reqAndAltCourses.add(alt);
+				}
+			}
+
+			for (Course reqOrAltCourse : reqAndAltCourses) {
 				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
-					if (actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
+					if (actualCourse.getCourse().getCode().equals(reqOrAltCourse.getCode())) {
 						numReqCoursesGiven++;
 						break;
 					}
 				} // for (student s' requested courses)
 			} // for (student s' actual courses)
-			if (numReqCoursesGiven == 8) {
-				System.out.println(s.getID());
-				System.out.println(s.getTimeTable());
-				numFullReqStudents++;
+			if (numReqCoursesGiven >= lowerLim && numReqCoursesGiven < higherLim) {
+				if (toPrint) {
+					System.out.println(s.getID());
+					System.out.println(s.getTimeTable());
+				}
+				numNotFullfilledStudents++;
 			} // if
 		} // for (students)
 
-		return (double) numFullReqStudents / totalNumStudent;
+		return (double) numNotFullfilledStudents / stuList.size();
 	}
 
 	// return the metrics all students have 7-8/8 requested classes
-	public static double genSufficientReqMetrics(ArrayList<Student> stuList) {
-		int totalNumStudent = stuList.size();
-		int numFullReqStudents = 0;
-
-		for (Student s : stuList) {
-			int numReqCoursesGiven = 0;
-			for (Course reqCourse : s.getRequestedCourses()) {
-				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
-					if (actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
-						numReqCoursesGiven++;
-						break;
-					}
-				} // for (student s' requested courses)
-			} // for (student s' actual courses)
-			if (numReqCoursesGiven >= 7 && numReqCoursesGiven < 9) {
-				numFullReqStudents++;
-			} // if
-		} // for (students)
-
-		return (double) numFullReqStudents / totalNumStudent;
-	}
+	/*
+	 * public static double genSufficientReqMetrics(ArrayList<Student> stuList, int
+	 * lowerLim, boolean includeAlts) { int numFullReqStudents = 0;
+	 * 
+	 * for (Student s : stuList) { int numReqCoursesGiven = 0;
+	 * 
+	 * ArrayList<Course> reqAndAltCourses = s.getRequestedCourses(); if () { for
+	 * (Course alt : s.getAlternateCourses()) { reqAndAltCourses.add(alt); } }
+	 * 
+	 * 
+	 * for (Course reqCourse : s.getRequestedCourses()) { for (CourseSection
+	 * actualCourse : s.getTimeTable().getAllCourseSections()) { if
+	 * (actualCourse.getCourse().getCode().equals(reqCourse.getCode())) {
+	 * numReqCoursesGiven++; break; } } // for (student s' requested courses) } //
+	 * for (student s' actual courses) if (numReqCoursesGiven >= lowerLim &&
+	 * numReqCoursesGiven < 9) { if (lowerLim == 8) { System.out.println(s.getID());
+	 * System.out.println(s.getTimeTable()); } numFullReqStudents++; } // if } //
+	 * for (students)
+	 * 
+	 * return (double) numFullReqStudents / stuList.size(); }
+	 */
 
 	public static Timetable generateTimetable() {
 		Timetable t = new Timetable();
 
 		for (Course c : courses) {
 			for (int i = 0; i < c.getNumSections(); i++) {
-				c.getSection(i).clearSection();
-				int slot = (int) (Math.random() * 8.0);
-				t.addSection(slot, c.getSection(i));
-				c.getSection(i).setBlock(slot);
-				c.getSection(i).setIndex(t.getSchedule(slot).size());
+				int slot;
+				// System.out.println(c.getS2Percent());
+				if (c.getS2Percent() < 0) {
+					slot = (int) (Math.random() * 8.0);
+				} else {
+					int offset = 0;
+					if ((double) i / c.getNumSections() <= c.getS2Percent()) {
+						offset = 4;
+					}
+					slot = offset + (int) (Math.random() * 4.0);
+				}
+				if (c.getSection(i) != null) {
+					t.addSection(slot, c.getSection(i));
+					c.getSection(i).setBlock(slot);
+					c.getSection(i).setIndex(t.getSchedule(slot).size());
+				}
 			}
 		}
 
 		return t;
 	}// generateTimetable
 
-	public static void resetSections(Timetable table) {
-
-		for (int i = 0; i < 8; i++) {
-			for (CourseSection c : table.getTimetable()[i]) {
-				c.clearSection();
-			}
-		}
-	}// resetSections
-
-	public static void generateStudents(ArrayList<Student> sList) throws IOException {
+	public static void generateStudents() throws IOException {
 		BufferedReader in = null;
 
 		// read in data
@@ -393,7 +540,7 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			if (data[i][0].equals("ID")) {
 				if (student != null) {
-					sList.add(student);
+					students.add(student);
 				}
 				student = new Student(data[i][1]);
 			} else if (!data[i][0].equals("Course")) {
@@ -402,12 +549,71 @@ public class Main {
 					if (data[i][3].equals("Y")) {
 						student.addAlternateCourse(c);
 					} else if (data[i][3].equals("N")) {
+						c.addRequestStudent(student);
 						student.addRequestedCourse(c);
+
 					}
 				}
-
 			}
 		} // for i
+			//
+
+		// generateStudentRequests();
+	}
+
+	public static void generateStudentRequests() {
+		Student student = null;
+		Course c = null;
+		for (int i = 0; i < students.size(); i++) {
+			student = students.get(i);
+			for (int j = 0; j < student.getRequestedCourses().size(); j++) {
+				c = student.getRequestedCourses().get(j);
+				// System.out.println(c.getCourBefore());
+				// System.out.println("s1 req: " + d.getCode() + "| s2 req: " + c.getCode());
+
+				/*
+				 * System.out.println("d: " + d.getCode()); System.out.println("courBefores:");
+				 */
+				/*
+				 * for (int k = 0; k < courBefores.size(); k++) {
+				 * System.out.println(courBefores.get(k).getCode()); }
+				 */
+				// System.out.println("c: " + c.getCode());
+
+				/*
+				 * if (student.getID() == 1002) { System.out.println("student 1002 has " +
+				 * c.getCode() + "with courBefores:"); for (int k = 0; k < courBefores.size();
+				 * k++) { System.out.println(courBefores.get(k).getCode()); } }
+				 */
+				ArrayList<Course> courBefores = c.getCourBefore();
+				Course c1 = null;
+				// Course c1;
+				for (int k = 0; k < courBefores.size(); k++) {
+					// c1 = courBefores.get(k);
+
+					for (int l = 0; l < student.getRequestedCourses().size(); l++) {
+						c1 = student.getRequestedCourses().get(l);
+						if (courBefores.get(k).getCode().equals(c1.getCode())) {
+//							System.out.println("student ID:" + student.getID() + "| s1 req: " + c1.getCode() + "| s2 req: " + c.getCode());
+							c1.addS1Request();
+							c.addS2Request();
+						}
+					}
+				}
+				// to finish
+
+				/*
+				 * if(c.getCourBefore().contains(d)) { System.out.println("student ID:" +
+				 * student.getID() + "| s1 req: " + d.getCode() + "| s2 req: " + c.getCode());
+				 * d.addS1Request(); c.addS2Request();
+				 * 
+				 * } else {
+				 * 
+				 * }
+				 */
+
+			}
+		}
 	}
 
 	public static void generateBlockingRules() throws IOException {
@@ -429,11 +635,13 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = in.readLine();
 			String[] lineSplit = line.split(",");
-			if (getCourse(lineSplit[0]) == null)
+			if (getCourse(lineSplit[0]) == null) {
 				continue;
+			}
 			for (int j = 1; j < lineSplit.length - 1; j++) {
-				if (getCourse(lineSplit[j]) == null)
+				if (getCourse(lineSplit[j]) == null) {
 					continue;
+				}
 
 				if (lineSplit[lineSplit.length - 1].equals("Simultaneous")) {
 					getCourse(lineSplit[0]).addSimultaneousCourseReciprocal(getCourse(lineSplit[j]));
@@ -475,7 +683,9 @@ public class Main {
 		Course course = null;
 		for (int i = 0; i < lines; i++) {
 			if (data[i].length == 9) {
-				course = new Course(data[i][1], data[i][0], data[i][7], data[i][8]);
+				course = new Course(data[i][1], data[i][0], data[i][7], data[i][8],
+						(data[i][0].charAt(data[i][0].length() - 1) == 'L'));
+				// VERY IMPORTANT: ADD FLAG FOR COURSES THAT ARE LINEAR
 				courses.add(course);
 			}
 		} // for i
@@ -502,23 +712,44 @@ public class Main {
 		for (int i = 0; i < lines; i++) {
 			line = br.readLine();
 			data[i] = line.split(",");
+
 			Course courseZero = null; // uses to store the course corresponding to data[i][0]
 			for (Course cr : courses) {
+				// System.out.println
 				if (cr.getCode().equals(data[i][0])) {
 					courseZero = cr;
+
 				}
 			}
-
+			for (int j = 0; j < data[i].length; j++) {
+				// System.out.println(data[i][j]);
+			}
+			// System.out.println("------------------------------");
 			// populate CourBefore when needed
+			if (courseZero != null) {
+				// System.out.println(courseZero.getCode() + " before:");
+			}
+
 			for (int j = 1; j < data[i].length; j++) {
-				for (Course c : courses) {
-					if (c.getCode().equals(data[i][j]) && courseZero != null) {
-						c.addCourBefore(courseZero);
+				for (int k = 0; k < courses.size(); k++) {
+
+					if (courses.get(k).getCode().equals(data[i][j]) && courseZero != null) {
+						courseZero.addCourAfter(courses.get(k));
+						courses.get(k).addCourBefore(courseZero);
 					} // if
-				} // enhanced for
+				}
 			} // for j
 		} // for i
 
+//		System.out.println("list of courBefores:");
+//		ArrayList<Course> courBefores = null;
+//		for (int i = 0; i < courses.size() ; i++) {
+//			courBefores = courses.get(i).getCourBefore();
+//			System.out.println("course is " + courses.get(i).getCode() + "\ncourBefores are:");
+//			for (int j = 0; j < courBefores.size(); j++) {
+//				System.out.println(courBefores.get(j).getCode());
+//			}
+//		}
 //		for(Course c : courses) {
 //			if(c.getCourBefore().size() == 0) continue;
 //			System.out.print("The following courses must appear before " + c.getName() + ": ");
