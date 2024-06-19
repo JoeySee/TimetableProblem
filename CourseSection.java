@@ -13,9 +13,6 @@ public class CourseSection {
 		block = -1;
 		index = -1;
 		secNum = n;
-		if(c.isLinear()) {
-			secNum *= 2; 
-		}
 		/*block = new int [sections];
 		index = new int [sections];*/
 		students = (ArrayList<Student>)new ArrayList();
@@ -27,7 +24,8 @@ public class CourseSection {
 	
 	public void addStudent(Student newStudent) {
 		if (students.size() + getLinkedStudentSize() < course.getCapacity()) {
-			if(newStudent.getTimeTable().getSchedule(block).size() > 0) return;
+			// TODO: Add authentication for linear and sequenced courses
+			if(newStudent.getTimeTable().getSchedule(block).size() > 0) {return;}
 			students.add(newStudent);
 			newStudent.getTimeTable().addSection(block, this);
 		}

@@ -89,7 +89,7 @@ public class Timetable {
 		s += "      S1 A     *      S1 B     *     S1 C      *     S1 D      *     S2 A      *    S2  B      *     S2  C     *     S2 D      \n";
 		String s2 = null;
 		
-		for(int i = 0; i < maxSize; i++) {
+		for(int i = 0; i <= maxSize; i++) {
 			for(int j = 0; j < 8; j++) {
 				if(j != 0) s += "*";
 				if(i < schedule[j].size()) {
@@ -99,12 +99,15 @@ public class Timetable {
 					for (int k = 0; k < 15 - s2.length(); k++) {
 						s += " ";
 					}
+				} else if (i == maxSize && maxSize != 1) {
+					s += "       "+ schedule[j].size() + "      ";
 				} else {
 					s += "               ";
 				}
 			}
 			s += "\n";
-		}	
+		}
+		
 		return s;
 	}
 	
