@@ -106,25 +106,25 @@ public class Main {
 			int highIndices = 0;
 			int[] prefsInOrder = {0,1,2,3,4,5,6,7}; // Slot Preference indices stored in order of preference
 			double highPref = 0;
-			for(int i = 0; i < coursesToCheck.size(); i++) {
-//				double[] preferences = coursesToCheck.get(i).getPreferences();
-//				double highPrefLoop = 0;
-//				for(int j = 0; j < preferences.length; j++) {
-//					if(preferences[j] > highPrefLoop) {
-//						highPrefLoop = preferences[j];
-//					}
-//				}
-//				if(highPrefLoop >= highPref) {
-//					highPref = highPrefLoop;
+//			for(int i = 0; i < coursesToCheck.size(); i++) {
+////				double[] preferences = coursesToCheck.get(i).getPreferences();
+////				double highPrefLoop = 0;
+////				for(int j = 0; j < preferences.length; j++) {
+////					if(preferences[j] > highPrefLoop) {
+////						highPrefLoop = preferences[j];
+////					}
+////				}
+////				if(highPrefLoop >= highPref) {
+////					highPref = highPrefLoop;
+////					highIndices = i;
+////				}
+//				
+//				double pref = courses.get(i).getTotalPref();
+//				if(pref > highPref || (pref == highPref && (int)(Math.random()*2) == 1)) {
 //					highIndices = i;
-//				}
-				
-				double pref = courses.get(i).getTotalPref();
-				if(pref > highPref || (pref == highPref && (int)(Math.random()*2) == 1)) {
-					highIndices = i;
-					highPref = pref;
-				}// if
-			}// for
+//					highPref = pref;
+//				}// if
+//			}// for
 //			highIndices = (int)(Math.random() * coursesToCheck.size());
 			double[] preferences = coursesToCheck.get(highIndices).getPreferences();
 			

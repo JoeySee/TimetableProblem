@@ -3,6 +3,8 @@ import java.util.ArrayList;
 public class Student {
 	private ArrayList<Course> requestedCourses = new ArrayList<Course>();
 	private ArrayList<Course> alternateCourses = new ArrayList<Course>();
+	private Course enrollmentHold;
+	private int linearCount;
 	//private ArrayList<CourseSection> actualCourseSections = new ArrayList<CourseSection>();
 	Timetable t;
 	private int id;
@@ -18,6 +20,7 @@ public class Student {
 		t = tt.clone();
 		requestedCourses = reqCourses;
 		alternateCourses = altCourses;
+		enrollmentHold = null;
 	}
 	
 	public int getID() {
@@ -89,5 +92,13 @@ public class Student {
 			if(t.getTimetable()[slot].size() == 0) emptySlots.add(slot);
 		}
 		return emptySlots;
+	}
+	
+	public void setEnrollmentHold(Course c) {
+		enrollmentHold = c;
+	}
+	
+	public Course getEnrollmentHold() {
+		return enrollmentHold;
 	}
 }
