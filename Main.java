@@ -23,7 +23,7 @@ public class Main {
 			//courses = new ArrayList<Course>();
 			for(int i = 0; i < courses.size(); i++) {
 				courses.get(i).resetSections();
-				courses.get(i).resetPreferences();
+				//courses.get(i).resetPreferences();
 			}
 			coursesToCheck = new ArrayList<Course>();
 			/*students = new ArrayList<Student>();*/
@@ -103,10 +103,13 @@ public class Main {
 	public static Timetable generateGreedyTable() {
 		Timetable solution = new Timetable();
 		// Get course with highest single requestPriority
+		generateStudentPreferences();
 		while(coursesToCheck.size() != 0) {
 			int highIndices = 0;
 			int[] prefsInOrder = {0,1,2,3,4,5,6,7}; // Slot Preference indices stored in order of preference
 			double highPref = 0;
+			
+			// get course with the highest number of total requests
 			for(int i = 0; i < coursesToCheck.size(); i++) {
 //				double[] preferences = coursesToCheck.get(i).getPreferences();
 //				double highPrefLoop = 0;
@@ -120,26 +123,32 @@ public class Main {
 //					highIndices = i;
 //				}
 				
-				double pref = courses.get(i).getTotalPref();
-				if(pref > highPref || (pref == highPref  && (int)(Math.random()*4) != 1)) {
-					highIndices = i;
-					highPref = pref;
+				double prefStudent = courses.get(i).getTotalPrefStudent();
+				if(prefStudent > highPref || (prefStudent == highPref  && (int)(Math.random()*4) != 1)) {
+					highIndices = i; // course to put in first
+					highPref = prefStudent;
 				}// if
 			}// for
 //			highIndices = (int)(Math.random() * coursesToCheck.size());
-			double[] preferences = coursesToCheck.get(highIndices).getPreferences();
-			
+			double[] preferencesStudent = coursesToCheck.get(highIndices).getPreferencesStudent();
+			double[] preferencesSequencing = coursesToCheck.get(highIndices).getPreferencesSequencing();
 			//System.out.println("checkpoint. courses to check size: " + coursesToCheck.size());
 			// Sort preferences
 			for(int i = 0; i < prefsInOrder.length; i++) {
 				int temp = prefsInOrder[i];
-				highPref = preferences[i];
+				highPref = preferencesSequencing[i];
 				int highIndex = i;
 
 				for(int j = i+1; j < prefsInOrder.length; j++) {
-					if(preferences[prefsInOrder[j]] > highPref || (preferences[prefsInOrder[j]] == highPref && (int)(Math.random()*2) != 1)) {
+					if(preferencesSequencing[prefsInOrder[j]] > highPref) {
 						highIndex = j;
-						highPref = preferences[prefsInOrder[j]];
+						highPref = preferencesSequencing[prefsInOrder[j]];
+					} else if (preferencesSequencing[prefsInOrder[j]] == highPref) { // if sequencing preferences are equal, student preferences break tie
+						if (preferencesSequencing[prefsInOrder[j]] > highPref) {
+							
+						}
+						highIndex = j;
+						highPref = preferencesSequencing[prefsInOrder[j]];
 					}
 				}
 				prefsInOrder[i] = prefsInOrder[highIndex];
@@ -181,45 +190,49 @@ public class Main {
 			
 			// Re-generate preferences with new student courses
 			coursesToCheck.remove(highIndices);
-			resetStudentPreferences(coursesToCheck);
-			generateStudentPreferences();
+			for(int i = 0; i < coursesToCheck.size(); i++) {
+				coursesToCheck.get(i).resetPreferences();
+			}
+			
 		}
 		return solution;
 	}
 	
 	public static void generateStudentPreferences() {
+		boolean semesterPriority;
+		int linearCount; // Amount of linear courses in this students requests
+		Course linearCourse = null;
+		ArrayList<Integer> slotPreferences;
 		for(Student s : students) {
 			// Iterate through this students courses
-			int linearCount = 0; // Amount of linear courses in this students requests
-
-			Course linearCourse = null;
+			linearCount = 0; // Amount of linear courses in this students requests
+			linearCourse = null;
 			for(Course c : s.getRequestedCourses()) {
-				ArrayList<Integer> slotPreferences = s.getEmptySlots(); // Slots that this student (s) would like this course (c) to be in
-				boolean semesterPriority = false;
+				slotPreferences = s.getEmptySlots(); // Slots that this student (s) would like this course (c) to be in
+				c.addPreferencesStudent(slotPreferences);
+				
+				semesterPriority = false;
 				if(c.isCourseLinear()) {
 					linearCount++;
 					linearCourse = c;
 				}
 				// Check if this courses has any sequencing rules that interact with this student's other courses
+				slotPreferences.removeAll(slotPreferences);
 				for(Course cSeq : c.getCourBefore()) {
 					if(s.getRequestedCourses().contains(cSeq)) {
 						semesterPriority = true;
-						for(int i = 0; i < slotPreferences.size(); i++) {
-							if(slotPreferences.get(i) > 4) {
-								slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, i, slotPreferences.size());
-							}
+						for (int i = 4; i < 8; i++) {
+							slotPreferences.add(i); // add to 2nd semester
 						}
 					}// if
-					//c.addPreferencesLinear(slotPreferences);
 				}// for cSeq
+				c.addPreferencesSequencing(slotPreferences);
 				if(!semesterPriority) {
 					for(Course cSeq : c.getCourAfter()) {
 						if(s.getRequestedCourses().contains(cSeq)) {
 							semesterPriority = true;
-							for(int i = 0; i < slotPreferences.size(); i++) {
-								if(slotPreferences.get(i) > 4) { 
-									slotPreferences = (ArrayList<Integer>) copyArrayListPortion(slotPreferences, 0, i);
-								}
+							for (int i = 0; i < 4; i++) {
+								slotPreferences.add(i); // add to 2nd semester
 							}
 						}// if
 					}// for cSeq
@@ -227,7 +240,7 @@ public class Main {
 				}
 				// if c is linear
 
-				if(c.isCourseLinear()) {
+				/*if(c.isCourseLinear()) {
 					for(int i = 0; i < 8; i++) {
 						for(CourseSection cActual : s.getTimeTable().getSchedule(i)) {
 							if(cActual.getCourse().isCourseLinear()) {
@@ -248,7 +261,7 @@ public class Main {
 						}// for cActual
 					}// for i
 					c.addPreferencesLinear(slotPreferences);
-				}
+				}*/
 				/*if(c.getCode().equals("ACSC-2A---")) {
 					System.out.println(slotPreferences);
 				}*/
@@ -266,11 +279,11 @@ public class Main {
 		return a;
 	}
 	
-	public static void resetStudentPreferences(ArrayList<Course> c) {
+	/*public static void resetStudentPreferences(ArrayList<Course> c) {
 		for(int i = 0; i < c.size(); i++) {
-			c.get(i).resetPreference();
+			c.get(i).resetPreferences();
 		}
-	}
+	}*/
 	
 	public static void resetSections(Timetable table) {
 		for(int i = 0; i < 8; i++) {
