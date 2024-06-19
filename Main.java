@@ -19,7 +19,7 @@ public class Main {
 		double highScore = 0;
 		Timetable bestTable = null;
 
-		for (int loopCounter = 0; loopCounter < 10; loopCounter++) {
+		for (int loopCounter = 0; loopCounter < 100; loopCounter++) {
 			// courses = new ArrayList<Course>();
 			for (int i = 0; i < courses.size(); i++) {
 				courses.get(i).resetSections();
@@ -56,7 +56,7 @@ public class Main {
 
 			purgeExcessCourses(t);
 
-			double newScore = genReqCourseMetrics(students);
+			double newScore = ((genReqCourseMetrics(students)/3) + genCorMetrics(students, 7, false, false) + (genCorMetrics(students, 8, false, false) * 2));
 			if (newScore > highScore) {
 				highScore = newScore;
 				bestTable = t;
@@ -77,7 +77,7 @@ public class Main {
 			 * courses.get(i).getS1() + " | " + courses.get(i).getS2()); } }
 			 */
 			System.out.println("Percent of all requested courses placed: " + newScore + " | record: "
-					+ genReqCourseMetrics(bestStudents) * 100 + "%");
+					+ ((genReqCourseMetrics(bestStudents)/3) + genCorMetrics(bestStudents, 7, false, false) + (genCorMetrics(bestStudents, 8, false, false) * 2)) * 100 + "%");
 		}
 
 		// Print split courses
