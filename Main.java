@@ -381,12 +381,15 @@ public class Main {
 		
 		
 
-		// return the metrics of all students have 8/8 requested classes
-		public static double genCorMetrics(ArrayList<Student> stuList, int lowerLim, boolean includeAlts, boolean toPrint) {
-			int numFullCorStudents = 0;
+	// return the metrics of all students have 8/8 requested classes
+	public static double genCorMetrics(ArrayList<Student> stuList, int lowerLim, boolean includeAlts, boolean toPrint) {
+		int numFullCorStudents = 0;
+		int numOfReqStu = 0;
 
-			// for every student
-			for (Student s : stuList) {
+		// for every student
+		for (Student s : stuList) {
+			if (s.getRequestedCourses().size() >= lowerLim && s.getRequestedCourses().size() < 9) {
+				numOfReqStu++;
 				int numReqCoursesGiven = 0;
 				ArrayList<Course> reqAndAltCourses = s.getRequestedCourses();
 				if (includeAlts) {
@@ -394,7 +397,6 @@ public class Main {
 						reqAndAltCourses.add(alt);
 					}
 				}
-				
 
 				for (Course reqOrAltCourse : reqAndAltCourses) {
 					for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
@@ -411,10 +413,46 @@ public class Main {
 					}
 					numFullCorStudents++;
 				} // if
-			} // for (students)
+			}
+		} // for (students)
 
-			return (double) numFullCorStudents / stuList.size();
-		}
+		return (double) numFullCorStudents / numOfReqStu;
+	}
+
+	// return % of students with 1-2 courses not fulfilled (alt or requested)
+	public static double genNotFullfilledMetrics(ArrayList<Student> stuList, int lowerLim, int higherLim,
+			boolean includeAlts, boolean toPrint) {
+		int numNotFullfilledStudents = 0;
+
+		// for every student
+		for (Student s : stuList) {
+			int numReqCoursesGiven = 0;
+			ArrayList<Course> reqAndAltCourses = s.getRequestedCourses();
+			if (includeAlts) {
+				for (Course alt : s.getAlternateCourses()) {
+					reqAndAltCourses.add(alt);
+				}
+			}
+
+			for (Course reqOrAltCourse : reqAndAltCourses) {
+				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+					if (actualCourse.getCourse().getCode().equals(reqOrAltCourse.getCode())) {
+						numReqCoursesGiven++;
+						break;
+					}
+				} // for (student s' requested courses)
+			} // for (student s' actual courses)
+			if (numReqCoursesGiven >= lowerLim && numReqCoursesGiven < higherLim) {
+				if (toPrint) {
+					System.out.println(s.getID());
+					System.out.println(s.getTimeTable());
+				}
+				numNotFullfilledStudents++;
+			} // if
+		} // for (students)
+
+		return (double) numNotFullfilledStudents / stuList.size();
+	}
 
 		// return the metrics all students have 7-8/8 requested classes
 		/*public static double genSufficientReqMetrics(ArrayList<Student> stuList, int lowerLim, boolean includeAlts) {
