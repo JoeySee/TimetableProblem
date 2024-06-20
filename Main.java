@@ -56,8 +56,11 @@ public class Main {
 
 			purgeExcessCourses(t);
 
-			double newScore = ((genReqCourseMetrics(students)/3) + genCorMetrics(students, 7, false, false) + (genCorMetrics(students, 8, false, false) * 2));
-			if (newScore > highScore) {
+			double newScore = ((genReqCourseMetrics(students) / 5) 
+					+ (genCorMetrics(students, 8, false, false) * 10));
+			t.toString();
+			if (newScore > highScore && (t.getMaxSize() - t.getMinSize()) <= 3) {
+				System.out.println(t.getMaxSize() - t.getMinSize());
 				highScore = newScore;
 				bestTable = t;
 				bestStudents.removeAll(bestStudents);
@@ -76,8 +79,11 @@ public class Main {
 			 * courses.get(i).getNumStudents() + " semester requests: " +
 			 * courses.get(i).getS1() + " | " + courses.get(i).getS2()); } }
 			 */
-			System.out.println("Percent of all requested courses placed: " + newScore + " | record: "
-					+ ((genReqCourseMetrics(bestStudents)/3) + genCorMetrics(bestStudents, 7, false, false) + (genCorMetrics(bestStudents, 8, false, false) * 2)) * 100 + "%");
+//			System.out.println("Percent of all requested courses placed: " + newScore + " | record: "
+//					+ ((genReqCourseMetrics(bestStudents) / 5) 
+//							+ (genCorMetrics(bestStudents, 8, false, false) * 10)) * 100
+//					+ "%");
+			
 		}
 
 		// Print split courses
@@ -95,8 +101,8 @@ public class Main {
 
 		System.out.println(getCoursesPlaced(bestStudents) + " / " + getCoursesRequested(bestStudents));
 		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics(bestStudents) * 100 + "%");
-		System.out.println("Percent of all students have 7-8/8 requested classes: "
-				+ genCorMetrics(bestStudents, 7, false, false) * 100 + "%");
+//		System.out.println("Percent of all students have 7-8/8 requested classes: "
+//				+ genCorMetrics(bestStudents, 7, false, false) * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: "
 				+ genCorMetrics(bestStudents, 8, false, false) * 100 + "%");
 		System.out.println("The % of students with 8/8 courses (requested or alternate): "
@@ -198,7 +204,18 @@ public class Main {
 	}
 
 	public static void generateStudentPreferences() {
-		for (Student s : students) {
+		int stuOriSize = students.size();
+		ArrayList <Student> stuCopy = (ArrayList<Student>) students.clone();
+		
+		for (int o = 0; o < stuCopy.size(); o++) {
+			Student s = stuCopy.get(o);
+			
+			
+			if(s.getRequestedCourses().size() != 8 && o < stuOriSize) {
+				stuCopy.add(s);
+				continue;
+			}
+			
 			// Iterate through this students courses
 			int linearCount = 0; // Amount of linear courses in this students requests
 
@@ -396,35 +413,39 @@ public class Main {
 	// return the metrics of all students have 8/8 requested classes
 	public static double genCorMetrics(ArrayList<Student> stuList, int lowerLim, boolean includeAlts, boolean toPrint) {
 		int numFullCorStudents = 0;
+		int numOfReqStu = 0;
 
 		// for every student
 		for (Student s : stuList) {
-			int numReqCoursesGiven = 0;
-			ArrayList<Course> reqAndAltCourses = s.getRequestedCourses();
-			if (includeAlts) {
-				for (Course alt : s.getAlternateCourses()) {
-					reqAndAltCourses.add(alt);
-				}
-			}
-
-			for (Course reqOrAltCourse : reqAndAltCourses) {
-				for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
-					if (actualCourse.getCourse().getCode().equals(reqOrAltCourse.getCode())) {
-						numReqCoursesGiven++;
-						break;
+			if (s.getRequestedCourses().size() >= lowerLim && s.getRequestedCourses().size() < 9) {
+				numOfReqStu++;
+				int numReqCoursesGiven = 0;
+				ArrayList<Course> reqAndAltCourses = s.getRequestedCourses();
+				if (includeAlts) {
+					for (Course alt : s.getAlternateCourses()) {
+						reqAndAltCourses.add(alt);
 					}
-				} // for (student s' requested courses)
-			} // for (student s' actual courses)
-			if (numReqCoursesGiven >= lowerLim && numReqCoursesGiven < 9) {
-				if (toPrint) {
-					System.out.println(s.getID());
-					System.out.println(s.getTimeTable());
 				}
-				numFullCorStudents++;
-			} // if
+
+				for (Course reqOrAltCourse : reqAndAltCourses) {
+					for (CourseSection actualCourse : s.getTimeTable().getAllCourseSections()) {
+						if (actualCourse.getCourse().getCode().equals(reqOrAltCourse.getCode())) {
+							numReqCoursesGiven++;
+							break;
+						}
+					} // for (student s' requested courses)
+				} // for (student s' actual courses)
+				if (numReqCoursesGiven >= lowerLim && numReqCoursesGiven < 9) {
+					if (toPrint) {
+						System.out.println(s.getID());
+						System.out.println(s.getTimeTable());
+					}
+					numFullCorStudents++;
+				} // if
+			}
 		} // for (students)
 
-		return (double) numFullCorStudents / stuList.size();
+		return (double) numFullCorStudents / numOfReqStu;
 	}
 
 	// return % of students with 1-2 courses not fulfilled (alt or requested)
