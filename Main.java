@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Main {
 	static ArrayList<Course> courses = new ArrayList<Course>();
-	static ArrayList<Course> coursesToCheck = new ArrayList<Course>();
+	//static ArrayList<Course> coursesToCheck = new ArrayList<Course>();
 	static ArrayList<Student> students = new ArrayList<Student>();
 	static ArrayList<Student> bestStudents = new ArrayList<Student>();
 	
@@ -19,13 +19,13 @@ public class Main {
 		double highScore = 0;
 		Timetable bestTable = null;
 		
-		for(int loopCounter = 0; loopCounter < 10; loopCounter++) {
+		for(int loopCounter = 0; loopCounter < 1; loopCounter++) {
 			//courses = new ArrayList<Course>();
 			for(int i = 0; i < courses.size(); i++) {
 				courses.get(i).resetSections();
 				//courses.get(i).resetPreferences();
 			}
-			coursesToCheck = new ArrayList<Course>();
+			//coursesToCheck = new ArrayList<Course>();
 			/*students = new ArrayList<Student>();*/
 			//students = new ArrayList<Student>();
 			
@@ -36,12 +36,12 @@ public class Main {
 			//generateBlockingRules();
 			//generateCourseSeqRules();
 			
-			generateStudentPreferences();
+			//generateStudentPreferences();
 		
 			
-			for(int i = 0; i < courses.size(); i++) {
-				coursesToCheck.add(courses.get(i));
-			}
+			//for(int i = 0; i < courses.size(); i++) {
+				//coursesToCheck.add(courses.get(i));
+			//}
 			Student s = null;
 			for(int i = 0; i < students.size(); i++) {
 				s = students.get(i);
@@ -101,14 +101,73 @@ public class Main {
 	}// main
 	
 	public static Timetable generateGreedyTable() {
+		
+		// generate student preferences
+		generateStudentPreferences();
+
 		Timetable solution = new Timetable();
 		// Get course with highest single requestPriority
-		generateStudentPreferences();
-		while(coursesToCheck.size() != 0) {
-			int highIndices = 0;
-			int[] prefsInOrder = {0,1,2,3,4,5,6,7}; // Slot Preference indices stored in order of preference
-			double highPref = 0;
+		int highIndices;
+		int[] prefsInOrder = {0,1,2,3,4,5,6,7}; // Slot Preference indices stored in order of preference
+		double highPrefStudent;
+		double highPrefSequencing;
+		int[] coursePopularityRanking = new int [courses.size()];
+		for (int i = 0; i < coursePopularityRanking.length; i++) {
+			coursePopularityRanking[i] = i;
+		}
+		int max_id;
+		int temp;
+        for (int i = 0; i < coursePopularityRanking.length-1; i++) { 
+            // Find the minimum element in unsorted array 
+        	max_id = i; 
+            for (int j = i+1; j < coursePopularityRanking.length; j++) {
+                if (courses.get(coursePopularityRanking[j]).getTotalPrefStudent() > courses.get(coursePopularityRanking[max_id]).getTotalPrefStudent()) { 
+                	max_id = j; 
+                }
+            }  
+            // Swap the found minimum element with the first element 
+            temp = coursePopularityRanking[max_id]; 
+            coursePopularityRanking[max_id] = coursePopularityRanking[i]; 
+            coursePopularityRanking[i] = temp; 
+        } 
+        Course c;
+		for (int i = 0; i < coursePopularityRanking.length; i++) {
+			System.out.print(courses.get(coursePopularityRanking[i]).getCode() + " ");
+			c = courses.get(coursePopularityRanking[i]);
+			for (int j = 0; j < c.getPreferencesStudent().length; j++) {
+				System.out.print(c.getPreferencesStudent()[j] + " ");
+			}
+			System.out.println();
 			
+			/*for(int j = 0; j < prefsInOrder.length; j++) {
+				
+				int temp = prefsInOrder[i];
+				highPrefSequencing = preferencesSequencing[j];
+				int highIndex = j;
+
+				for(int k = j+1; k < prefsInOrder.length; k++) {
+					if(preferencesSequencing[prefsInOrder[k]] > highPrefSequencing) {
+						highIndex = k;
+						highPrefSequencing = preferencesSequencing[prefsInOrder[k]];
+					} else if (preferencesSequencing[prefsInOrder[k]] == highPrefSequencing) { // if sequencing preferences are equal, student preferences break tie
+						if (preferencesStudent[prefsInOrder[k]] > highPrefStudent || (preferencesStudent[prefsInOrder[k]] == highPrefStudent && (int)(Math.random()*2) != 1)) {
+							highIndex = k;
+							highPrefSequencing = preferencesSequencing[prefsInOrder[k]];
+							highPrefStudent = preferencesStudent[prefsInOrder[k]];
+						}
+						
+					}
+				}
+				prefsInOrder[i] = prefsInOrder[highIndex];
+				prefsInOrder[highIndex] = temp;
+			}*/
+			
+			/*highIndices = 0;
+			for (int i = 0; i < 8; i++) {
+				prefsInOrder[i] = i;
+			}
+			highPrefStudent = 0;
+			highPrefSequencing = 0;
 			// get course with the highest number of total requests
 			for(int i = 0; i < coursesToCheck.size(); i++) {
 //				double[] preferences = coursesToCheck.get(i).getPreferences();
@@ -124,9 +183,9 @@ public class Main {
 //				}
 				
 				double prefStudent = courses.get(i).getTotalPrefStudent();
-				if(prefStudent > highPref || (prefStudent == highPref  && (int)(Math.random()*4) != 1)) {
+				if(prefStudent > highPrefStudent || (prefStudent == highPref  && (int)(Math.random()*4) != 1)) {
 					highIndices = i; // course to put in first
-					highPref = prefStudent;
+					highPrefStudent = prefStudent;
 				}// if
 			}// for
 //			highIndices = (int)(Math.random() * coursesToCheck.size());
@@ -136,24 +195,25 @@ public class Main {
 			// Sort preferences
 			for(int i = 0; i < prefsInOrder.length; i++) {
 				int temp = prefsInOrder[i];
-				highPref = preferencesSequencing[i];
+				highPrefSequencing = preferencesSequencing[i];
 				int highIndex = i;
 
 				for(int j = i+1; j < prefsInOrder.length; j++) {
-					if(preferencesSequencing[prefsInOrder[j]] > highPref) {
+					if(preferencesSequencing[prefsInOrder[j]] > highPrefSequencing) {
 						highIndex = j;
-						highPref = preferencesSequencing[prefsInOrder[j]];
-					} else if (preferencesSequencing[prefsInOrder[j]] == highPref) { // if sequencing preferences are equal, student preferences break tie
-						if (preferencesSequencing[prefsInOrder[j]] > highPref) {
-							
+						highPrefSequencing = preferencesSequencing[prefsInOrder[j]];
+					} else if (preferencesSequencing[prefsInOrder[j]] == highPrefSequencing) { // if sequencing preferences are equal, student preferences break tie
+						if (preferencesStudent[prefsInOrder[j]] > highPrefStudent || (preferencesStudent[prefsInOrder[j]] == highPrefStudent && (int)(Math.random()*2) != 1)) {
+							highIndex = j;
+							highPrefSequencing = preferencesSequencing[prefsInOrder[j]];
+							highPrefStudent = preferencesStudent[prefsInOrder[j]];
 						}
-						highIndex = j;
-						highPref = preferencesSequencing[prefsInOrder[j]];
+						
 					}
 				}
 				prefsInOrder[i] = prefsInOrder[highIndex];
 				prefsInOrder[highIndex] = temp;
-			}
+			}*/
 			
 			// Assign the course to the timetable based on preferences
 //			for(int slot : prefsInOrder) {
@@ -173,6 +233,11 @@ public class Main {
 //				}
 //			}
 			
+			
+
+			
+		}
+		/*while(coursesToCheck.size() != 0) {
 			if(coursesToCheck.get(highIndices).getNumSections() <= 1) {
 				coursesToCheck.get(highIndices).addCourseToBlock(solution, prefsInOrder[0]);
 			} else {
@@ -193,8 +258,10 @@ public class Main {
 			for(int i = 0; i < coursesToCheck.size(); i++) {
 				coursesToCheck.get(i).resetPreferences();
 			}
-			
-		}
+		}*/
+		
+		
+		
 		return solution;
 	}
 	
@@ -277,7 +344,7 @@ public class Main {
 			newA.add(a.get(n));
 		}
 		return a;
-	}
+	} 
 	
 	/*public static void resetStudentPreferences(ArrayList<Course> c) {
 		for(int i = 0; i < c.size(); i++) {

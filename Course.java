@@ -176,8 +176,8 @@ public class Course {
 	}
 	
 	// Add percent of sections to slot in t
-	public void addPercentSections(Timetable t, int slot) {
-		double sectionsToRun = ((placementPreference[slot]/totalPrefs)*numSections);
+	/*public void addPercentSections(Timetable t, int slot) {
+		double sectionsToRun = ((preferenceStudent[slot]/totalPrefsStudent)*numSections);
 		for(int i = 0; i < Math.min(Math.ceil(sectionsToRun), sections.length); i++) {
 			if(sections[i].getBlock() == -1) {
 				sections[i].setIndex(t.getSchedule(slot).size());
@@ -187,7 +187,7 @@ public class Course {
 				sectionsToRun++;
 			}
 		}
-	}
+	}*/
 	
 	// Assign any unassigned sections to random positions
 	public void addExcessSections(Timetable t) {
