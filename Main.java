@@ -96,6 +96,10 @@ public class Main {
 				+ genCorMetrics(bestStudents, 8, false, false) * 100 + "%");
 		System.out.println("The % of students with 8/8 courses (requested or alternate): "
 				+ genCorMetrics(bestStudents, 8, true, true) * 100 + "%");
+		System.out.println("% of students with 1-2 courses not fulfilled (alt or requested): "
+				+ genNotFullfilledMetrics(bestStudents, 6, 8, true, false) * 100 + "%");
+		System.out.println("% of students with 3-8 courses not fulfilled (alt or requested): "
+				+ genNotFullfilledMetrics(bestStudents, 0, 6, true, false) * 100 + "%");
 		
 	}// main
 	
