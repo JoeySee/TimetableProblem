@@ -56,7 +56,8 @@ public class Main {
 			
 			purgeExcessCourses(t);
 			
-			double newScore = genReqCourseMetrics(students);
+			double newScore = ((genReqCourseMetrics(students) / 3) + genCorMetrics(students, 7, false, false)
+					+ (genCorMetrics(students, 8, false, false) * 2));
 			if(newScore > highScore) {
 				highScore = newScore;
 				bestTable = t;
@@ -89,7 +90,8 @@ public class Main {
 		System.out.println(bestTable);
 		
 		System.out.println(getCoursesPlaced(bestStudents) + " / " + getCoursesRequested(bestStudents));
-		System.out.println("Percent of all requested courses placed: " + genReqCourseMetrics(bestStudents) * 100 + "%");
+		System.out.println("Percent of all requested courses placed: " + ((genReqCourseMetrics(students) / 3) + genCorMetrics(students, 7, false, false)
+					+ (genCorMetrics(students, 8, false, false) * 2)) * 100 + "%");
 		System.out.println("Percent of all students have 7-8/8 requested classes: "
 				+ genCorMetrics(bestStudents, 7, false, false) * 100 + "%");
 		System.out.println("Percent of all students who have 8/8 requested classes: "
