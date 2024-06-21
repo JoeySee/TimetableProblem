@@ -217,22 +217,22 @@ public class Course {
 	// Add preference to slots
 	public void addPreferencesStudent(ArrayList<Integer> slots) {
 		for(int i : slots) {
-			preferenceStudent[i] += 1.0/(double)slots.size();
-			totalPrefsStudent += 1.0/(double)slots.size();
+			preferenceStudent[i] += 1.0/*/(double)slots.size()*/;
+			totalPrefsStudent += 1.0/*/(double)slots.size()*/;
 		}
 	}
 	
 	public void addPreferencesSequencing(ArrayList<Integer> slots) {
 		for(int i : slots) {
-			preferenceSequencing[i] += 1.0/(double)slots.size();
-			totalPrefsSequencing += 1.0/(double)slots.size();
+			preferenceSequencing[i] += 1.0/*/(double)slots.size()*/;
+			totalPrefsSequencing += 1.0/*/(double)slots.size()*/;
 		}
 	}
 	
 	public void addPreferencesLinear(ArrayList<Integer> slots) {
 		for(int i : slots) {
-			preferenceLinear[i] += 1.0/(double)slots.size();
-			totalPrefsLinear += 1.0/(double)slots.size();
+			preferenceLinear[i] += 1.0/*/(double)slots.size()*/;
+			totalPrefsLinear += 1.0/*/(double)slots.size()*/;
 		}
 	}
 	

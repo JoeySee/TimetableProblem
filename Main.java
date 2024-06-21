@@ -133,11 +133,56 @@ public class Main {
         Course c;
 		for (int i = 0; i < coursePopularityRanking.length; i++) {
 			System.out.print(courses.get(coursePopularityRanking[i]).getCode() + " ");
+			
 			c = courses.get(coursePopularityRanking[i]);
+			
+			
+			
+			for (int j = 0; j < coursePopularityRanking.length-1; j++) { 
+	            // Find the minimum element in unsorted array 
+	        	max_id = j; 
+	            for (int k = j+1; k < coursePopularityRanking.length; k++) {
+	                if (courses.get(coursePopularityRanking[k]).getTotalPrefStudent() > courses.get(coursePopularityRanking[max_id]).getTotalPrefStudent()) { 
+	                	max_id = k; 
+	                }
+	            }  
+	            // Swap the found minimum element with the first element 
+	            temp = coursePopularityRanking[max_id]; 
+	            coursePopularityRanking[max_id] = coursePopularityRanking[j]; 
+	            coursePopularityRanking[j] = temp; 
+	        } 
+			
+			
 			for (int j = 0; j < c.getPreferencesStudent().length; j++) {
 				System.out.print(c.getPreferencesStudent()[j] + " ");
 			}
+			System.out.print(" | ");
+			for (int j = 0; j < c.getPreferencesSequencing().length; j++) {
+				System.out.print(c.getPreferencesSequencing()[j] + " ");
+			}
 			System.out.println();
+			int slot;
+			while(c.getSection(c.getNumSections()-1).getBlock() == -1) {
+				for(int j = 0; j < prefsInOrder.length; j++) {
+					slot = prefsInOrder[j];
+					c.addCourseToBlock(solution, slot);
+				}
+			}
+			
+			
+			if(c.getNumSections() <= 1) {
+				c.addCourseToBlock(solution, prefsInOrder[0]);
+			} else {
+				
+			}
+			c.addExcessSections(solution);
+			c.addRequestedStudents();
+			
+			// Re-generate preferences with new student courses
+			coursesToCheck.remove(highIndices);
+			for(int i = 0; i < coursesToCheck.size(); i++) {
+				coursesToCheck.get(i).resetPreferences();
+			}
 			
 			/*for(int j = 0; j < prefsInOrder.length; j++) {
 				
